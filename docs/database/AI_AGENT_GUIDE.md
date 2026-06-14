@@ -14,6 +14,33 @@ Bad task:
 
 ## Technical Rules
 
+### Standing Task Rules
+
+These rules apply to every Codex task in this repository:
+
+1. Work in `ImperfectRain/Garden-Godot`.
+2. Keep each change small and focused.
+3. Do not add unrelated features.
+4. Do not rename existing folders unless explicitly instructed.
+5. Preserve the design grammar:
+   - Flora produces.
+   - Fauna consumes.
+   - Objects modify.
+   - The player tends.
+6. Prefer readable, simple GDScript over clever abstractions.
+7. Update documentation when behavior, architecture, controls, content, or project workflow changes.
+8. Append an entry to `docs/COMMIT_LOG.md` for every task.
+9. At the end of each task, run a basic project sanity check if possible.
+10. Summarize changes, commit, and push to GitHub.
+
+Commit messages should be concise and use this style:
+
+- `mvp: add first fun loop documentation`
+- `mvp: implement garden interval ticking`
+- `mvp: add drifter enemy pressure`
+
+Do not combine multiple roadmap tasks into one commit.
+
 ### Before Editing
 
 1. Read `docs/database/README.md`.
