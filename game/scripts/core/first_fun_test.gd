@@ -12,6 +12,7 @@ var event_log: Array[String] = []
 var _last_health := 0
 var _last_shield := 0
 var _reward_has_been_claimed := false
+var _last_bloomchain := "None yet"
 
 
 func _ready() -> void:
@@ -27,12 +28,13 @@ func _ready() -> void:
 	GardenResources.resource_failed.connect(_on_resource_failed)
 	GardenManager.piece_placed.connect(_on_piece_placed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
+	Bloomchains.chain_finished.connect(_on_bloomchain_finished)
 	reward_choice_panel.reward_selected.connect(_on_reward_selected)
 	_last_health = player.health
 	_last_shield = player.shield
 	_add_event("Lantern Lily produces +1 Light every 5 seconds.")
 	_add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
-	_add_event("Reward choice is ready: press 1, 2, or 3.")
+	_add_event("Choose Bellflower with 2 to test the first Bloomchain.")
 	reward_choice_panel.show()
 	_refresh_debug("", 0, 0)
 
@@ -45,6 +47,8 @@ func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary
 	JournalManager.discover_piece(piece_id)
 	if piece_id == "lantern_lily":
 		_add_event("Lantern Lily produced +1 Light.")
+	elif piece_id == "bellflower":
+		_add_event("Bellflower heard the garden wake and produced +1 Echo.")
 	_refresh_debug("", 0, 0)
 
 
@@ -108,6 +112,15 @@ func _on_player_defeated() -> void:
 	_refresh_debug("", 0, 0)
 
 
+func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
+	if length < 3:
+		return
+	_last_bloomchain = " -> ".join(PackedStringArray(_get_piece_names(piece_ids)))
+	_add_event("Bloomchain x%s: %s" % [length, _last_bloomchain])
+	debug_message = "Bloomchain recorded"
+	_refresh_debug("", 0, 0)
+
+
 func _refresh_debug(_resource_id: String, _amount: int, _delta: int) -> void:
 	var lines: Array[String] = [
 		"Garden of Teeth - First Fun Test",
@@ -118,6 +131,7 @@ func _refresh_debug(_resource_id: String, _amount: int, _delta: int) -> void:
 		"Health: %s/%s" % [player.health, player.max_health],
 		"Shield: %s" % player.shield,
 		"Status: %s" % debug_message,
+		"Last Bloomchain: %s" % _last_bloomchain,
 		"Garden:"
 	]
 	lines.append_array(GardenManager.as_debug_rows())
@@ -135,3 +149,10 @@ func _add_event(message: String) -> void:
 func _get_piece_name(piece_id: String) -> String:
 	var piece := ContentDatabase.get_garden_piece(piece_id)
 	return piece.get("name", piece_id)
+
+
+func _get_piece_names(piece_ids: Array[String]) -> Array[String]:
+	var names: Array[String] = []
+	for piece_id in piece_ids:
+		names.append(_get_piece_name(piece_id))
+	return names

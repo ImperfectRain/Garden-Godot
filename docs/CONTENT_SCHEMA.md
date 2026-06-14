@@ -37,3 +37,24 @@ Each garden piece should use these fields:
 - `rot`
 - `blood`
 - `echo`
+
+## Trigger Fields
+
+Trigger entries currently support:
+
+- `id`: stable trigger identifier within the piece.
+- `event`: event name that activates this trigger.
+- `action`: action interpreted by the garden system.
+- `resource`: resource id used by resource actions.
+- `amount`: produced amount, shield amount, or action magnitude depending on action.
+- `cost`: resource cost for consuming actions.
+- `cooldown`: interval seconds for `on_interval` triggers.
+- `follow_up_events`: optional event names dispatched after this trigger succeeds.
+
+Current causal Bloomchain support uses `follow_up_events` plus runtime chain context from `GardenManager`. The chain context is not authored directly in JSON yet; it is generated when successful triggers produce or spend resources.
+
+Current first-chain authored events:
+
+- `on_interval`: Lantern Lily produces Light.
+- `on_pulse`: Saintmoth spends Light and grants Shield.
+- `garden_woke`: Bellflower reacts to a successful Saintmoth Pulse and produces Echo.

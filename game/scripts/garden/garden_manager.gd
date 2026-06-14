@@ -13,6 +13,8 @@ var cells: Dictionary = {}
 var selected_cell := HEART_CELL
 var last_trigger: Dictionary = {}
 var _interval_timers: Dictionary = {}
+var _resource_sources: Dictionary = {}
+var _next_chain_index := 1
 
 
 func _ready() -> void:
@@ -22,6 +24,8 @@ func _ready() -> void:
 func reset_grid() -> void:
 	cells.clear()
 	_interval_timers.clear()
+	_resource_sources.clear()
+	_next_chain_index = 1
 	for y in range(GRID_SIZE.y):
 		for x in range(GRID_SIZE.x):
 			cells[Vector2i(x, y)] = ""
@@ -74,14 +78,7 @@ func remove_piece(cell: Vector2i) -> String:
 
 
 func trigger_piece(cell: Vector2i, event_name: String) -> bool:
-	var piece_id := str(cells.get(cell, ""))
-	if piece_id.is_empty():
-		return false
-	var piece := ContentDatabase.get_garden_piece(piece_id)
-	for trigger in piece.get("triggers", []):
-		if trigger.get("event", "") == event_name:
-			return _apply_trigger(cell, piece_id, trigger)
-	return false
+	return _trigger_piece_with_context(cell, event_name, {})
 
 
 func pulse_selected() -> bool:
@@ -104,13 +101,29 @@ func process_intervals(delta: float) -> void:
 			var next_time := float(_interval_timers.get(timer_key, 0.0)) + delta
 			if next_time >= cooldown:
 				next_time -= cooldown
-				_apply_trigger(cell, piece_id, trigger)
+				_apply_trigger(cell, piece_id, trigger, {})
 			_interval_timers[timer_key] = next_time
 
 
 func produce_from_intervals() -> void:
 	for cell in cells.keys():
 		trigger_piece(cell, "on_interval")
+
+
+func _trigger_piece_with_context(cell: Vector2i, event_name: String, context: Dictionary) -> bool:
+	var piece_id := str(cells.get(cell, ""))
+	if piece_id.is_empty():
+		return false
+	var piece := ContentDatabase.get_garden_piece(piece_id)
+	for trigger in piece.get("triggers", []):
+		if trigger.get("event", "") == event_name:
+			return _apply_trigger(cell, piece_id, trigger, context)
+	return false
+
+
+func _trigger_event_for_all_pieces(event_name: String, context: Dictionary) -> void:
+	for cell in cells.keys():
+		_trigger_piece_with_context(cell, event_name, context)
 
 
 func get_piece_at(cell: Vector2i) -> Dictionary:
@@ -157,14 +170,15 @@ func as_debug_rows() -> Array[String]:
 	return rows
 
 
-func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> bool:
+func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary = {}) -> bool:
 	var action := str(trigger.get("action", ""))
+	var trigger_context := _build_trigger_context(piece_id, trigger, context)
 	var succeeded := false
 	match action:
 		"produce_resource":
-			succeeded = _apply_produce_resource(trigger)
+			succeeded = _apply_produce_resource(trigger, trigger_context)
 		"grant_player_shield":
-			succeeded = _apply_grant_player_shield_cost(trigger)
+			succeeded = _apply_grant_player_shield_cost(trigger, trigger_context)
 		_:
 			succeeded = false
 	if not succeeded:
@@ -175,26 +189,51 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> bo
 		"trigger": trigger.duplicate(true)
 	}
 	piece_triggered.emit(cell, piece_id, trigger)
-	Bloomchains.record_trigger(cell, piece_id, trigger)
+	Bloomchains.record_trigger(cell, piece_id, trigger, trigger_context)
+	_dispatch_follow_up_events(trigger, trigger_context)
 	return true
 
 
-func _apply_produce_resource(trigger: Dictionary) -> bool:
+func _apply_produce_resource(trigger: Dictionary, context: Dictionary) -> bool:
 	var resource_id := str(trigger.get("resource", ""))
 	var amount := int(trigger.get("amount", 1))
 	if resource_id.is_empty() or amount <= 0:
 		return false
 	GardenResources.add(resource_id, amount)
+	_resource_sources[resource_id] = context.duplicate(true)
 	return true
 
 
-func _apply_grant_player_shield_cost(trigger: Dictionary) -> bool:
+func _apply_grant_player_shield_cost(trigger: Dictionary, context: Dictionary) -> bool:
 	var resource_id := str(trigger.get("resource", ""))
 	var cost := int(trigger.get("cost", 0))
 	if resource_id.is_empty() or cost <= 0:
 		return false
 	# Shield is applied by CompanionController after this successful trigger emits.
 	return GardenResources.spend(resource_id, cost)
+
+
+func _build_trigger_context(piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:
+	var trigger_context := context.duplicate(true)
+	var resource_id := str(trigger.get("resource", ""))
+	if trigger.get("action", "") == "grant_player_shield" and trigger_context.get("chain_id", "") == "" and _resource_sources.has(resource_id):
+		trigger_context = _resource_sources[resource_id].duplicate(true)
+	if str(trigger_context.get("chain_id", "")).is_empty():
+		trigger_context["chain_id"] = _make_chain_id(piece_id, trigger)
+	trigger_context["source_piece_id"] = piece_id
+	trigger_context["source_trigger_id"] = trigger.get("id", trigger.get("action", ""))
+	return trigger_context
+
+
+func _dispatch_follow_up_events(trigger: Dictionary, context: Dictionary) -> void:
+	for event_name in trigger.get("follow_up_events", []):
+		_trigger_event_for_all_pieces(str(event_name), context)
+
+
+func _make_chain_id(piece_id: String, trigger: Dictionary) -> String:
+	var chain_id := "%s:%s:%s" % [piece_id, trigger.get("id", trigger.get("action", "")), _next_chain_index]
+	_next_chain_index += 1
+	return chain_id
 
 
 func _get_interval_timer_key(cell: Vector2i, trigger: Dictionary) -> String:

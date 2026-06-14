@@ -49,6 +49,28 @@ Garden interval production is owned by `GardenManager.process_intervals(delta)`.
 
 The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_pieces.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenManager.process_intervals(delta)` instead of owning production timers.
 
+## Causal Bloomchain Detection
+
+Bloomchains now support a minimal causal path instead of relying only on triggers happening near each other in time. `GardenManager` creates a `chain_id` when a successful trigger starts a resource source, stores that context per resource, and reuses it when a later trigger spends that resource. Successful triggers can also list `follow_up_events` in JSON; those events are dispatched immediately with the same chain context.
+
+The first causal chain is:
+
+1. Lantern Lily produces Light and starts a chain context.
+2. Saintmoth spends that Light on Pulse and grants Shield.
+3. Saintmoth's successful trigger dispatches `garden_woke`.
+4. Bellflower reacts to `garden_woke` and produces Echo.
+
+`Bloomchains` records steps by `chain_id`, prevents the same piece from triggering twice in one chain, caps chains at `SOFT_CHAIN_CAP`, and records chains of length 3+ through `JournalManager.record_bloomchain()`.
+
+Known limitations:
+
+- Resource source tracking is global per resource, not per individual resource unit.
+- Causal follow-up events are simple string events, not a full effect graph.
+- Visual chain paths are still debug text only.
+- Temporal fallback tracking still exists for non-causal triggers, but first-fun-test Bloomchains should use causal context.
+
+Future improvements should replace this with explicit effect results, per-resource provenance, grid path visualization, and a dedicated chain preview/playback layer.
+
 ## Saintmoth Shield Effect Path
 
 Saintmoth's current shield behavior is intentionally simple and signal-based:
@@ -75,5 +97,5 @@ Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If
 
 - Resources are global to the garden instead of stored per tile or per piece.
 - Only a partial set of trigger effects is implemented in code.
-- Bloomchain detection is temporal and records nearby trigger timing, not explicit graph causality yet.
+- Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
 - Shield application is wired through the current debug scene and companion signal connection.

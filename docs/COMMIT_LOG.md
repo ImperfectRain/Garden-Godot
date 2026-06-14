@@ -42,6 +42,34 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: add first causal bloomchain
+
+#### Summary
+- Added minimal causal Bloomchain context using runtime `chain_id` data instead of relying only on timing.
+- Connected Lantern Lily Light production to Saintmoth Light spending, then to Bellflower's `garden_woke` Echo trigger.
+- Added first fun test debug output for completed Bloomchains.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/garden/bloomchain_manager.gd`
+- `game/data/garden_pieces/mvp_garden_pieces.json`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/CONTENT_SCHEMA.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only the requested GardenManager, BloomchainManager, MVP garden data, first fun test, and docs files modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed Saintmoth failed Pulse still exits before `piece_triggered` and Bloomchain recording.
+- Confirmed Bellflower uses `garden_woke` and Saintmoth dispatches that event only after a successful shield trigger.
+- Confirmed the first fun test listens for completed chains and shows the latest Bloomchain in debug output.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add visible Bloomchain path feedback between garden cells.
+
 ### 2026-06-14 - mvp: add reward choice scaffold
 
 #### Summary
