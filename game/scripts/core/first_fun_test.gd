@@ -3,7 +3,6 @@ extends Node2D
 const SimpleRoomControllerScript := preload("res://game/scripts/core/simple_room_controller.gd")
 
 @onready var player := $Player
-@onready var saintmoth := $Saintmoth
 @onready var debug_label := $CanvasLayer/DebugLabel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 
@@ -23,8 +22,6 @@ var _room_reward_ready := false
 func _ready() -> void:
 	RunManager.start_run()
 	GardenManager.place_piece(Vector2i(0, 1), "lantern_lily")
-	# Temporary first-fun-test wiring: Saintmoth requests shield, player applies it.
-	saintmoth.shield_requested.connect(player.add_shield)
 	player.health_changed.connect(_on_player_health_changed)
 	player.shield_changed.connect(_on_player_shield_changed)
 	player.player_defeated.connect(_on_player_defeated)

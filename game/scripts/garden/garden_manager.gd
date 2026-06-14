@@ -173,15 +173,17 @@ func as_debug_rows() -> Array[String]:
 func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary = {}) -> bool:
 	var action := str(trigger.get("action", ""))
 	var trigger_context := _build_trigger_context(piece_id, trigger, context)
+	var effect_result := {}
 	var succeeded := false
 	match action:
 		"produce_resource":
-			var effect_result := GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
+			effect_result = GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
 			succeeded = bool(effect_result.get("success", false))
 			if succeeded:
 				_store_resource_source_from_effect(effect_result, trigger_context)
 		"grant_player_shield":
-			succeeded = _apply_grant_player_shield_cost(trigger, trigger_context)
+			effect_result = GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
+			succeeded = bool(effect_result.get("success", false))
 		_:
 			succeeded = false
 	if not succeeded:
@@ -195,15 +197,6 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 	Bloomchains.record_trigger(cell, piece_id, trigger, trigger_context)
 	_dispatch_follow_up_events(trigger, trigger_context)
 	return true
-
-
-func _apply_grant_player_shield_cost(trigger: Dictionary, context: Dictionary) -> bool:
-	var resource_id := str(trigger.get("resource", ""))
-	var cost := int(trigger.get("cost", 0))
-	if resource_id.is_empty() or cost <= 0:
-		return false
-	# Shield is applied by CompanionController after this successful trigger emits.
-	return GardenResources.spend(resource_id, cost)
 
 
 func _build_effect_request(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:

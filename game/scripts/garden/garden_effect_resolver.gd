@@ -3,7 +3,7 @@ extends Node
 signal effect_resolved(result: Dictionary)
 signal effect_failed(request: Dictionary, reason: String)
 
-# Intended request shape:
+# Intended effect request shape:
 # {
 #   "action": "produce_resource",
 #   "cell": Vector2i,
@@ -12,7 +12,7 @@ signal effect_failed(request: Dictionary, reason: String)
 #   "context": {}
 # }
 #
-# Intended result shape:
+# Intended effect result shape:
 # {
 #   "success": true,
 #   "action": "produce_resource",
@@ -27,6 +27,8 @@ func resolve_effect(request: Dictionary) -> Dictionary:
 	match action:
 		"produce_resource":
 			result = _resolve_produce_resource(request)
+		"grant_player_shield":
+			result = _resolve_grant_player_shield(request)
 		_:
 			result = {
 				"success": false,
@@ -67,6 +69,54 @@ func _resolve_produce_resource(request: Dictionary) -> Dictionary:
 		{
 			"type": "resource",
 			"resource": resource_id,
+			"amount": amount
+		}
+	]
+	return result
+
+
+func _resolve_grant_player_shield(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var context: Dictionary = request.get("context", {})
+	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var cost := int(trigger.get("cost", request.get("cost", 0)))
+	var amount := int(trigger.get("amount", request.get("amount", 0)))
+	var source := {
+		"piece_id": str(request.get("piece_id", "")),
+		"cell": request.get("cell", Vector2i(-1, -1)),
+		"trigger": trigger.duplicate(true),
+		"context": context.duplicate(true)
+	}
+	var result := {
+		"success": false,
+		"action": "grant_player_shield",
+		"resource": resource_id,
+		"cost": cost,
+		"amount": amount,
+		"cell": request.get("cell", Vector2i(-1, -1)),
+		"piece_id": str(request.get("piece_id", "")),
+		"trigger": trigger,
+		"outputs": [],
+		"context": context,
+		"source": source
+	}
+	if resource_id.is_empty():
+		result["reason"] = "Missing resource id"
+		return result
+	if cost <= 0:
+		result["reason"] = "Cost must be positive"
+		return result
+	if amount <= 0:
+		result["reason"] = "Shield amount must be positive"
+		return result
+	if not GardenResources.spend(resource_id, cost):
+		result["reason"] = "Not enough resource"
+		return result
+	CombatEvents.player_shield_requested.emit(amount, source)
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "player_shield",
 			"amount": amount
 		}
 	]

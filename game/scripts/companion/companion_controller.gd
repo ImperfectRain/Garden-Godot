@@ -1,7 +1,6 @@
 extends Node2D
 
 signal mood_changed(mood: String)
-signal shield_requested(amount: int)
 
 @export var follow_distance := 34.0
 @export var follow_speed := 7.0
@@ -40,6 +39,5 @@ func _on_garden_piece_triggered(_cell: Vector2i, piece_id: String, trigger: Dict
 	if piece_id != "saintmoth":
 		return
 	if trigger.get("action", "") == "grant_player_shield":
-		# GardenManager only emits this trigger after Saintmoth's Light cost is paid.
+		# Shield application is handled by CombatEvents; the companion only reacts emotionally here.
 		set_mood("happy")
-		shield_requested.emit(int(trigger.get("amount", 20)))

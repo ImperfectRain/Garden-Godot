@@ -9,11 +9,13 @@ Current Saintmoth shield flow:
 1. Player presses Space.
 2. `PlayerController` calls `GardenManager.pulse_selected()`.
 3. `GardenManager` finds the Saintmoth `on_pulse` trigger on the Heart Tile.
-4. `GardenManager` spends Light through `GardenResources`.
-5. If the spend succeeds, `GardenManager` emits `piece_triggered`.
-6. `CompanionController` hears the Saintmoth trigger.
-7. `CompanionController` emits `shield_requested`.
-8. `FirstFunTest` connects `shield_requested` to `player.add_shield`.
+4. `GardenManager` sends the `grant_player_shield` request to `GardenEffectResolver`.
+5. `GardenEffectResolver` validates the resource id, cost, and shield amount.
+6. `GardenEffectResolver` spends Light through `GardenResources`.
+7. If the spend succeeds, `GardenEffectResolver` emits `CombatEvents.player_shield_requested`.
+8. `PlayerController` receives the combat event and calls `add_shield()`.
+9. `GardenManager` emits `piece_triggered`, records the Bloomchain step, and dispatches follow-up events only after the resolver succeeds.
+10. `CompanionController` hears the successful Saintmoth trigger and updates mood only.
 
 Current causal Bloomchain flow:
 
@@ -53,15 +55,16 @@ Current room/reward flow:
 
 - Autoload for generic effect action application.
 - Currently resolves `produce_resource` requests by validating resource data and adding resources through `GardenResources`.
+- Currently resolves `grant_player_shield` requests by spending the configured resource cost and emitting a generic player shield request through `CombatEvents`.
 - Emits `effect_resolved` or `effect_failed` for result observers.
-- Does not resolve shield, damage, healing, spawning, or other gameplay actions yet.
+- Does not resolve damage, healing, spawning, or other gameplay actions yet.
 
 ### `game/scripts/combat/combat_events.gd`
 
 - Autoload scaffold for player/enemy-facing combat effect requests.
 - Defines generic signals for player shield, player damage, enemy damage, and helper spawning.
-- Does not route current gameplay behavior yet.
-- Exists to replace scene-specific shield and combat wiring in later focused tasks.
+- Routes current player shield requests from `GardenEffectResolver` to interested combat receivers.
+- Exists to replace scene-specific combat wiring in focused steps.
 
 ### `game/scripts/garden/bloomchain_manager.gd`
 
@@ -79,13 +82,15 @@ Current room/reward flow:
 
 - Follows the player.
 - Listens for successful Saintmoth triggers.
-- Emits `shield_requested` after Saintmoth has paid its Light cost.
+- Updates companion mood after Saintmoth shield triggers.
+- Does not apply player shield.
 
 ### `game/scripts/player/player_controller.gd`
 
 - Owns player movement.
 - Handles health and shield state.
 - Calls `GardenManager.pulse_selected()` when Pulse is pressed.
+- Listens for `CombatEvents.player_shield_requested` and applies shield.
 - Applies damage with shield-before-health behavior.
 
 ### `game/scripts/core/run_manager.gd`
@@ -113,11 +118,10 @@ Current room/reward flow:
 
 ## Responsibility Problems
 
-- `GardenManager` owns grid state, ticking, trigger lookup, shield effect cost spending, resource provenance, follow-up events, and reward placement helpers.
-- Effect resolution is partially migrated: `produce_resource` lives in `GardenEffectResolver`, while `grant_player_shield` still lives in `GardenManager`.
+- `GardenManager` owns grid state, ticking, trigger lookup, resource provenance, follow-up events, and reward placement helpers.
+- Effect resolution is partially migrated: `produce_resource` and `grant_player_shield` live in `GardenEffectResolver`, while unsupported actions still fail.
 - `first_fun_test.gd` owns debug UI, room timing, rewards, run start, event log, and prototype wiring.
 - `Bloomchains` records chains and directly calls `JournalManager`.
-- Saintmoth shield behavior is still scene-wired through `FirstFunTest`.
 - Reward choices are hardcoded in `RewardChoicePanel`.
 - Resource provenance is global per resource type rather than per produced resource unit.
 - Debug display is mixed into scene glue rather than isolated in a `DebugHUD`.
@@ -146,12 +150,12 @@ Current room/reward flow:
 - Own generic action application for data-defined effects.
 - Emit effect results for resources, combat, spawning, chain tracking, and UI consumers.
 - Avoid knowing about specific debug scenes.
-- Currently owns `produce_resource`; future tasks should move one additional action at a time.
+- Currently owns `produce_resource` and `grant_player_shield`; future tasks should move one additional action at a time.
 
 ### `CombatEvents`
 
 - Route player/enemy-facing effects such as shield, damage, healing, spawning, and knockback.
-- Replace scene-specific Saintmoth shield wiring.
+- Continue replacing scene-specific combat wiring.
 - Stay generic; avoid Saintmoth-specific, Drifter-specific, or debug-scene-specific behavior.
 
 ### `Bloomchains`

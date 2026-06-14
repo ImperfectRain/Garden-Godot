@@ -11,8 +11,8 @@ See `docs/ARCHITECTURE_MAP.md` for the current runtime flow, known responsibilit
 - `ContentDatabase`: loads JSON content from `game/data`.
 - `GardenResources`: tracks current Light, Rot, Blood, and Echo resource amounts.
 - `GardenManager`: owns the 3x3 grid, Heart Tile placement, and garden trigger dispatch.
-- `GardenEffectResolver`: resolves generic garden effect actions. It currently owns `produce_resource`; other actions still use temporary prototype paths.
-- `CombatEvents`: scaffold signal bus for player/enemy-facing combat effect requests. It is registered but not used by gameplay yet.
+- `GardenEffectResolver`: resolves generic garden effect actions. It currently owns `produce_resource` and `grant_player_shield`; other actions still use temporary prototype paths.
+- `CombatEvents`: signal bus for player/enemy-facing combat effect requests. It currently routes player shield requests.
 - `Bloomchains`: records temporal trigger chains and tracks largest chain length.
 - `JournalManager`: records discovered pieces, Bloomchains, run history, and Saintmoth bond.
 - `RunManager`: starts and finishes runs and tracks the current planned room.
@@ -61,15 +61,15 @@ The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_
 
 ## Garden Effect Resolution
 
-`GardenEffectResolver` is the generic action resolver for data-defined garden effects. The first migrated action is `produce_resource`: `GardenManager` builds an effect request from the successful trigger context, `GardenEffectResolver` validates the resource id and amount, calls `GardenResources.add(resource_id, amount)`, and returns an effect result.
+`GardenEffectResolver` is the generic action resolver for data-defined garden effects. For `produce_resource`, `GardenManager` builds an effect request from the successful trigger context, `GardenEffectResolver` validates the resource id and amount, calls `GardenResources.add(resource_id, amount)`, and returns an effect result.
 
-`GardenManager` still owns resource provenance, trigger success bookkeeping, `piece_triggered`, Bloomchain recording, and follow-up dispatch for now. `grant_player_shield` has not moved yet, so Saintmoth shield cost spending remains in `GardenManager` until a later combat-facing resolver step.
+For `grant_player_shield`, `GardenEffectResolver` validates the resource id, cost, and shield amount, spends the resource through `GardenResources.spend()`, and emits `CombatEvents.player_shield_requested`. `GardenManager` still owns resource provenance, trigger success bookkeeping, `piece_triggered`, Bloomchain recording, and follow-up dispatch for now.
 
 ## Combat Event Bus
 
 `CombatEvents` is a generic signal bus for combat-facing effects that need to target players, enemies, or helper spawns without binding gameplay systems to a specific scene. It currently exposes requests for player shield, player damage, enemy damage, and helper spawning.
 
-No current gameplay routes through `CombatEvents` yet. Saintmoth shield still uses the existing `CompanionController.shield_requested` signal and `FirstFunTest` scene connection until a later task moves that behavior deliberately.
+Player shield requests now route through `CombatEvents.player_shield_requested`. `PlayerController` listens for that signal and applies shield with `add_shield(amount)`. Player damage, enemy damage, and helper spawning are still scaffold-only signals.
 
 ## Causal Bloomchain Detection
 
@@ -99,15 +99,15 @@ Saintmoth's current shield behavior is intentionally simple and signal-based:
 
 1. The player presses Pulse.
 2. `PlayerController` asks `GardenManager` to pulse the Heart Tile.
-3. `GardenManager._apply_trigger()` handles Saintmoth's `grant_player_shield` trigger.
-4. `GardenManager` spends the Light cost first.
-5. Only if the spend succeeds, `GardenManager` emits `piece_triggered` and records the Bloomchain step.
-6. `CompanionController` listens for the successful Saintmoth trigger and emits `shield_requested`.
-7. The first fun test scene connects `shield_requested` to `PlayerController.add_shield`.
+3. `GardenManager._apply_trigger()` builds a generic `grant_player_shield` effect request.
+4. `GardenEffectResolver` spends the Light cost and emits `CombatEvents.player_shield_requested`.
+5. `PlayerController` receives the combat event and calls `add_shield(amount)`.
+6. Only if the resolver succeeds, `GardenManager` emits `piece_triggered` and records the Bloomchain step.
+7. `CompanionController` listens for the successful Saintmoth trigger and updates mood.
 
 This means a failed Pulse with fewer than 2 Light should not grant shield, update `last_trigger`, or create a Bloomchain trigger.
 
-TODO: Replace the scene-specific shield connection with a centralized `EffectResolver`, `CombatEvents`, or equivalent combat effect application autoload once more effects need to target the player, enemies, or world.
+TODO: Route future player damage, enemy damage, healing, helper spawning, and other combat-facing actions through `GardenEffectResolver` and `CombatEvents` one action at a time.
 
 ## Git LFS Expectations
 
@@ -118,6 +118,6 @@ Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.
-- Only a partial set of trigger effects is implemented in code; `produce_resource` is routed through `GardenEffectResolver`, while shield spending remains in `GardenManager`.
+- Only a partial set of trigger effects is implemented in code; `produce_resource` and `grant_player_shield` are routed through `GardenEffectResolver`.
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
-- Shield application is wired through the current debug scene and companion signal connection; `CombatEvents` exists but is not active yet.
+- Shield application now routes through `CombatEvents`, but other combat-facing effects are still not implemented.

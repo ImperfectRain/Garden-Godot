@@ -14,6 +14,7 @@ var shield := 0
 
 func _ready() -> void:
 	health = max_health
+	CombatEvents.player_shield_requested.connect(_on_player_shield_requested)
 	health_changed.emit(health, max_health)
 	shield_changed.emit(shield)
 
@@ -33,6 +34,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func add_shield(amount: int) -> void:
 	shield = max(shield + amount, 0)
 	shield_changed.emit(shield)
+
+
+func _on_player_shield_requested(amount: int, _source: Dictionary) -> void:
+	add_shield(amount)
 
 
 func take_damage(amount: int) -> void:

@@ -117,6 +117,37 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Route Saintmoth shield requests through `CombatEvents` without changing successful or failed Pulse behavior.
 
+### 2026-06-14 - architecture: route shield through combat events
+
+#### Summary
+- Implemented `grant_player_shield` in `GardenEffectResolver`.
+- Routed successful player shield requests through `CombatEvents.player_shield_requested`.
+- Moved shield application into `PlayerController` and removed direct FirstFunTest Saintmoth-to-player shield wiring.
+- Kept `CompanionController` listening to successful Saintmoth triggers for mood feedback only.
+
+#### Files Changed
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/companion/companion_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/player/player_controller.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only the shield routing scripts and requested docs files modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `FirstFunTest` no longer connects Saintmoth directly to `PlayerController.add_shield()`.
+- Confirmed `CompanionController` no longer emits `shield_requested`.
+- Confirmed `GardenEffectResolver` now owns the `GardenResources.spend()` call for `grant_player_shield` and emits `CombatEvents.player_shield_requested`.
+- Confirmed `PlayerController` listens for `CombatEvents.player_shield_requested`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary
