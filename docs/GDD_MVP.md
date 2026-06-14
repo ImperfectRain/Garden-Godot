@@ -1,59 +1,60 @@
 # Garden of Teeth MVP
 
-## Plainspeak
+## One-Sentence Pitch
 
-Garden of Teeth is a relaxing creature-garden roguelite. The player is not collecting weapons. They are tending a small living ecosystem that protects them through readable cascades called Bloomchains.
+A relaxing creature-garden roguelite where the player explores with a bonded companion, collects Flora, Fauna, and Objects, and arranges them into a living inventory that protects them through Bloomchain cascades.
 
-The first fun test is intentionally tiny:
+## Design Pillars
 
-1. The player moves.
-2. Saintmoth follows.
-3. Lantern Lily makes Light.
-4. Saintmoth eats Light.
-5. The player gets a shield by pressing Pulse.
+- Relaxing first, deep second.
+- The garden is alive, not a passive inventory.
+- Flora produces, Fauna consumes, Objects modify, and the player tends.
+- Every piece should be useful alone and better together.
+- The player stays mostly consistent while the garden changes between runs.
+- Saintmoth should create emotional continuity and clear protection.
+- Big cascades should feel readable, beautiful, and earned.
+- Failure should still grow journal, bond, or discovery progress.
 
-If that relationship is not charming and understandable, no larger system should be built yet.
+## Core Loop
 
-## Technical North Star
+Start at home, enter an expedition, clear a short relaxed combat room, collect a garden piece, place it during a safe garden moment, watch the garden help, trigger Bloomchains, fight a mini-boss, and return home with discoveries.
 
-The MVP should be built bottom-up around data-defined garden pieces and small runtime managers:
+The current smallest loop is:
 
-- `ContentDatabase` loads JSON content.
-- `GardenManager` owns the 3x3 grid and trigger dispatch.
-- `GardenResources` owns Light, Rot, Blood, and Echo counts.
-- `Bloomchains` records trigger sequences and prevents unbounded loops.
-- `RunManager` owns run flow.
-- `JournalManager` records discoveries.
+Lantern Lily -> Light -> Saintmoth -> Shield
 
-Every future feature should preserve the central grammar:
+No new content should be added until this loop is playable and understandable.
 
-- Flora produces.
-- Fauna consumes.
-- Objects modify.
-- The player tends.
+## Flora/Fauna/Object Grammar
+
+- Flora produces resources or growth.
+- Fauna consumes resources and acts when fed.
+- Objects modify, store, copy, connect, protect, or repeat.
+- The player tends the system through placement, safe tending, and Pulse.
+
+## Bloomchain Definition
+
+A Bloomchain occurs when three or more garden pieces trigger each other in sequence. MVP Bloomchains should glow, show a visible path, play a small cue at length 3+, and stop before loops become confusing or infinite.
 
 ## MVP Scope
 
-Included:
-
 - Godot 4 project.
-- Data-driven 12-piece MVP content set.
+- 2D top-down player movement.
+- One debug first fun test scene.
+- One starter companion: Saintmoth.
+- One 3x3 garden grid with a Heart Tile.
 - Four resources: Light, Rot, Blood, Echo.
-- 3x3 garden with Saintmoth Heart Tile.
-- First fun test scene.
-- Placeholder-friendly folders for scenes, scripts, art, audio, and data.
-- Documentation database for code, content, systems, and editing workflow.
+- Twelve planned MVP garden pieces.
+- Data-driven content files.
+- Basic journal, run, resource, garden, companion, and Bloomchain scaffolding.
 
-Not included yet:
+## Explicit Non-Goals
 
-- Full combat loop.
-- Reward UI.
-- Real Bloomchain visualization.
-- Final art/audio.
-- Procedural generation.
-- Multiple companions.
-- Complex meta-progression.
-
-## Current First-Pass Status
-
-This repository now has groundwork, not a finished MVP. The next playable target is to make the first fun test feel good before expanding content behavior.
+- No additional companions yet.
+- No complex breeding.
+- No procedural map generation.
+- No large item pool.
+- No 5x5 garden.
+- No real-time rearranging during combat.
+- No full economy, achievements, localization, final art, or final music.
+- No new content before the Lantern Lily -> Light -> Saintmoth -> Shield loop works.
