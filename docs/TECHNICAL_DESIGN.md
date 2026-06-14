@@ -11,7 +11,7 @@ See `docs/ARCHITECTURE_MAP.md` for the current runtime flow, known responsibilit
 - `ContentDatabase`: loads JSON content from `game/data`.
 - `GardenResources`: tracks current Light, Rot, Blood, and Echo resource amounts.
 - `GardenManager`: owns the 3x3 grid, Heart Tile placement, and garden trigger dispatch.
-- `GardenEffectResolver`: scaffold for future generic garden effect resolution. It is registered as an autoload but does not apply gameplay actions yet.
+- `GardenEffectResolver`: resolves generic garden effect actions. It currently owns `produce_resource`; other actions still use temporary prototype paths.
 - `Bloomchains`: records temporal trigger chains and tracks largest chain length.
 - `JournalManager`: records discovered pieces, Bloomchains, run history, and Saintmoth bond.
 - `RunManager`: starts and finishes runs and tracks the current planned room.
@@ -57,6 +57,12 @@ Selection currently calls `GardenManager.place_piece_in_first_empty_cell(piece_i
 Garden interval production is owned by `GardenManager.process_intervals(delta)`. The method inspects placed garden pieces, reads each JSON trigger with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and applies the trigger when its `cooldown` is reached.
 
 The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_pieces.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenManager.process_intervals(delta)` instead of owning production timers.
+
+## Garden Effect Resolution
+
+`GardenEffectResolver` is the generic action resolver for data-defined garden effects. The first migrated action is `produce_resource`: `GardenManager` builds an effect request from the successful trigger context, `GardenEffectResolver` validates the resource id and amount, calls `GardenResources.add(resource_id, amount)`, and returns an effect result.
+
+`GardenManager` still owns resource provenance, trigger success bookkeeping, `piece_triggered`, Bloomchain recording, and follow-up dispatch for now. `grant_player_shield` has not moved yet, so Saintmoth shield cost spending remains in `GardenManager` until a later combat-facing resolver step.
 
 ## Causal Bloomchain Detection
 
@@ -105,6 +111,6 @@ Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.
-- Only a partial set of trigger effects is implemented in code.
+- Only a partial set of trigger effects is implemented in code; `produce_resource` is routed through `GardenEffectResolver`, while shield spending remains in `GardenManager`.
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
 - Shield application is wired through the current debug scene and companion signal connection.

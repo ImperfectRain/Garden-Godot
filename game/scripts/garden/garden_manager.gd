@@ -176,7 +176,10 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 	var succeeded := false
 	match action:
 		"produce_resource":
-			succeeded = _apply_produce_resource(trigger, trigger_context)
+			var effect_result := GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
+			succeeded = bool(effect_result.get("success", false))
+			if succeeded:
+				_store_resource_source_from_effect(effect_result, trigger_context)
 		"grant_player_shield":
 			succeeded = _apply_grant_player_shield_cost(trigger, trigger_context)
 		_:
@@ -194,16 +197,6 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 	return true
 
 
-func _apply_produce_resource(trigger: Dictionary, context: Dictionary) -> bool:
-	var resource_id := str(trigger.get("resource", ""))
-	var amount := int(trigger.get("amount", 1))
-	if resource_id.is_empty() or amount <= 0:
-		return false
-	GardenResources.add(resource_id, amount)
-	_resource_sources[resource_id] = context.duplicate(true)
-	return true
-
-
 func _apply_grant_player_shield_cost(trigger: Dictionary, context: Dictionary) -> bool:
 	var resource_id := str(trigger.get("resource", ""))
 	var cost := int(trigger.get("cost", 0))
@@ -211,6 +204,23 @@ func _apply_grant_player_shield_cost(trigger: Dictionary, context: Dictionary) -
 		return false
 	# Shield is applied by CompanionController after this successful trigger emits.
 	return GardenResources.spend(resource_id, cost)
+
+
+func _build_effect_request(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:
+	return {
+		"action": str(trigger.get("action", "")),
+		"cell": cell,
+		"piece_id": piece_id,
+		"trigger": trigger.duplicate(true),
+		"context": context.duplicate(true)
+	}
+
+
+func _store_resource_source_from_effect(result: Dictionary, context: Dictionary) -> void:
+	var resource_id := str(result.get("resource", ""))
+	if resource_id.is_empty():
+		return
+	_resource_sources[resource_id] = context.duplicate(true)
 
 
 func _build_trigger_context(piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:

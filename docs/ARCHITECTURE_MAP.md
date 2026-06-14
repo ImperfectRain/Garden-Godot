@@ -18,11 +18,13 @@ Current Saintmoth shield flow:
 Current causal Bloomchain flow:
 
 1. Lantern Lily produces Light through an interval trigger.
-2. `GardenManager` stores resource provenance for that Light.
-3. Saintmoth spends Light on a successful Pulse and reuses the chain context.
-4. Saintmoth dispatches the `garden_woke` follow-up event.
-5. Bellflower reacts to `garden_woke` and produces Echo.
-6. `Bloomchains` records the causal chain and currently calls `JournalManager.record_bloomchain()` for chains of length 3 or more.
+2. `GardenManager` sends the `produce_resource` request to `GardenEffectResolver`.
+3. `GardenEffectResolver` validates the resource id and amount, then adds Light through `GardenResources`.
+4. `GardenManager` stores resource provenance for that Light after the successful effect result.
+5. Saintmoth spends Light on a successful Pulse and reuses the chain context.
+6. Saintmoth dispatches the `garden_woke` follow-up event.
+7. Bellflower reacts to `garden_woke` and produces Echo.
+8. `Bloomchains` records the causal chain and currently calls `JournalManager.record_bloomchain()` for chains of length 3 or more.
 
 Current room/reward flow:
 
@@ -44,13 +46,15 @@ Current room/reward flow:
 ### `game/scripts/garden/garden_manager.gd`
 
 - Owns garden grid state, Heart Tile placement, cell lookup, and placement validation.
-- Currently also owns interval ticking, trigger lookup, effect application, resource provenance, follow-up events, and first-empty-cell reward placement.
+- Currently also owns interval ticking, trigger lookup, shield cost spending, resource provenance, follow-up events, and first-empty-cell reward placement.
+- Delegates `produce_resource` action application to `GardenEffectResolver`.
 
 ### `game/scripts/garden/garden_effect_resolver.gd`
 
-- Autoload scaffold for future generic effect action application.
-- Currently exposes `resolve_effect(request)` and emits failure for all actions.
-- Does not affect current gameplay behavior yet.
+- Autoload for generic effect action application.
+- Currently resolves `produce_resource` requests by validating resource data and adding resources through `GardenResources`.
+- Emits `effect_resolved` or `effect_failed` for result observers.
+- Does not resolve shield, damage, healing, spawning, or other gameplay actions yet.
 
 ### `game/scripts/garden/bloomchain_manager.gd`
 
@@ -102,7 +106,8 @@ Current room/reward flow:
 
 ## Responsibility Problems
 
-- `GardenManager` owns grid state, ticking, trigger lookup, effect application, resource provenance, follow-up events, and reward placement helpers.
+- `GardenManager` owns grid state, ticking, trigger lookup, shield effect cost spending, resource provenance, follow-up events, and reward placement helpers.
+- Effect resolution is partially migrated: `produce_resource` lives in `GardenEffectResolver`, while `grant_player_shield` still lives in `GardenManager`.
 - `first_fun_test.gd` owns debug UI, room timing, rewards, run start, event log, and prototype wiring.
 - `Bloomchains` records chains and directly calls `JournalManager`.
 - Saintmoth shield behavior is still scene-wired through `FirstFunTest`.
@@ -134,7 +139,7 @@ Current room/reward flow:
 - Own generic action application for data-defined effects.
 - Emit effect results for resources, combat, spawning, chain tracking, and UI consumers.
 - Avoid knowing about specific debug scenes.
-- Current scaffold exists, but action logic has not moved into it yet.
+- Currently owns `produce_resource`; future tasks should move one additional action at a time.
 
 ### `CombatEvents`
 

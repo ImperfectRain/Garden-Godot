@@ -67,6 +67,31 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Route resource production through `GardenEffectResolver` without changing player-facing behavior.
 
+### 2026-06-14 - architecture: route resource production through effect resolver
+
+#### Summary
+- Moved `produce_resource` action application from `GardenManager` into `GardenEffectResolver`.
+- Kept GardenManager responsible for trigger success bookkeeping, resource provenance, Bloomchain recording, and follow-up dispatch.
+- Left Saintmoth shield spending in `GardenManager` for a later focused combat effect refactor.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only GardenManager, GardenEffectResolver, and the requested docs files modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `GardenManager` no longer contains `_apply_produce_resource()` or direct `GardenResources.add()` calls.
+- Confirmed `GardenResources.add()` for `produce_resource` now exists in `GardenEffectResolver`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Route `grant_player_shield` through a combat-facing effect path such as `CombatEvents` without changing the first fun test behavior.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary
