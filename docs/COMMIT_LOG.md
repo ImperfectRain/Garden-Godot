@@ -41,3 +41,26 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
+
+### 2026-06-14 - chore: expand git hygiene
+
+#### Summary
+- Expanded repository ignores for Godot cache/import folders, exports, logs, temporary files, backups, and OS junk.
+- Added missing Git LFS patterns for likely binary asset types.
+- Documented Git LFS expectations for future art and audio assets.
+
+#### Files Changed
+- `.gitignore`
+- `.gitattributes`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `.gitignore`, `.gitattributes`, `docs/TECHNICAL_DESIGN.md`, and `docs/COMMIT_LOG.md` modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Conflict-marker scan found no merge markers in the changed files; the only `TODO`/`FIXME` text is a historical verification sentence in this commit log.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.

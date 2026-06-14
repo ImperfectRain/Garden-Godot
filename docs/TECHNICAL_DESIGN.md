@@ -29,6 +29,12 @@ Lantern Lily -> Light -> Saintmoth -> Shield
 - `game/data/rooms/mvp_rooms.json`
 - `game/data/rewards/mvp_reward_pools.json`
 
+## Git LFS Expectations
+
+Likely binary art and audio assets should be tracked with Git LFS through `.gitattributes`. This includes common image, audio, pixel art, layered source, Krita, and Blender files such as `png`, `jpg`, `jpeg`, `webp`, `wav`, `ogg`, `mp3`, `aseprite`, `psd`, `kra`, and `blend`.
+
+Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If automated exports are added later, review whether `export_presets.cfg` should remain ignored or become committed project configuration.
+
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.
