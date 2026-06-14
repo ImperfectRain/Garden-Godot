@@ -1,18 +1,23 @@
 extends Node2D
 
+const SimpleRoomControllerScript := preload("res://game/scripts/core/simple_room_controller.gd")
+
 @onready var player := $Player
 @onready var saintmoth := $Saintmoth
 @onready var debug_label := $CanvasLayer/DebugLabel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 
 const MAX_EVENT_LOG_LINES := 6
+const ROOM_SURVIVAL_SECONDS := 30.0
 
-var debug_message := "Drifter pressure active"
+var debug_message := "Survive until the reward appears"
 var event_log: Array[String] = []
 var _last_health := 0
 var _last_shield := 0
 var _reward_has_been_claimed := false
 var _last_bloomchain := "None yet"
+var _room_controller := SimpleRoomControllerScript.new()
+var _room_reward_ready := false
 
 
 func _ready() -> void:
@@ -34,13 +39,18 @@ func _ready() -> void:
 	_last_shield = player.shield
 	_add_event("Lantern Lily produces +1 Light every 5 seconds.")
 	_add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
-	_add_event("Choose Bellflower with 2 to test the first Bloomchain.")
-	reward_choice_panel.show()
+	_add_event("Room started: %s." % RunManager.get_current_room_id())
+	_add_event("Survive 30 seconds, then choose Bellflower with 2.")
+	reward_choice_panel.hide()
+	_room_controller.start(ROOM_SURVIVAL_SECONDS)
 	_refresh_debug("", 0, 0)
 
 
 func _process(delta: float) -> void:
 	GardenManager.process_intervals(delta)
+	if _room_controller.process(delta):
+		_on_room_survival_complete()
+	_refresh_debug("", 0, 0)
 
 
 func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary) -> void:
@@ -60,7 +70,7 @@ func _on_piece_placed(cell: Vector2i, piece_id: String) -> void:
 
 
 func _on_reward_selected(piece_id: String) -> void:
-	if _reward_has_been_claimed:
+	if _reward_has_been_claimed or not _room_reward_ready:
 		return
 	var placed_cell := GardenManager.place_piece_in_first_empty_cell(piece_id)
 	if placed_cell == Vector2i(-1, -1):
@@ -70,6 +80,8 @@ func _on_reward_selected(piece_id: String) -> void:
 	_reward_has_been_claimed = true
 	reward_choice_panel.hide()
 	debug_message = "Reward placed: %s" % _get_piece_name(piece_id)
+	RunManager.complete_current_room()
+	_add_event("Room complete. Advanced to %s." % RunManager.get_current_room_id())
 	_refresh_debug("", 0, 0)
 
 
@@ -108,6 +120,7 @@ func _on_resource_failed(resource_id: String, requested: int, _available: int) -
 
 
 func _on_player_defeated() -> void:
+	_room_controller.is_active = false
 	debug_message = "Player defeated - restart the scene to try again"
 	_refresh_debug("", 0, 0)
 
@@ -121,10 +134,21 @@ func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
 	_refresh_debug("", 0, 0)
 
 
+func _on_room_survival_complete() -> void:
+	_room_reward_ready = true
+	debug_message = "Room survived - choose a reward"
+	_add_event("Meadow survived. Choose one reward with 1, 2, or 3.")
+	reward_choice_panel.show()
+	_refresh_debug("", 0, 0)
+
+
 func _refresh_debug(_resource_id: String, _amount: int, _delta: int) -> void:
+	var room_id := RunManager.get_current_room_id()
+	var room_timer := "Reward ready" if _room_reward_ready else "%.1fs" % _room_controller.get_remaining_seconds()
 	var lines: Array[String] = [
 		"Garden of Teeth - First Fun Test",
 		"WASD move | Space pulse Saintmoth",
+		"Room: %s | Completed: %s | Objective: survive %s" % [room_id, RunManager.get_completed_room_count(), room_timer],
 		"Interval ticking: GardenManager",
 		"Enemy: Drifter slowly follows and deals contact damage",
 		"Resources: %s" % GardenResources.get_all(),

@@ -37,6 +37,12 @@ The first fun test includes one `Drifter` enemy from `res://game/scenes/enemies/
 
 Drifter damage is intentionally low-stress: it uses a short cooldown so contact does not instantly defeat the player. Because damage goes through `take_damage()`, shield absorbs damage before health, making Saintmoth's shield useful without requiring a full combat system yet.
 
+## Temporary Room Loop
+
+The first fun test now uses `game/scripts/core/simple_room_controller.gd` for a minimal survival room objective. The current room starts when `RunManager.start_run()` is called, then the player survives gentle Drifter pressure for 30 seconds.
+
+When the timer completes, the reward choice panel appears. After the player chooses and places one reward, `RunManager.complete_current_room()` advances from the current planned room to the next room id. This is only a debug-room scaffold; it is not the final room system, room clear UI, enemy wave manager, or reward pacing.
+
 ## Reward Choice Scaffold
 
 The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It shows three hardcoded MVP rewards, displays each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.

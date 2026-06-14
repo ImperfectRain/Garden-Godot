@@ -42,6 +42,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: add minimal room completion loop
+
+#### Summary
+- Added a simple 30-second survival room objective to the first fun test.
+- Delayed the reward choice panel until the room timer completes.
+- Called `RunManager.complete_current_room()` after the player selects and places a reward.
+
+#### Files Changed
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/core/run_manager.gd`
+- `game/scripts/core/simple_room_controller.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only first fun test, RunManager, SimpleRoomController, and docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed reward panel is hidden at room start and shown only after the 30-second survival timer completes.
+- Confirmed reward placement calls `RunManager.complete_current_room()`.
+- Confirmed debug UI shows current room id and completed room count.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add visible Bloomchain path feedback between garden cells.
+
 ### 2026-06-14 - mvp: add first causal bloomchain
 
 #### Summary

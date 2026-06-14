@@ -25,6 +25,10 @@ func get_current_room_id() -> String:
 	return planned_rooms[current_room_index]
 
 
+func get_completed_room_count() -> int:
+	return current_room_index
+
+
 func complete_current_room() -> void:
 	var room_id := get_current_room_id()
 	if room_id.is_empty():
