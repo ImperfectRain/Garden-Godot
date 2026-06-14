@@ -26,10 +26,7 @@ func process_intervals(delta: float) -> void:
 		var piece_id := str(cells.get(cell, ""))
 		if piece_id.is_empty():
 			continue
-		var piece := ContentDatabase.get_garden_piece(piece_id)
-		for trigger in piece.get("triggers", []):
-			if trigger.get("event", "") != "on_interval":
-				continue
+		for trigger in GardenTriggerSystem.get_matching_triggers(piece_id, "on_interval"):
 			var cooldown := float(trigger.get("cooldown", 0.0))
 			if cooldown <= 0.0:
 				continue
@@ -37,7 +34,7 @@ func process_intervals(delta: float) -> void:
 			var next_time := float(_interval_timers.get(timer_key, 0.0)) + delta
 			if next_time >= cooldown:
 				next_time -= cooldown
-				GardenManager.trigger_piece_with_trigger(cell, trigger, {})
+				GardenManager.apply_trigger_request(cell, piece_id, trigger, {})
 			_interval_timers[timer_key] = next_time
 
 

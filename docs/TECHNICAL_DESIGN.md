@@ -10,8 +10,9 @@ See `docs/ARCHITECTURE_MAP.md` for the current runtime flow, known responsibilit
 
 - `ContentDatabase`: loads JSON content from `game/data`.
 - `GardenResources`: tracks current Light, Rot, Blood, and Echo resource amounts.
-- `GardenManager`: owns the 3x3 grid, Heart Tile placement, and garden trigger dispatch.
+- `GardenManager`: owns the 3x3 grid, Heart Tile placement, and low-level trigger application.
 - `GardenTickSystem`: owns interval cooldown timers and interval trigger ticking.
+- `GardenTriggerSystem`: owns event-to-trigger lookup for cell and global garden events.
 - `GardenEffectResolver`: resolves generic garden effect actions. It currently owns `produce_resource` and `grant_player_shield`; other actions still use temporary prototype paths.
 - `CombatEvents`: signal bus for player/enemy-facing combat effect requests. It currently routes player shield requests.
 - `Bloomchains`: records temporal trigger chains and tracks largest chain length.
@@ -56,11 +57,17 @@ Selection currently calls `GardenManager.place_piece_in_first_empty_cell(piece_i
 
 ## Garden Interval Ticking
 
-Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, reads each JSON trigger with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.
+Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, asks `GardenTriggerSystem` for JSON triggers with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.
 
 The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_pieces.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenTickSystem.process_intervals(delta)` instead of owning production timers.
 
 `GardenTickSystem` owns the interval timer dictionary, timer key generation, and stale timer clearing. It resets timers on `GardenManager.grid_reset` and clears a cell's timers when `GardenManager.piece_placed` or `GardenManager.piece_removed` fires.
+
+## Garden Trigger Lookup
+
+`GardenTriggerSystem` owns event-to-trigger lookup. `trigger_cell_event(cell, event_name, context)` finds matching triggers for the piece in one cell. `trigger_global_event(event_name, context)` checks every placed piece and dispatches matching triggers. `get_matching_triggers(piece_id, event_name)` is the shared lookup helper used by both direct cell events and interval ticking.
+
+`GardenManager` still owns low-level trigger application through `apply_trigger_request(cell, piece_id, trigger, context)`, including effect request construction, success bookkeeping, Bloomchain recording, resource provenance, and follow-up event handoff. This keeps the extraction focused; a later task can move trigger request construction and follow-up ownership further out of `GardenManager`.
 
 ## Garden Effect Resolution
 
@@ -122,6 +129,6 @@ Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If
 
 - Resources are global to the garden instead of stored per tile or per piece.
 - Only a partial set of trigger effects is implemented in code; `produce_resource` and `grant_player_shield` are routed through `GardenEffectResolver`.
-- Interval ticking has moved to `GardenTickSystem`, but completed interval triggers still route back through `GardenManager` until a dedicated `GardenTriggerSystem` exists.
+- Interval ticking has moved to `GardenTickSystem`, and event-to-trigger lookup has moved to `GardenTriggerSystem`; completed trigger application still routes through `GardenManager`.
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
 - Shield application now routes through `CombatEvents`, but other combat-facing effects are still not implemented.

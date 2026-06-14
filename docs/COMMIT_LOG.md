@@ -176,6 +176,36 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
 
+### 2026-06-14 - architecture: extract garden trigger system
+
+#### Summary
+- Added `GardenTriggerSystem` as the owner of event-to-trigger lookup.
+- Routed Pulse and global follow-up events through `GardenTriggerSystem`.
+- Updated `GardenTickSystem` to request interval trigger matches from `GardenTriggerSystem`.
+- Kept `GardenManager` responsible for low-level trigger application and effect bookkeeping.
+
+#### Files Changed
+- `project.godot`
+- `game/scripts/garden/garden_trigger_system.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/garden/garden_tick_system.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `project.godot`, GardenTriggerSystem, GardenManager, GardenTickSystem, and requested docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `GardenManager` no longer contains the old `_trigger_piece_with_context()`, `_trigger_event_for_all_pieces()`, or `trigger_piece_with_trigger()` trigger matching helpers.
+- Confirmed trigger-array lookup now lives in `GardenTriggerSystem.get_matching_triggers()`.
+- Confirmed `GardenTickSystem` uses `GardenTriggerSystem.get_matching_triggers(piece_id, "on_interval")`.
+- Confirmed `GardenManager.trigger_piece()` delegates to `GardenTriggerSystem.trigger_cell_event()` and follow-up events delegate to `GardenTriggerSystem.trigger_global_event()`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

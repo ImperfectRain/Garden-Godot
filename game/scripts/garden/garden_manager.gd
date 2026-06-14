@@ -74,41 +74,28 @@ func remove_piece(cell: Vector2i) -> String:
 
 
 func trigger_piece(cell: Vector2i, event_name: String) -> bool:
-	return _trigger_piece_with_context(cell, event_name, {})
+	return GardenTriggerSystem.trigger_cell_event(cell, event_name, {})
 
 
 func pulse_selected() -> bool:
 	return trigger_piece(selected_cell, "on_pulse")
 
 
-func trigger_piece_with_trigger(cell: Vector2i, trigger: Dictionary, context: Dictionary = {}) -> bool:
-	var piece_id := str(cells.get(cell, ""))
-	if piece_id.is_empty():
+func apply_trigger_request(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary = {}) -> bool:
+	if str(cells.get(cell, "")) != piece_id:
 		return false
 	return _apply_trigger(cell, piece_id, trigger, context)
 
 
-func _trigger_piece_with_context(cell: Vector2i, event_name: String, context: Dictionary) -> bool:
-	var piece_id := str(cells.get(cell, ""))
-	if piece_id.is_empty():
-		return false
-	var piece := ContentDatabase.get_garden_piece(piece_id)
-	for trigger in piece.get("triggers", []):
-		if trigger.get("event", "") == event_name:
-			return _apply_trigger(cell, piece_id, trigger, context)
-	return false
-
-
-func _trigger_event_for_all_pieces(event_name: String, context: Dictionary) -> void:
-	for cell in cells.keys():
-		_trigger_piece_with_context(cell, event_name, context)
-
-
 func get_piece_at(cell: Vector2i) -> Dictionary:
-	var piece_id := str(cells.get(cell, ""))
+	var piece_id := get_piece_id_at(cell)
 	if piece_id.is_empty():
 		return {}
 	return ContentDatabase.get_garden_piece(piece_id)
+
+
+func get_piece_id_at(cell: Vector2i) -> String:
+	return str(cells.get(cell, ""))
 
 
 func get_all_cells() -> Dictionary:
@@ -212,7 +199,7 @@ func _build_trigger_context(piece_id: String, trigger: Dictionary, context: Dict
 
 func _dispatch_follow_up_events(trigger: Dictionary, context: Dictionary) -> void:
 	for event_name in trigger.get("follow_up_events", []):
-		_trigger_event_for_all_pieces(str(event_name), context)
+		GardenTriggerSystem.trigger_global_event(str(event_name), context)
 
 
 func _make_chain_id(piece_id: String, trigger: Dictionary) -> String:
