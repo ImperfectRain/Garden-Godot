@@ -42,6 +42,30 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: implement garden interval ticking
+
+#### Summary
+- Moved interval production timing out of the first fun test debug scene and into `GardenManager`.
+- Added per-cell/per-trigger cooldown tracking for JSON `on_interval` triggers.
+- Kept Lantern Lily producing 1 Light every 5 seconds through its existing JSON trigger.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only the requested GardenManager, first fun test, and docs files modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `_produce_timer` was removed from `first_fun_test.gd`.
+- Confirmed interval ticking is now called through `GardenManager.process_intervals(delta)`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Make Saintmoth shield feedback clearer in the first fun test scene.
+
 ### 2026-06-14 - chore: expand git hygiene
 
 #### Summary

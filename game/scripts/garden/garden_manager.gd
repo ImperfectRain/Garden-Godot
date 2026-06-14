@@ -12,6 +12,7 @@ const HEART_CELL := Vector2i(1, 1)
 var cells: Dictionary = {}
 var selected_cell := HEART_CELL
 var last_trigger: Dictionary = {}
+var _interval_timers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -20,6 +21,7 @@ func _ready() -> void:
 
 func reset_grid() -> void:
 	cells.clear()
+	_interval_timers.clear()
 	for y in range(GRID_SIZE.y):
 		for x in range(GRID_SIZE.x):
 			cells[Vector2i(x, y)] = ""
@@ -41,6 +43,7 @@ func place_piece(cell: Vector2i, piece_id: String, allow_heart := false) -> bool
 		placement_failed.emit(cell, piece_id, "Unknown garden piece id")
 		return false
 	cells[cell] = piece_id
+	_clear_interval_timers_for_cell(cell)
 	piece_placed.emit(cell, piece_id)
 	return true
 
@@ -52,6 +55,7 @@ func remove_piece(cell: Vector2i) -> String:
 	if piece_id.is_empty():
 		return ""
 	cells[cell] = ""
+	_clear_interval_timers_for_cell(cell)
 	piece_removed.emit(cell, piece_id)
 	return piece_id
 
@@ -70,6 +74,26 @@ func trigger_piece(cell: Vector2i, event_name: String) -> bool:
 
 func pulse_selected() -> bool:
 	return trigger_piece(selected_cell, "on_pulse")
+
+
+func process_intervals(delta: float) -> void:
+	for cell in cells.keys():
+		var piece_id := str(cells.get(cell, ""))
+		if piece_id.is_empty():
+			continue
+		var piece := ContentDatabase.get_garden_piece(piece_id)
+		for trigger in piece.get("triggers", []):
+			if trigger.get("event", "") != "on_interval":
+				continue
+			var cooldown := float(trigger.get("cooldown", 0.0))
+			if cooldown <= 0.0:
+				continue
+			var timer_key := _get_interval_timer_key(cell, trigger)
+			var next_time := float(_interval_timers.get(timer_key, 0.0)) + delta
+			if next_time >= cooldown:
+				next_time -= cooldown
+				_apply_trigger(cell, piece_id, trigger)
+			_interval_timers[timer_key] = next_time
 
 
 func produce_from_intervals() -> void:
@@ -140,3 +164,14 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> vo
 	}
 	piece_triggered.emit(cell, piece_id, trigger)
 	Bloomchains.record_trigger(cell, piece_id, trigger)
+
+
+func _get_interval_timer_key(cell: Vector2i, trigger: Dictionary) -> String:
+	return "%s,%s:%s" % [cell.x, cell.y, trigger.get("id", trigger.get("action", "on_interval"))]
+
+
+func _clear_interval_timers_for_cell(cell: Vector2i) -> void:
+	var prefix := "%s,%s:" % [cell.x, cell.y]
+	for timer_key in _interval_timers.keys():
+		if str(timer_key).begins_with(prefix):
+			_interval_timers.erase(timer_key)

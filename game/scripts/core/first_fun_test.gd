@@ -4,8 +4,6 @@ extends Node2D
 @onready var saintmoth := $Saintmoth
 @onready var debug_label := $CanvasLayer/DebugLabel
 
-var _produce_timer := 0.0
-
 
 func _ready() -> void:
 	RunManager.start_run()
@@ -18,10 +16,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_produce_timer += delta
-	if _produce_timer >= 5.0:
-		_produce_timer = 0.0
-		GardenManager.trigger_piece(Vector2i(0, 1), "on_interval")
+	GardenManager.process_intervals(delta)
 
 
 func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary) -> void:
@@ -37,6 +32,7 @@ func _refresh_debug(_resource_id: String, _amount: int, _delta: int) -> void:
 	var lines: Array[String] = [
 		"Garden of Teeth - First Fun Test",
 		"WASD move | Space pulse Saintmoth",
+		"Interval ticking: GardenManager",
 		"Resources: %s" % GardenResources.get_all(),
 		"Shield: %s" % player.shield,
 		"Garden:"
