@@ -45,6 +45,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary
+- Reworked the architecture map around the required current runtime flow, current file responsibilities, responsibility problems, target responsibilities, refactor rules, and do-not-do-yet boundaries.
+- Documented the current Space-to-Saintmoth-shield path, causal Bloomchain path, and temporary room/reward flow.
+- Updated the technical design summary link to point readers to the architecture map for responsibility boundaries.
+
+#### Files Changed
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `docs/ARCHITECTURE_MAP.md`, `docs/TECHNICAL_DESIGN.md`, and `docs/COMMIT_LOG.md` modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `docs/ARCHITECTURE_MAP.md` includes all required sections.
+- Confirmed the current Space-to-Saintmoth-shield flow is documented.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Extract garden interval ticking from `GardenManager` into a dedicated `GardenTickSystem` scaffold.
+
+### 2026-06-14 - architecture: document current responsibilities
+
+#### Summary
 - Added an architecture map documenting current responsibilities and target system boundaries.
 - Captured the standing project rules for focused tasks, documentation updates, and end-of-task workflow.
 - Linked the technical design to the new architecture map.

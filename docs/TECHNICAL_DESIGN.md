@@ -4,7 +4,7 @@
 
 The project uses Godot autoloads for small global systems that coordinate data, garden state, resources, run flow, and meta records.
 
-See `docs/ARCHITECTURE_MAP.md` for the current responsibility map and target system boundaries.
+See `docs/ARCHITECTURE_MAP.md` for the current runtime flow, known responsibility problems, target ownership boundaries, and refactor rules.
 
 ## Autoloads
 
