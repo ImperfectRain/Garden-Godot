@@ -235,6 +235,35 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
 
+### 2026-06-14 - architecture: extract debug hud
+
+#### Summary
+- Added a temporary `DebugHUD` scene and script for the first fun test.
+- Moved debug label composition, capped event log, room info display, status text, and last Bloomchain text out of `FirstFunTest`.
+- Updated the first fun test scene to instance `DebugHUD`.
+- Kept gameplay behavior unchanged; FirstFunTest now forwards high-level events and status to the HUD.
+
+#### Files Changed
+- `game/scripts/ui/debug_hud.gd`
+- `game/scenes/ui/debug_hud.tscn`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only DebugHUD, first fun test, and requested docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `game/scenes/debug/first_fun_test.tscn` now instances `res://game/scenes/ui/debug_hud.tscn`.
+- Confirmed `FirstFunTest` no longer owns `debug_label`, `event_log`, `_add_event()`, `debug_message`, or `_last_bloomchain`.
+- Confirmed `DebugHUD` owns the capped event log, label text composition, room info, status text, player display, garden rows, and last Bloomchain text.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Move reward choice flow out of `FirstFunTest` into a small reward controller scaffold.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

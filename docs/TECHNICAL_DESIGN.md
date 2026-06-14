@@ -27,7 +27,9 @@ This scene exists to test the smallest fun loop:
 
 Lantern Lily -> Light -> Saintmoth -> Shield
 
-The debug label is temporary readability instrumentation. It shows resources, health, shield, garden rows, and a small event log so the first fun test can be understood without reading code. The log is capped and currently exists only to validate that Lantern Lily production, Saintmoth Light consumption, shield gain, failed Pulse attempts, and Drifter damage are readable.
+The debug HUD is temporary readability instrumentation. It shows resources, health, shield, garden rows, room state, last Bloomchain, and a small event log so the first fun test can be understood without reading code. The log is capped and currently exists only to validate that Lantern Lily production, Saintmoth Light consumption, shield gain, failed Pulse attempts, Drifter damage, reward placement, and Bloomchain finalization are readable.
+
+`DebugHUD` lives at `res://game/scenes/ui/debug_hud.tscn` with script `game/scripts/ui/debug_hud.gd`. It is intentionally debug-only and may read global singletons such as `GardenResources` and `GardenManager` for display. Gameplay rules should not move into this HUD.
 
 ## Current Data Files
 
@@ -54,6 +56,12 @@ When the timer completes, the reward choice panel appears. After the player choo
 The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It shows three hardcoded MVP rewards, displays each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.
 
 Selection currently calls `GardenManager.place_piece_in_first_empty_cell(piece_id)` and auto-places the reward into the first empty non-heart garden cell. This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, drag-and-drop garden UI, or polished reward screen.
+
+## Debug HUD
+
+`DebugHUD` owns the temporary debug label, capped event log, room status text, last Bloomchain text, and display refresh. `FirstFunTest` should call high-level HUD methods such as `set_status()`, `add_event()`, `set_room_info()`, `set_last_bloomchain()`, and `refresh()` instead of assembling debug text directly.
+
+The HUD may read current resources and garden rows from global singletons for debug display only. Do not use it as a gameplay dependency.
 
 ## Garden Interval Ticking
 

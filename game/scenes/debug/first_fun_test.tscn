@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://first_fun_test"]
+[gd_scene load_steps=7 format=3 uid="uid://first_fun_test"]
 
 [ext_resource type="Script" path="res://game/scripts/core/first_fun_test.gd" id="1"]
 [ext_resource type="Script" path="res://game/scripts/player/player_controller.gd" id="2"]
 [ext_resource type="Script" path="res://game/scripts/companion/companion_controller.gd" id="3"]
 [ext_resource type="PackedScene" path="res://game/scenes/enemies/drifter.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://game/scenes/ui/reward_choice_panel.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://game/scenes/ui/debug_hud.tscn" id="6"]
 
 [node name="FirstFunTest" type="Node2D"]
 script = ExtResource("1")
@@ -44,11 +45,6 @@ player_path = NodePath("../Player")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="DebugLabel" type="Label" parent="CanvasLayer"]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 520.0
-offset_bottom = 240.0
-theme_override_font_sizes/font_size = 16
+[node name="DebugHUD" parent="CanvasLayer" instance=ExtResource("6")]
 
 [node name="RewardChoicePanel" parent="CanvasLayer" instance=ExtResource("5")]

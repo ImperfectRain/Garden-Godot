@@ -40,10 +40,12 @@ Current room/reward flow:
 
 1. `FirstFunTest` starts `RunManager`.
 2. `FirstFunTest` starts `SimpleRoomController` for a 30-second survival timer.
-3. When the timer completes, `FirstFunTest` shows `RewardChoicePanel`.
-4. `RewardChoicePanel` emits a selected piece id.
-5. `FirstFunTest` asks `GardenManager` to place the piece in the first empty non-heart cell.
-6. `FirstFunTest` calls `RunManager.complete_current_room()`.
+3. `FirstFunTest` updates `DebugHUD` with room status and event messages.
+4. When the timer completes, `FirstFunTest` shows `RewardChoicePanel`.
+5. `RewardChoicePanel` emits a selected piece id.
+6. `FirstFunTest` asks `GardenManager` to place the piece in the first empty non-heart cell.
+7. `FirstFunTest` calls `RunManager.complete_current_room()`.
+8. `DebugHUD` owns the temporary display refresh and event log.
 
 ## Current Files and Responsibilities
 
@@ -133,13 +135,19 @@ Current room/reward flow:
 - Displays name, category, and simple description.
 - Emits `reward_selected`.
 
+### `game/scripts/ui/debug_hud.gd`
+
+- Owns the temporary first fun test debug label.
+- Owns the capped event log, room status text, last Bloomchain text, and display refresh.
+- Reads player state and debug global singletons for display only.
+- Does not own gameplay rules.
+
 ### `game/scripts/core/first_fun_test.gd`
 
 - Temporary debug scene glue.
 - Starts the run and room timer.
-- Wires Saintmoth shield requests to the player.
 - Wires reward selection to garden placement.
-- Owns debug UI text, event log, room status text, and prototype feedback.
+- Sends high-level status, room info, Bloomchain, and event messages to `DebugHUD`.
 
 ## Responsibility Problems
 
@@ -147,11 +155,12 @@ Current room/reward flow:
 - `GardenTickSystem` owns interval ticking, but it still asks `GardenManager` to apply completed triggers.
 - `GardenTriggerSystem` owns event-to-trigger lookup, but `GardenManager` still owns low-level trigger application and follow-up event handoff.
 - Effect resolution is partially migrated: `produce_resource` and `grant_player_shield` live in `GardenEffectResolver`, while unsupported actions still fail.
-- `first_fun_test.gd` owns debug UI, room timing, rewards, run start, event log, and prototype wiring.
+- `first_fun_test.gd` owns room timing, rewards, run start, and prototype wiring.
+- `DebugHUD` owns temporary debug UI, display refresh, room status text, and event log.
 - `Bloomchains` records chains and directly calls `JournalManager`.
 - Reward choices are hardcoded in `RewardChoicePanel`.
 - Resource provenance is global per resource type rather than per produced resource unit.
-- Debug display is mixed into scene glue rather than isolated in a `DebugHUD`.
+- `DebugHUD` is still temporary and debug-only, but it now owns the first fun test display text and event log.
 
 ## Target Responsibilities
 
@@ -217,11 +226,13 @@ Current room/reward flow:
 
 - Own temporary debug display and event log.
 - Observe system signals instead of owning gameplay rules.
+- Current implementation receives high-level updates from `FirstFunTest` and reads debug-only singleton state for display.
 
 ### `FirstFunTest`
 
 - Remain temporary debug scene glue only.
 - Wire prototype presentation, not permanent gameplay rules.
+- Forward display state to `DebugHUD` instead of composing HUD text directly.
 
 ## Refactor Rules
 
