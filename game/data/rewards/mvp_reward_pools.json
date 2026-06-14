@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "reward_pools": [
+    {
+      "id": "general_garden_piece",
+      "choices": ["lantern_lily", "gravecap", "blood_rose", "bellflower", "rotling", "mawlet", "glass_beetle", "grave_bell", "mirror_shard", "bone_trellis", "tiny_fence"]
+    },
+    {
+      "id": "flora",
+      "choices": ["lantern_lily", "gravecap", "blood_rose", "bellflower"]
+    },
+    {
+      "id": "fauna",
+      "choices": ["rotling", "mawlet", "glass_beetle"]
+    },
+    {
+      "id": "object",
+      "choices": ["grave_bell", "mirror_shard", "bone_trellis", "tiny_fence"]
+    }
+  ]
+}

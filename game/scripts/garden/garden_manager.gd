@@ -1,0 +1,142 @@
+extends Node
+
+signal grid_reset
+signal piece_placed(cell: Vector2i, piece_id: String)
+signal piece_removed(cell: Vector2i, piece_id: String)
+signal piece_triggered(cell: Vector2i, piece_id: String, trigger: Dictionary)
+signal placement_failed(cell: Vector2i, piece_id: String, reason: String)
+
+const GRID_SIZE := Vector2i(3, 3)
+const HEART_CELL := Vector2i(1, 1)
+
+var cells: Dictionary = {}
+var selected_cell := HEART_CELL
+var last_trigger: Dictionary = {}
+
+
+func _ready() -> void:
+	reset_grid()
+
+
+func reset_grid() -> void:
+	cells.clear()
+	for y in range(GRID_SIZE.y):
+		for x in range(GRID_SIZE.x):
+			cells[Vector2i(x, y)] = ""
+	place_piece(HEART_CELL, "saintmoth", true)
+	grid_reset.emit()
+
+
+func place_piece(cell: Vector2i, piece_id: String, allow_heart := false) -> bool:
+	if not is_valid_cell(cell):
+		placement_failed.emit(cell, piece_id, "Cell is outside the 3x3 garden")
+		return false
+	if cell == HEART_CELL and not allow_heart:
+		placement_failed.emit(cell, piece_id, "Heart Tile is reserved for the companion")
+		return false
+	if not cells.get(cell, "").is_empty():
+		placement_failed.emit(cell, piece_id, "Cell already has a garden piece")
+		return false
+	if ContentDatabase.get_garden_piece(piece_id).is_empty():
+		placement_failed.emit(cell, piece_id, "Unknown garden piece id")
+		return false
+	cells[cell] = piece_id
+	piece_placed.emit(cell, piece_id)
+	return true
+
+
+func remove_piece(cell: Vector2i) -> String:
+	if not is_valid_cell(cell) or cell == HEART_CELL:
+		return ""
+	var piece_id := str(cells.get(cell, ""))
+	if piece_id.is_empty():
+		return ""
+	cells[cell] = ""
+	piece_removed.emit(cell, piece_id)
+	return piece_id
+
+
+func trigger_piece(cell: Vector2i, event_name: String) -> bool:
+	var piece_id := str(cells.get(cell, ""))
+	if piece_id.is_empty():
+		return false
+	var piece := ContentDatabase.get_garden_piece(piece_id)
+	for trigger in piece.get("triggers", []):
+		if trigger.get("event", "") == event_name:
+			_apply_trigger(cell, piece_id, trigger)
+			return true
+	return false
+
+
+func pulse_selected() -> bool:
+	return trigger_piece(selected_cell, "on_pulse")
+
+
+func produce_from_intervals() -> void:
+	for cell in cells.keys():
+		trigger_piece(cell, "on_interval")
+
+
+func get_piece_at(cell: Vector2i) -> Dictionary:
+	var piece_id := str(cells.get(cell, ""))
+	if piece_id.is_empty():
+		return {}
+	return ContentDatabase.get_garden_piece(piece_id)
+
+
+func get_neighbors(cell: Vector2i, include_diagonal := false) -> Array[Vector2i]:
+	var offsets: Array[Vector2i] = [
+		Vector2i(0, -1),
+		Vector2i(1, 0),
+		Vector2i(0, 1),
+		Vector2i(-1, 0)
+	]
+	if include_diagonal:
+		offsets.append_array([
+			Vector2i(-1, -1),
+			Vector2i(1, -1),
+			Vector2i(1, 1),
+			Vector2i(-1, 1)
+		])
+	var result: Array[Vector2i] = []
+	for offset in offsets:
+		var neighbor := cell + offset
+		if is_valid_cell(neighbor):
+			result.append(neighbor)
+	return result
+
+
+func is_valid_cell(cell: Vector2i) -> bool:
+	return cell.x >= 0 and cell.x < GRID_SIZE.x and cell.y >= 0 and cell.y < GRID_SIZE.y
+
+
+func as_debug_rows() -> Array[String]:
+	var rows: Array[String] = []
+	for y in range(GRID_SIZE.y):
+		var row: Array[String] = []
+		for x in range(GRID_SIZE.x):
+			var id := str(cells.get(Vector2i(x, y), ""))
+			row.append(id if not id.is_empty() else ".")
+		rows.append(" | ".join(PackedStringArray(row)))
+	return rows
+
+
+func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> void:
+	var action := str(trigger.get("action", ""))
+	match action:
+		"produce_resource":
+			GardenResources.add(str(trigger.get("resource", "")), int(trigger.get("amount", 1)))
+		"grant_player_shield":
+			var resource_id := str(trigger.get("resource", ""))
+			var cost := int(trigger.get("cost", 0))
+			if cost > 0 and not GardenResources.spend(resource_id, cost):
+				return
+		_:
+			pass
+	last_trigger = {
+		"cell": cell,
+		"piece_id": piece_id,
+		"trigger": trigger.duplicate(true)
+	}
+	piece_triggered.emit(cell, piece_id, trigger)
+	Bloomchains.record_trigger(cell, piece_id, trigger)
