@@ -42,6 +42,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: add drifter enemy pressure
+
+#### Summary
+- Added a simple Drifter enemy scene and script for gentle first fun test pressure.
+- Instanced one Drifter in the first fun test scene and assigned it to chase the player.
+- Updated the debug UI to show health, shield, Drifter pressure status, and defeat state.
+
+#### Files Changed
+- `game/scenes/enemies/drifter.tscn`
+- `game/scripts/enemies/drifter_enemy.gd`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only the requested Drifter scene/script, first fun test scene/script, and docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed the Drifter instance targets `../Player` in the first fun test scene.
+- Confirmed Drifter contact damage calls `PlayerController.take_damage()`, preserving shield-before-health behavior.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add visible shield feedback to the first fun test scene.
+
 ### 2026-06-14 - mvp: clarify saintmoth shield effect path
 
 #### Summary

@@ -29,6 +29,12 @@ Lantern Lily -> Light -> Saintmoth -> Shield
 - `game/data/rooms/mvp_rooms.json`
 - `game/data/rewards/mvp_reward_pools.json`
 
+## MVP Enemy Behavior
+
+The first fun test includes one `Drifter` enemy from `res://game/scenes/enemies/drifter.tscn`. It is a slow `CharacterBody2D` that moves toward the player and applies contact damage through `PlayerController.take_damage()`.
+
+Drifter damage is intentionally low-stress: it uses a short cooldown so contact does not instantly defeat the player. Because damage goes through `take_damage()`, shield absorbs damage before health, making Saintmoth's shield useful without requiring a full combat system yet.
+
 ## Garden Interval Ticking
 
 Garden interval production is owned by `GardenManager.process_intervals(delta)`. The method inspects placed garden pieces, reads each JSON trigger with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and applies the trigger when its `cooldown` is reached.
