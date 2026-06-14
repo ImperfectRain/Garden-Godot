@@ -11,7 +11,7 @@ var active_chain: Array = []
 var largest_chain_this_run := 0
 var _chain_elapsed := 0.0
 var _causal_chains: Dictionary = {}
-var _recorded_chain_ids: Dictionary = {}
+var _finished_chain_ids: Dictionary = {}
 
 
 func _process(delta: float) -> void:
@@ -25,7 +25,7 @@ func _process(delta: float) -> void:
 func reset_run() -> void:
 	active_chain.clear()
 	_causal_chains.clear()
-	_recorded_chain_ids.clear()
+	_finished_chain_ids.clear()
 	largest_chain_this_run = 0
 	_chain_elapsed = 0.0
 
@@ -44,14 +44,16 @@ func finish_chain() -> void:
 	var ids := _get_piece_ids(active_chain)
 	var length := active_chain.size()
 	var chain_id := str(active_chain[0].get("chain_id", ""))
-	var was_recorded := not chain_id.is_empty() and _recorded_chain_ids.has(chain_id)
+	var should_finish := _can_finish_chain(chain_id)
 	largest_chain_this_run = max(largest_chain_this_run, length)
-	if length >= 3 and not was_recorded:
+	if length >= 3 and should_finish:
 		JournalManager.record_bloomchain(ids)
+	if should_finish:
 		if not chain_id.is_empty():
-			_recorded_chain_ids[chain_id] = true
-	if not was_recorded:
+			_finished_chain_ids[chain_id] = true
 		chain_finished.emit(length, ids)
+	if not chain_id.is_empty():
+		_causal_chains.erase(chain_id)
 	active_chain.clear()
 	_chain_elapsed = 0.0
 
@@ -87,27 +89,19 @@ func _record_causal_trigger(chain_id: String, cell: Vector2i, piece_id: String, 
 		active_chain = chain.duplicate(true)
 		finish_chain()
 		chain = []
-		_recorded_chain_ids.erase(chain_id)
 	chain.append(_make_step(cell, piece_id, action, chain_id))
-	if chain.size() > SOFT_CHAIN_CAP:
-		chain = chain.slice(0, SOFT_CHAIN_CAP)
 	_causal_chains[chain_id] = chain
 	active_chain = chain.duplicate(true)
 	_chain_elapsed = 0.0
 	if chain.size() == 1:
 		chain_started.emit(cell, piece_id)
 	chain_step_added.emit(cell, piece_id, action, chain.size())
-	_record_completed_causal_chain_if_needed(chain_id, chain)
+	if chain.size() >= SOFT_CHAIN_CAP:
+		finish_chain()
 
 
-func _record_completed_causal_chain_if_needed(chain_id: String, chain: Array) -> void:
-	if chain.size() < 3 or _recorded_chain_ids.has(chain_id):
-		return
-	var ids := _get_piece_ids(chain)
-	largest_chain_this_run = max(largest_chain_this_run, chain.size())
-	JournalManager.record_bloomchain(ids)
-	_recorded_chain_ids[chain_id] = true
-	chain_finished.emit(chain.size(), ids)
+func _can_finish_chain(chain_id: String) -> bool:
+	return chain_id.is_empty() or not _finished_chain_ids.has(chain_id)
 
 
 func _get_piece_ids(chain: Array) -> Array[String]:

@@ -126,8 +126,8 @@ func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
 	if length < 3:
 		return
 	_last_bloomchain = " -> ".join(PackedStringArray(_get_piece_names(piece_ids)))
-	_add_event("Bloomchain x%s: %s" % [length, _last_bloomchain])
-	debug_message = "Bloomchain recorded"
+	_add_event("Bloomchain finalized x%s: %s" % [length, _last_bloomchain])
+	debug_message = "Bloomchain finalized"
 	_refresh_debug("", 0, 0)
 
 

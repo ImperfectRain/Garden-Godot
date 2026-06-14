@@ -34,8 +34,9 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Wait until Lantern Lily has produced at least 2 Light.
 - [ ] Press Space to Pulse Saintmoth.
 - [ ] Confirm the Bloomchain reaches length 3: Lantern Lily -> Saintmoth -> Bellflower.
-- [ ] Confirm the Bloomchain appears in the debug UI.
-- [ ] Confirm the Bloomchain is recorded in the journal.
+- [ ] Wait for the short chain finalization timeout.
+- [ ] Confirm the finalized Bloomchain appears in the debug UI.
+- [ ] Confirm the finalized Bloomchain is recorded in the journal.
 - [ ] Confirm failed Saintmoth Pulse attempts do not count as successful Bloomchain steps.
 
 ## Notes

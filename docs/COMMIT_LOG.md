@@ -206,6 +206,35 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
 
+### 2026-06-14 - architecture: finalize bloomchains on chain finish
+
+#### Summary
+- Moved Bloomchain journal recording to `finish_chain()`.
+- Kept step signals immediate while delaying `chain_finished` until final chain length is known.
+- Preserved chain timeout, soft cap, and repeated-piece protection.
+- Updated debug and manual test wording from immediate recording to finalization.
+
+#### Files Changed
+- `game/scripts/garden/bloomchain_manager.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only BloomchainManager, first fun test, and requested docs files modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `JournalManager.record_bloomchain()` is only called from `Bloomchains.finish_chain()`.
+- Confirmed causal chains no longer journal immediately at length 3.
+- Confirmed soft cap and repeated-piece protection still call `finish_chain()`.
+- Confirmed first fun test still listens to `chain_finished` and now labels the event as finalized.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

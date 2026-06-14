@@ -33,7 +33,8 @@ Current causal Bloomchain flow:
 10. Saintmoth dispatches the `garden_woke` follow-up event.
 11. `GardenTriggerSystem` dispatches `garden_woke` to matching garden pieces.
 12. Bellflower reacts to `garden_woke` and produces Echo.
-13. `Bloomchains` records the causal chain and currently calls `JournalManager.record_bloomchain()` for chains of length 3 or more.
+13. `Bloomchains` records each step as it happens.
+14. When the chain finishes through timeout, cap, repeated-piece protection, or explicit finish, `Bloomchains` records the final chain in `JournalManager` if it has length 3 or more.
 
 Current room/reward flow:
 
@@ -94,7 +95,8 @@ Current room/reward flow:
 - Records temporal and causal trigger chains.
 - Tracks largest chain this run.
 - Emits chain signals for debug display.
-- Currently records journal Bloomchains directly.
+- Emits step signals immediately.
+- Records journal Bloomchains when chains finish, not when they first reach length 3.
 
 ### `game/scripts/garden/resource_manager.gd`
 
@@ -190,6 +192,7 @@ Current room/reward flow:
 - Record causal trigger/effect chains.
 - Emit chain results.
 - Avoid directly hardcoding journal persistence long-term.
+- Current implementation still calls `JournalManager` directly, but only at chain finish.
 
 ### `RunManager`
 

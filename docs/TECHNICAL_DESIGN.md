@@ -92,12 +92,15 @@ The first causal chain is:
 3. Saintmoth's successful trigger dispatches `garden_woke`.
 4. Bellflower reacts to `garden_woke` and produces Echo.
 
-`Bloomchains` records steps by `chain_id`, prevents the same piece from triggering twice in one chain, caps chains at `SOFT_CHAIN_CAP`, and records chains of length 3+ through `JournalManager.record_bloomchain()`.
+`Bloomchains` records steps by `chain_id`, prevents the same piece from triggering twice in one chain, and caps chains at `SOFT_CHAIN_CAP`. Step events can emit immediately through `chain_step_added`, but `JournalManager.record_bloomchain()` and `chain_finished` happen only when the chain finishes through timeout, cap, repeated-piece protection, or an explicit finish.
+
+This finish-time recording means a future chain longer than 3 records its final length instead of only the first 3 steps.
 
 Known limitations:
 
 - Resource source tracking is global per resource, not per individual resource unit.
 - Causal follow-up events are simple string events, not a full effect graph.
+- A chain that times out before reaching 3 steps is finalized without journal recording.
 - Visual chain paths are still debug text only.
 - Temporal fallback tracking still exists for non-causal triggers, but first-fun-test Bloomchains should use causal context.
 
