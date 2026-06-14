@@ -48,6 +48,19 @@ func place_piece(cell: Vector2i, piece_id: String, allow_heart := false) -> bool
 	return true
 
 
+func place_piece_in_first_empty_cell(piece_id: String) -> Vector2i:
+	for y in range(GRID_SIZE.y):
+		for x in range(GRID_SIZE.x):
+			var cell := Vector2i(x, y)
+			if cell == HEART_CELL:
+				continue
+			if not str(cells.get(cell, "")).is_empty():
+				continue
+			if place_piece(cell, piece_id):
+				return cell
+	return Vector2i(-1, -1)
+
+
 func remove_piece(cell: Vector2i) -> String:
 	if not is_valid_cell(cell) or cell == HEART_CELL:
 		return ""

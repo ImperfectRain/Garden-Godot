@@ -37,6 +37,12 @@ The first fun test includes one `Drifter` enemy from `res://game/scenes/enemies/
 
 Drifter damage is intentionally low-stress: it uses a short cooldown so contact does not instantly defeat the player. Because damage goes through `take_damage()`, shield absorbs damage before health, making Saintmoth's shield useful without requiring a full combat system yet.
 
+## Reward Choice Scaffold
+
+The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It shows three hardcoded MVP rewards, displays each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.
+
+Selection currently calls `GardenManager.place_piece_in_first_empty_cell(piece_id)` and auto-places the reward into the first empty non-heart garden cell. This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, drag-and-drop garden UI, or polished reward screen.
+
 ## Garden Interval Ticking
 
 Garden interval production is owned by `GardenManager.process_intervals(delta)`. The method inspects placed garden pieces, reads each JSON trigger with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and applies the trigger when its `cooldown` is reached.

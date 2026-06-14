@@ -3,6 +3,7 @@ extends Node2D
 @onready var player := $Player
 @onready var saintmoth := $Saintmoth
 @onready var debug_label := $CanvasLayer/DebugLabel
+@onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 
 const MAX_EVENT_LOG_LINES := 6
 
@@ -10,6 +11,7 @@ var debug_message := "Drifter pressure active"
 var event_log: Array[String] = []
 var _last_health := 0
 var _last_shield := 0
+var _reward_has_been_claimed := false
 
 
 func _ready() -> void:
@@ -23,11 +25,15 @@ func _ready() -> void:
 	GardenResources.resource_changed.connect(_on_resource_changed)
 	GardenResources.resource_spent.connect(_on_resource_spent)
 	GardenResources.resource_failed.connect(_on_resource_failed)
+	GardenManager.piece_placed.connect(_on_piece_placed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
+	reward_choice_panel.reward_selected.connect(_on_reward_selected)
 	_last_health = player.health
 	_last_shield = player.shield
 	_add_event("Lantern Lily produces +1 Light every 5 seconds.")
 	_add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
+	_add_event("Reward choice is ready: press 1, 2, or 3.")
+	reward_choice_panel.show()
 	_refresh_debug("", 0, 0)
 
 
@@ -39,6 +45,27 @@ func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary
 	JournalManager.discover_piece(piece_id)
 	if piece_id == "lantern_lily":
 		_add_event("Lantern Lily produced +1 Light.")
+	_refresh_debug("", 0, 0)
+
+
+func _on_piece_placed(cell: Vector2i, piece_id: String) -> void:
+	JournalManager.discover_piece(piece_id)
+	if piece_id != "saintmoth":
+		_add_event("%s placed at garden cell %s,%s." % [_get_piece_name(piece_id), cell.x, cell.y])
+	_refresh_debug("", 0, 0)
+
+
+func _on_reward_selected(piece_id: String) -> void:
+	if _reward_has_been_claimed:
+		return
+	var placed_cell := GardenManager.place_piece_in_first_empty_cell(piece_id)
+	if placed_cell == Vector2i(-1, -1):
+		_add_event("No empty garden cell for %s." % _get_piece_name(piece_id))
+		_refresh_debug("", 0, 0)
+		return
+	_reward_has_been_claimed = true
+	reward_choice_panel.hide()
+	debug_message = "Reward placed: %s" % _get_piece_name(piece_id)
 	_refresh_debug("", 0, 0)
 
 
@@ -103,3 +130,8 @@ func _add_event(message: String) -> void:
 	event_log.append(message)
 	while event_log.size() > MAX_EVENT_LOG_LINES:
 		event_log.pop_front()
+
+
+func _get_piece_name(piece_id: String) -> String:
+	var piece := ContentDatabase.get_garden_piece(piece_id)
+	return piece.get("name", piece_id)

@@ -42,6 +42,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: add reward choice scaffold
+
+#### Summary
+- Added a temporary reward choice panel with three hardcoded MVP choices: Gravecap, Bellflower, and Grave Bell.
+- Wired the first fun test to show the panel, accept button or 1/2/3 selection, and auto-place the chosen piece into the first empty non-heart garden cell.
+- Added a small GardenManager helper for first-empty-cell placement.
+
+#### Files Changed
+- `game/scripts/ui/reward_choice_panel.gd`
+- `game/scenes/ui/reward_choice_panel.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only the requested reward panel, first fun test, GardenManager, and docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed reward ids `gravecap`, `bellflower`, and `grave_bell` exist in MVP garden piece data.
+- Confirmed the first fun test instances `RewardChoicePanel` and connects its `reward_selected` signal.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add a simple room-clear trigger that reveals the reward panel after a short survival beat.
+
 ### 2026-06-14 - mvp: improve first fun test feedback
 
 #### Summary
