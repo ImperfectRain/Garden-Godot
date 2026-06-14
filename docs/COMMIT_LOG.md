@@ -42,6 +42,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - architecture: document current responsibilities
+
+#### Summary
+- Added an architecture map documenting current responsibilities and target system boundaries.
+- Captured the standing project rules for focused tasks, documentation updates, and end-of-task workflow.
+- Linked the technical design to the new architecture map.
+
+#### Files Changed
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `docs/ARCHITECTURE_MAP.md`, `docs/TECHNICAL_DESIGN.md`, and `docs/COMMIT_LOG.md` changed.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `docs/ARCHITECTURE_MAP.md` documents current and target responsibilities for the requested systems.
+- Confirmed `docs/TECHNICAL_DESIGN.md` links to the architecture map.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Extract garden interval ticking from `GardenManager` into a dedicated `GardenTickSystem` scaffold.
+
 ### 2026-06-14 - docs: add manual MVP test checklist
 
 #### Summary

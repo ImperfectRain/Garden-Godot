@@ -4,6 +4,8 @@
 
 The project uses Godot autoloads for small global systems that coordinate data, garden state, resources, run flow, and meta records.
 
+See `docs/ARCHITECTURE_MAP.md` for the current responsibility map and target system boundaries.
+
 ## Autoloads
 
 - `ContentDatabase`: loads JSON content from `game/data`.
