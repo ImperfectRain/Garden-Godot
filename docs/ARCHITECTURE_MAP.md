@@ -56,6 +56,13 @@ Current room/reward flow:
 - Emits `effect_resolved` or `effect_failed` for result observers.
 - Does not resolve shield, damage, healing, spawning, or other gameplay actions yet.
 
+### `game/scripts/combat/combat_events.gd`
+
+- Autoload scaffold for player/enemy-facing combat effect requests.
+- Defines generic signals for player shield, player damage, enemy damage, and helper spawning.
+- Does not route current gameplay behavior yet.
+- Exists to replace scene-specific shield and combat wiring in later focused tasks.
+
 ### `game/scripts/garden/bloomchain_manager.gd`
 
 - Records temporal and causal trigger chains.
@@ -145,6 +152,7 @@ Current room/reward flow:
 
 - Route player/enemy-facing effects such as shield, damage, healing, spawning, and knockback.
 - Replace scene-specific Saintmoth shield wiring.
+- Stay generic; avoid Saintmoth-specific, Drifter-specific, or debug-scene-specific behavior.
 
 ### `Bloomchains`
 

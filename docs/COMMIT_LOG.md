@@ -92,6 +92,31 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Route `grant_player_shield` through a combat-facing effect path such as `CombatEvents` without changing the first fun test behavior.
 
+### 2026-06-14 - architecture: add combat events bus
+
+#### Summary
+- Added `CombatEvents` as a generic autoload signal bus for combat-facing effect requests.
+- Defined initial player shield, player damage, enemy damage, and helper spawn request signals.
+- Documented that no gameplay is routed through the bus yet.
+
+#### Files Changed
+- `project.godot`
+- `game/scripts/combat/combat_events.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `project.godot`, the new combat script folder, and the requested docs files changed.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `CombatEvents` is registered as an autoload in `project.godot`.
+- Confirmed no existing gameplay scripts reference `CombatEvents` yet.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Route Saintmoth shield requests through `CombatEvents` without changing successful or failed Pulse behavior.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

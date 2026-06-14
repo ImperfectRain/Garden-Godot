@@ -12,6 +12,7 @@ See `docs/ARCHITECTURE_MAP.md` for the current runtime flow, known responsibilit
 - `GardenResources`: tracks current Light, Rot, Blood, and Echo resource amounts.
 - `GardenManager`: owns the 3x3 grid, Heart Tile placement, and garden trigger dispatch.
 - `GardenEffectResolver`: resolves generic garden effect actions. It currently owns `produce_resource`; other actions still use temporary prototype paths.
+- `CombatEvents`: scaffold signal bus for player/enemy-facing combat effect requests. It is registered but not used by gameplay yet.
 - `Bloomchains`: records temporal trigger chains and tracks largest chain length.
 - `JournalManager`: records discovered pieces, Bloomchains, run history, and Saintmoth bond.
 - `RunManager`: starts and finishes runs and tracks the current planned room.
@@ -64,6 +65,12 @@ The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_
 
 `GardenManager` still owns resource provenance, trigger success bookkeeping, `piece_triggered`, Bloomchain recording, and follow-up dispatch for now. `grant_player_shield` has not moved yet, so Saintmoth shield cost spending remains in `GardenManager` until a later combat-facing resolver step.
 
+## Combat Event Bus
+
+`CombatEvents` is a generic signal bus for combat-facing effects that need to target players, enemies, or helper spawns without binding gameplay systems to a specific scene. It currently exposes requests for player shield, player damage, enemy damage, and helper spawning.
+
+No current gameplay routes through `CombatEvents` yet. Saintmoth shield still uses the existing `CompanionController.shield_requested` signal and `FirstFunTest` scene connection until a later task moves that behavior deliberately.
+
 ## Causal Bloomchain Detection
 
 Bloomchains now support a minimal causal path instead of relying only on triggers happening near each other in time. `GardenManager` creates a `chain_id` when a successful trigger starts a resource source, stores that context per resource, and reuses it when a later trigger spends that resource. Successful triggers can also list `follow_up_events` in JSON; those events are dispatched immediately with the same chain context.
@@ -113,4 +120,4 @@ Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If
 - Resources are global to the garden instead of stored per tile or per piece.
 - Only a partial set of trigger effects is implemented in code; `produce_resource` is routed through `GardenEffectResolver`, while shield spending remains in `GardenManager`.
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
-- Shield application is wired through the current debug scene and companion signal connection.
+- Shield application is wired through the current debug scene and companion signal connection; `CombatEvents` exists but is not active yet.
