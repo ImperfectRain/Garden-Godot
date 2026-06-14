@@ -42,6 +42,31 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - architecture: add garden effect resolver scaffold
+
+#### Summary
+- Added `GardenEffectResolver` as an autoload scaffold for future generic effect resolution.
+- Documented the intended effect request/result shapes in the resolver script.
+- Updated architecture and technical docs to show the resolver exists but does not own current gameplay behavior yet.
+
+#### Files Changed
+- `project.godot`
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `project.godot`, `garden_effect_resolver.gd`, and docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `GardenEffectResolver` is registered as an autoload.
+- Confirmed no gameplay code calls `GardenEffectResolver` yet.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Route resource production through `GardenEffectResolver` without changing player-facing behavior.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

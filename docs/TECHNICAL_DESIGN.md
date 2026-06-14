@@ -11,6 +11,7 @@ See `docs/ARCHITECTURE_MAP.md` for the current runtime flow, known responsibilit
 - `ContentDatabase`: loads JSON content from `game/data`.
 - `GardenResources`: tracks current Light, Rot, Blood, and Echo resource amounts.
 - `GardenManager`: owns the 3x3 grid, Heart Tile placement, and garden trigger dispatch.
+- `GardenEffectResolver`: scaffold for future generic garden effect resolution. It is registered as an autoload but does not apply gameplay actions yet.
 - `Bloomchains`: records temporal trigger chains and tracks largest chain length.
 - `JournalManager`: records discovered pieces, Bloomchains, run history, and Saintmoth bond.
 - `RunManager`: starts and finishes runs and tracks the current planned room.

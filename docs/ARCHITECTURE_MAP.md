@@ -46,6 +46,12 @@ Current room/reward flow:
 - Owns garden grid state, Heart Tile placement, cell lookup, and placement validation.
 - Currently also owns interval ticking, trigger lookup, effect application, resource provenance, follow-up events, and first-empty-cell reward placement.
 
+### `game/scripts/garden/garden_effect_resolver.gd`
+
+- Autoload scaffold for future generic effect action application.
+- Currently exposes `resolve_effect(request)` and emits failure for all actions.
+- Does not affect current gameplay behavior yet.
+
 ### `game/scripts/garden/bloomchain_manager.gd`
 
 - Records temporal and causal trigger chains.
@@ -128,6 +134,7 @@ Current room/reward flow:
 - Own generic action application for data-defined effects.
 - Emit effect results for resources, combat, spawning, chain tracking, and UI consumers.
 - Avoid knowing about specific debug scenes.
+- Current scaffold exists, but action logic has not moved into it yet.
 
 ### `CombatEvents`
 
