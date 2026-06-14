@@ -42,6 +42,31 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: clarify saintmoth shield effect path
+
+#### Summary
+- Made GardenManager trigger application report success or failure explicitly.
+- Ensured failed Saintmoth shield pulses do not emit `piece_triggered`, update `last_trigger`, or record Bloomchain steps.
+- Documented the current shield signal path and the future need for a centralized combat effect resolver.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/companion/companion_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only the requested GardenManager, CompanionController, first fun test, and docs files modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `GardenManager._apply_trigger()` now returns success and only emits `piece_triggered` on success.
+- Confirmed `CompanionController` receives shield requests only through the successful Saintmoth trigger signal path.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add visible shield feedback to the first fun test scene.
+
 ### 2026-06-14 - mvp: implement garden interval ticking
 
 #### Summary

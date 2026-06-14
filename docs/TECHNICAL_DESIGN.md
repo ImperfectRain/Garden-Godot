@@ -35,6 +35,22 @@ Garden interval production is owned by `GardenManager.process_intervals(delta)`.
 
 The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_pieces.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenManager.process_intervals(delta)` instead of owning production timers.
 
+## Saintmoth Shield Effect Path
+
+Saintmoth's current shield behavior is intentionally simple and signal-based:
+
+1. The player presses Pulse.
+2. `PlayerController` asks `GardenManager` to pulse the Heart Tile.
+3. `GardenManager._apply_trigger()` handles Saintmoth's `grant_player_shield` trigger.
+4. `GardenManager` spends the Light cost first.
+5. Only if the spend succeeds, `GardenManager` emits `piece_triggered` and records the Bloomchain step.
+6. `CompanionController` listens for the successful Saintmoth trigger and emits `shield_requested`.
+7. The first fun test scene connects `shield_requested` to `PlayerController.add_shield`.
+
+This means a failed Pulse with fewer than 2 Light should not grant shield, update `last_trigger`, or create a Bloomchain trigger.
+
+TODO: Replace the scene-specific shield connection with a centralized `EffectResolver`, `CombatEvents`, or equivalent combat effect application autoload once more effects need to target the player, enemies, or world.
+
 ## Git LFS Expectations
 
 Likely binary art and audio assets should be tracked with Git LFS through `.gitattributes`. This includes common image, audio, pixel art, layered source, Krita, and Blender files such as `png`, `jpg`, `jpeg`, `webp`, `wav`, `ogg`, `mp3`, `aseprite`, `psd`, `kra`, and `blend`.

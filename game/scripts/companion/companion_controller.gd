@@ -40,5 +40,6 @@ func _on_garden_piece_triggered(_cell: Vector2i, piece_id: String, trigger: Dict
 	if piece_id != "saintmoth":
 		return
 	if trigger.get("action", "") == "grant_player_shield":
+		# GardenManager only emits this trigger after Saintmoth's Light cost is paid.
 		set_mood("happy")
 		shield_requested.emit(int(trigger.get("amount", 20)))

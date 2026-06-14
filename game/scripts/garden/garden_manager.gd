@@ -67,8 +67,7 @@ func trigger_piece(cell: Vector2i, event_name: String) -> bool:
 	var piece := ContentDatabase.get_garden_piece(piece_id)
 	for trigger in piece.get("triggers", []):
 		if trigger.get("event", "") == event_name:
-			_apply_trigger(cell, piece_id, trigger)
-			return true
+			return _apply_trigger(cell, piece_id, trigger)
 	return false
 
 
@@ -145,18 +144,18 @@ func as_debug_rows() -> Array[String]:
 	return rows
 
 
-func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> void:
+func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> bool:
 	var action := str(trigger.get("action", ""))
+	var succeeded := false
 	match action:
 		"produce_resource":
-			GardenResources.add(str(trigger.get("resource", "")), int(trigger.get("amount", 1)))
+			succeeded = _apply_produce_resource(trigger)
 		"grant_player_shield":
-			var resource_id := str(trigger.get("resource", ""))
-			var cost := int(trigger.get("cost", 0))
-			if cost > 0 and not GardenResources.spend(resource_id, cost):
-				return
+			succeeded = _apply_grant_player_shield_cost(trigger)
 		_:
-			pass
+			succeeded = false
+	if not succeeded:
+		return false
 	last_trigger = {
 		"cell": cell,
 		"piece_id": piece_id,
@@ -164,6 +163,25 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary) -> vo
 	}
 	piece_triggered.emit(cell, piece_id, trigger)
 	Bloomchains.record_trigger(cell, piece_id, trigger)
+	return true
+
+
+func _apply_produce_resource(trigger: Dictionary) -> bool:
+	var resource_id := str(trigger.get("resource", ""))
+	var amount := int(trigger.get("amount", 1))
+	if resource_id.is_empty() or amount <= 0:
+		return false
+	GardenResources.add(resource_id, amount)
+	return true
+
+
+func _apply_grant_player_shield_cost(trigger: Dictionary) -> bool:
+	var resource_id := str(trigger.get("resource", ""))
+	var cost := int(trigger.get("cost", 0))
+	if resource_id.is_empty() or cost <= 0:
+		return false
+	# Shield is applied by CompanionController after this successful trigger emits.
+	return GardenResources.spend(resource_id, cost)
 
 
 func _get_interval_timer_key(cell: Vector2i, trigger: Dictionary) -> String:

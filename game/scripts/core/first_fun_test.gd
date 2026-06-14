@@ -8,6 +8,7 @@ extends Node2D
 func _ready() -> void:
 	RunManager.start_run()
 	GardenManager.place_piece(Vector2i(0, 1), "lantern_lily")
+	# Temporary first-fun-test wiring: Saintmoth requests shield, player applies it.
 	saintmoth.shield_requested.connect(player.add_shield)
 	player.shield_changed.connect(_on_player_shield_changed)
 	GardenResources.resource_changed.connect(_refresh_debug)
