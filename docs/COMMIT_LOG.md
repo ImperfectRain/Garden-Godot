@@ -42,6 +42,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - docs: add manual MVP test checklist
+
+#### Summary
+- Added a repeatable manual MVP test checklist for the first fun loop, enemy pressure, garden placement, and Bloomchain behavior.
+- Linked the checklist from the README.
+- Kept the change documentation-only.
+
+#### Files Changed
+- `docs/MANUAL_TESTS.md`
+- `README.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `README.md`, `docs/COMMIT_LOG.md`, and new `docs/MANUAL_TESTS.md` changed.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed README links to `docs/MANUAL_TESTS.md`.
+- Confirmed the manual checklist covers first fun loop, enemy pressure, garden placement, and Bloomchain checks.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Run the manual MVP checklist in Godot and record any failures as focused follow-up tasks.
+
 ### 2026-06-14 - mvp: add minimal room completion loop
 
 #### Summary

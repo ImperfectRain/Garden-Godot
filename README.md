@@ -23,3 +23,7 @@ Do not add new content until the smallest fun loop is playable.
 2. Import or open this repository folder.
 3. Run the current main scene, `res://game/scenes/debug/first_fun_test.tscn`.
 4. Use WASD to move and Space to Pulse Saintmoth once Lantern Lily has produced Light.
+
+## Manual Testing
+
+Use [docs/MANUAL_TESTS.md](docs/MANUAL_TESTS.md) for the current repeatable MVP prototype checklist.
