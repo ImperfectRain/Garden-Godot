@@ -42,6 +42,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - mvp: improve first fun test feedback
+
+#### Summary
+- Added a capped first fun test event log for Lantern Lily production, Saintmoth Light requirements, Light consumption, shield gain, and Drifter damage feedback.
+- Connected the debug UI to existing resource, garden trigger, shield, and health signals.
+- Documented the debug UI as temporary readability instrumentation.
+
+#### Files Changed
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `first_fun_test.gd`, `docs/TECHNICAL_DESIGN.md`, and `docs/COMMIT_LOG.md` modified.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed the debug log is capped at 6 lines.
+- Confirmed the event log uses existing resource, garden trigger, shield, and health signals.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add visible non-text shield feedback to the player in the first fun test scene.
+
 ### 2026-06-14 - mvp: add drifter enemy pressure
 
 #### Summary

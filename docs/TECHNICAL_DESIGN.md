@@ -21,6 +21,8 @@ This scene exists to test the smallest fun loop:
 
 Lantern Lily -> Light -> Saintmoth -> Shield
 
+The debug label is temporary readability instrumentation. It shows resources, health, shield, garden rows, and a small event log so the first fun test can be understood without reading code. The log is capped and currently exists only to validate that Lantern Lily production, Saintmoth Light consumption, shield gain, failed Pulse attempts, and Drifter damage are readable.
+
 ## Current Data Files
 
 - `game/data/garden_pieces/mvp_garden_pieces.json`
