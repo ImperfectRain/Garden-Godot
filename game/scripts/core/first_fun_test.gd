@@ -44,7 +44,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	GardenManager.process_intervals(delta)
+	GardenTickSystem.process_intervals(delta)
 	if _room_controller.process(delta):
 		_on_room_survival_complete()
 	_refresh_debug("", 0, 0)
@@ -146,7 +146,7 @@ func _refresh_debug(_resource_id: String, _amount: int, _delta: int) -> void:
 		"Garden of Teeth - First Fun Test",
 		"WASD move | Space pulse Saintmoth",
 		"Room: %s | Completed: %s | Objective: survive %s" % [room_id, RunManager.get_completed_room_count(), room_timer],
-		"Interval ticking: GardenManager",
+		"Interval ticking: GardenTickSystem",
 		"Enemy: Drifter slowly follows and deals contact damage",
 		"Resources: %s" % GardenResources.get_all(),
 		"Health: %s/%s" % [player.health, player.max_health],

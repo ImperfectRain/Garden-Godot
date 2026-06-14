@@ -148,6 +148,34 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
 
+### 2026-06-14 - architecture: extract garden tick system
+
+#### Summary
+- Added `GardenTickSystem` as the owner of garden interval cooldown timers.
+- Moved interval processing, timer key generation, and stale timer clearing out of `GardenManager`.
+- Added a garden cell snapshot API on `GardenManager` and switched the first fun test to call `GardenTickSystem.process_intervals(delta)`.
+
+#### Files Changed
+- `project.godot`
+- `game/scripts/garden/garden_tick_system.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only `project.godot`, GardenTickSystem, GardenManager, first fun test, and requested docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `FirstFunTest` now calls `GardenTickSystem.process_intervals(delta)`.
+- Confirmed `GardenManager` no longer contains `_interval_timers`, `process_intervals()`, `produce_from_intervals()`, `_get_interval_timer_key()`, or `_clear_interval_timers_for_cell()`.
+- Confirmed interval timer storage and cell timer clearing now live in `GardenTickSystem`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Extract debug event display from `FirstFunTest` into a dedicated temporary `DebugHUD`.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

@@ -19,14 +19,17 @@ Current Saintmoth shield flow:
 
 Current causal Bloomchain flow:
 
-1. Lantern Lily produces Light through an interval trigger.
-2. `GardenManager` sends the `produce_resource` request to `GardenEffectResolver`.
-3. `GardenEffectResolver` validates the resource id and amount, then adds Light through `GardenResources`.
-4. `GardenManager` stores resource provenance for that Light after the successful effect result.
-5. Saintmoth spends Light on a successful Pulse and reuses the chain context.
-6. Saintmoth dispatches the `garden_woke` follow-up event.
-7. Bellflower reacts to `garden_woke` and produces Echo.
-8. `Bloomchains` records the causal chain and currently calls `JournalManager.record_bloomchain()` for chains of length 3 or more.
+1. `FirstFunTest` calls `GardenTickSystem.process_intervals(delta)`.
+2. `GardenTickSystem` reads the garden cell snapshot from `GardenManager`.
+3. `GardenTickSystem` advances the Lantern Lily interval trigger cooldown.
+4. When the cooldown is reached, `GardenTickSystem` asks `GardenManager` to apply the interval trigger.
+5. `GardenManager` sends the `produce_resource` request to `GardenEffectResolver`.
+6. `GardenEffectResolver` validates the resource id and amount, then adds Light through `GardenResources`.
+7. `GardenManager` stores resource provenance for that Light after the successful effect result.
+8. Saintmoth spends Light on a successful Pulse and reuses the chain context.
+9. Saintmoth dispatches the `garden_woke` follow-up event.
+10. Bellflower reacts to `garden_woke` and produces Echo.
+11. `Bloomchains` records the causal chain and currently calls `JournalManager.record_bloomchain()` for chains of length 3 or more.
 
 Current room/reward flow:
 
@@ -48,8 +51,17 @@ Current room/reward flow:
 ### `game/scripts/garden/garden_manager.gd`
 
 - Owns garden grid state, Heart Tile placement, cell lookup, and placement validation.
-- Currently also owns interval ticking, trigger lookup, shield cost spending, resource provenance, follow-up events, and first-empty-cell reward placement.
+- Currently also owns trigger lookup/application, resource provenance, follow-up events, and first-empty-cell reward placement.
+- Provides `get_all_cells()` so systems can read garden state without mutating it.
 - Delegates `produce_resource` action application to `GardenEffectResolver`.
+
+### `game/scripts/garden/garden_tick_system.gd`
+
+- Autoload for interval and cooldown ticking.
+- Owns interval timer storage, timer key generation, and per-cell timer clearing.
+- Observes `GardenManager.grid_reset`, `piece_placed`, and `piece_removed` to clear stale timers.
+- Reads placed piece data from `GardenManager.get_all_cells()` and JSON triggers from `ContentDatabase`.
+- Asks `GardenManager` to apply interval triggers when cooldowns complete.
 
 ### `game/scripts/garden/garden_effect_resolver.gd`
 
@@ -118,7 +130,8 @@ Current room/reward flow:
 
 ## Responsibility Problems
 
-- `GardenManager` owns grid state, ticking, trigger lookup, resource provenance, follow-up events, and reward placement helpers.
+- `GardenManager` owns grid state, trigger lookup/application, resource provenance, follow-up events, and reward placement helpers.
+- `GardenTickSystem` owns interval ticking, but it still asks `GardenManager` to apply completed triggers until `GardenTriggerSystem` exists.
 - Effect resolution is partially migrated: `produce_resource` and `grant_player_shield` live in `GardenEffectResolver`, while unsupported actions still fail.
 - `first_fun_test.gd` owns debug UI, room timing, rewards, run start, event log, and prototype wiring.
 - `Bloomchains` records chains and directly calls `JournalManager`.
@@ -138,6 +151,7 @@ Current room/reward flow:
 - Own interval and cooldown ticking for garden pieces.
 - Read timing from content data.
 - Produce trigger requests instead of applying effects directly.
+- Current implementation owns timers and delegates completed trigger application back to `GardenManager`.
 
 ### `GardenTriggerSystem`
 
