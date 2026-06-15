@@ -1,28 +1,56 @@
 extends RefCounted
 
-var duration_seconds := 30.0
+signal room_started(room_id: String)
+signal room_completed(room_id: String)
+signal reward_ready(room_id: String)
+
+const DEFAULT_SURVIVAL_SECONDS := 30.0
+
+var room_id := ""
+var duration_seconds := DEFAULT_SURVIVAL_SECONDS
 var elapsed_seconds := 0.0
 var is_active := false
 var is_complete := false
+var is_reward_ready := false
 
 
-func start(duration: float) -> void:
+func start(next_room_id: String, duration: float = DEFAULT_SURVIVAL_SECONDS) -> void:
+	room_id = next_room_id
 	duration_seconds = max(duration, 0.1)
 	elapsed_seconds = 0.0
 	is_active = true
 	is_complete = false
+	is_reward_ready = false
+	room_started.emit(room_id)
 
 
-func process(delta: float) -> bool:
+func process(delta: float) -> void:
 	if not is_active or is_complete:
-		return false
+		return
 	elapsed_seconds = min(elapsed_seconds + delta, duration_seconds)
 	if elapsed_seconds >= duration_seconds:
 		is_complete = true
 		is_active = false
-		return true
-	return false
+		is_reward_ready = true
+		room_completed.emit(room_id)
+		reward_ready.emit(room_id)
+
+
+func stop() -> void:
+	is_active = false
+
+
+func mark_reward_claimed() -> void:
+	is_reward_ready = false
 
 
 func get_remaining_seconds() -> float:
 	return max(duration_seconds - elapsed_seconds, 0.0)
+
+
+func get_objective_text() -> String:
+	if is_reward_ready:
+		return "Reward ready"
+	if is_complete:
+		return "Reward claimed"
+	return "survive %.1fs" % get_remaining_seconds()

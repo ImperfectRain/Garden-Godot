@@ -291,6 +291,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Move room objective ownership out of `FirstFunTest` into a small room controller node or scene-facing coordinator.
 
+### 2026-06-14 - architecture: extract room flow responsibilities
+
+#### Summary
+- Expanded `SimpleRoomController` to own the temporary 30-second survival objective, reward-ready state, and objective text.
+- Added room started, room completed, and reward ready signals.
+- Updated `FirstFunTest` to react to room reward readiness and reward-claimed results instead of owning room reward state.
+- Preserved the current reward-after-survival flow and player-defeat stop behavior.
+
+#### Files Changed
+- `game/scripts/core/simple_room_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed MVP JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed `FirstFunTest` no longer owns survival duration, reward-ready state, or room objective text formatting.
+- Confirmed `SimpleRoomController` owns the default 30-second duration, reward-ready state, objective text, and room/reward signals.
+- Confirmed player defeat stops room progression through `SimpleRoomController.stop()`.
+- Godot CLI was not available in PATH, so the scene was not launched from the command line.
+
+#### Next Recommended Task
+- Extract first fun test startup/setup wiring into a small coordinator or keep hardening the room/reward debug loop with manual validation.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

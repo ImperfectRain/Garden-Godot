@@ -47,9 +47,18 @@ Drifter damage is intentionally low-stress: it uses a short cooldown so contact 
 
 ## Temporary Room Loop
 
-The first fun test now uses `game/scripts/core/simple_room_controller.gd` for a minimal survival room objective. The current room starts when `RunManager.start_run()` is called, then the player survives gentle Drifter pressure for 30 seconds.
+The first fun test uses `game/scripts/core/simple_room_controller.gd` for a minimal survival room objective. `SimpleRoomController` owns the default 30-second survival duration, active/completed/reward-ready state, objective text, and room flow signals.
 
-When the timer completes, the reward choice panel appears. After the player chooses and places one reward, `RunManager.complete_current_room()` advances from the current planned room to the next room id. This is only a debug-room scaffold; it is not the final room system, room clear UI, enemy wave manager, or reward pacing.
+Current signal flow:
+
+1. `FirstFunTest` starts the run through `RunManager.start_run()`.
+2. `FirstFunTest` starts `SimpleRoomController` with the current room id.
+3. `SimpleRoomController.process(delta)` advances the survival timer.
+4. When the timer completes, `SimpleRoomController` emits `reward_ready(room_id)`.
+5. `FirstFunTest` responds by asking `RewardController` to show rewards.
+6. After `RewardController` emits `reward_claimed`, `FirstFunTest` calls `RunManager.complete_current_room()`.
+
+Player defeat calls `SimpleRoomController.stop()`, preventing the room timer from reaching reward readiness. This remains a debug-room scaffold; it is not the final room system, room clear UI, enemy wave manager, or reward pacing.
 
 ## Reward Choice Scaffold
 
@@ -143,5 +152,6 @@ Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If
 - Resources are global to the garden instead of stored per tile or per piece.
 - Only a partial set of trigger effects is implemented in code; `produce_resource` and `grant_player_shield` are routed through `GardenEffectResolver`.
 - Interval ticking has moved to `GardenTickSystem`, and event-to-trigger lookup has moved to `GardenTriggerSystem`; completed trigger application still routes through `GardenManager`.
+- Room objective timing has moved to `SimpleRoomController`, but `FirstFunTest` still wires room-ready and reward-claimed outcomes.
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
 - Shield application now routes through `CombatEvents`, but other combat-facing effects are still not implemented.
