@@ -12,13 +12,13 @@ Owner file: `game/scripts/data/content_database.gd`
 
 Autoload name: `ContentDatabase`
 
-Loaded files:
+Loaded directories:
 
-- `game/data/garden_pieces/mvp_garden_pieces.json`
-- `game/data/resources/mvp_resources.json`
-- `game/data/enemies/mvp_enemies.json`
-- `game/data/rooms/mvp_rooms.json`
-- `game/data/rewards/mvp_reward_pools.json`
+- `game/data/garden_pieces`
+- `game/data/resources`
+- `game/data/enemies`
+- `game/data/rooms`
+- `game/data/rewards`
 
 Primary APIs:
 
@@ -38,6 +38,9 @@ Signals:
 
 Implementation notes:
 
+- Each content entry should live in its own JSON file with a stable `id`.
+- The loader scans content directories recursively and indexes every JSON object by `id`.
+- Legacy collection-shaped files are still readable, but new content should not use them.
 - Returned dictionaries are deep duplicates so callers do not mutate source data by accident.
 - Validation is intentionally minimal in first pass. Expand it as schema needs become clearer.
 - Data ids should remain stable once saves or journal records depend on them.

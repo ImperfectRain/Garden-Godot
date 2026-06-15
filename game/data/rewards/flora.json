@@ -1,0 +1,9 @@
+{
+    "id":  "flora",
+    "choices":  [
+                    "lantern_lily",
+                    "gravecap",
+                    "blood_rose",
+                    "bellflower"
+                ]
+}

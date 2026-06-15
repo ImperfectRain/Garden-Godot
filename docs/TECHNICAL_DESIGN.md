@@ -33,11 +33,13 @@ The debug HUD is temporary readability instrumentation. It shows resources, heal
 
 ## Current Data Files
 
-- `game/data/garden_pieces/mvp_garden_pieces.json`
-- `game/data/resources/mvp_resources.json`
-- `game/data/enemies/mvp_enemies.json`
-- `game/data/rooms/mvp_rooms.json`
-- `game/data/rewards/mvp_reward_pools.json`
+- `game/data/garden_pieces/*.json`
+- `game/data/resources/*.json`
+- `game/data/enemies/*.json`
+- `game/data/rooms/*.json`
+- `game/data/rewards/*.json`
+
+Each content entry is stored as its own JSON object file named after its stable id. `ContentDatabase` scans these directories recursively, indexes entries by `id`, and reports duplicate ids. Future content should be added by creating a new JSON file in the appropriate folder rather than editing a master MVP collection file.
 
 ## Architecture Guardrails
 
@@ -49,7 +51,7 @@ The debug HUD is temporary readability instrumentation. It shows resources, heal
 
 ## Content Validation
 
-`ContentDatabase.load_all()` validates loaded garden piece content and duplicate ids in indexed collections. Validation errors are stored in `ContentDatabase.validation_errors` and also emitted through `content_load_failed(path, reason)` so debug scenes or editor tooling can show problems clearly.
+`ContentDatabase.load_all()` validates loaded garden piece content and duplicate ids discovered while scanning content directories. Validation errors are stored in `ContentDatabase.validation_errors` and also emitted through `content_load_failed(path, reason)` so debug scenes or editor tooling can show problems clearly.
 
 Garden piece validation currently checks required fields, allowed categories, and required trigger fields. This validation is intentionally non-blocking for parseable JSON so prototype content can still load while problems are reported. Invalid JSON roots still fail that file load and return an empty collection.
 
@@ -98,7 +100,7 @@ The panel listens to `GardenManager.grid_reset`, `piece_placed`, `piece_removed`
 
 Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, asks `GardenTriggerSystem` for JSON triggers with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.
 
-The current Lantern Lily trigger comes from `game/data/garden_pieces/mvp_garden_pieces.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenTickSystem.process_intervals(delta)` instead of owning production timers.
+The current Lantern Lily trigger comes from `game/data/garden_pieces/lantern_lily.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenTickSystem.process_intervals(delta)` instead of owning production timers.
 
 `GardenTickSystem` owns the interval timer dictionary, timer key generation, and stale timer clearing. It resets timers on `GardenManager.grid_reset` and clears a cell's timers when `GardenManager.piece_placed` or `GardenManager.piece_removed` fires.
 

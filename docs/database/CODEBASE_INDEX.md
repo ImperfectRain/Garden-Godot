@@ -21,11 +21,13 @@ The repo is organized so game code, content data, scenes, art, audio, and docs l
 
 Data should define content identity and tunable behavior. Scripts should read from this folder rather than hardcoding new content.
 
-- `garden_pieces/mvp_garden_pieces.json`: 12 MVP pieces.
-- `resources/mvp_resources.json`: Light, Rot, Blood, Echo definitions.
-- `enemies/mvp_enemies.json`: Drifter, Burrower, Grazer, Hungry Stag definitions.
-- `rooms/mvp_rooms.json`: Meadow, Nursery, Burrow, Reliquary, Boss Grove definitions.
-- `rewards/mvp_reward_pools.json`: reward pools by room/category.
+- `garden_pieces/*.json`: one file per garden piece.
+- `resources/*.json`: one file per resource.
+- `enemies/*.json`: one file per enemy.
+- `rooms/*.json`: one file per room.
+- `rewards/*.json`: one file per reward pool.
+
+Add future content by adding a new JSON file to the appropriate folder. Do not recreate master MVP collection files.
 
 ### `game/scripts/`
 

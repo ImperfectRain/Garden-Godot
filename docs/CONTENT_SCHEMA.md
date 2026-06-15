@@ -4,7 +4,9 @@
 
 Garden pieces are currently defined in:
 
-- `game/data/garden_pieces/mvp_garden_pieces.json`
+- `game/data/garden_pieces/*.json`
+
+Each garden piece should be its own JSON object file named after its stable id, such as `lantern_lily.json`. Add future pieces by adding a new JSON file to the folder, not by editing a master collection file.
 
 Each garden piece should use these fields:
 
@@ -65,11 +67,11 @@ Indexed collections should not contain duplicate `id` values. Duplicate ids are 
 
 Rooms are currently defined in:
 
-- `game/data/rooms/mvp_rooms.json`
+- `game/data/rooms/*.json`
 
 Each room should include a `reward_pool` id. `RewardController` uses that id to look up a pool in:
 
-- `game/data/rewards/mvp_reward_pools.json`
+- `game/data/rewards/*.json`
 
 Reward pools currently use:
 

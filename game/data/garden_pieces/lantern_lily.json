@@ -1,0 +1,54 @@
+{
+    "id":  "lantern_lily",
+    "name":  "Lantern Lily",
+    "category":  "flora",
+    "tags":  [
+                 "plant",
+                 "light",
+                 "bloom",
+                 "starter"
+             ],
+    "simple_description":  "A soft flower that makes Light. Moths love it.",
+    "detail_description":  "Produces 1 Light every 5 seconds. Adjacent Fauna should be prioritized as Light receivers by consuming systems.",
+    "produces":  [
+                     {
+                         "resource":  "light",
+                         "amount":  1,
+                         "interval":  5.0
+                     }
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "interval_light",
+                         "event":  "on_interval",
+                         "action":  "produce_resource",
+                         "resource":  "light",
+                         "amount":  1,
+                         "cooldown":  5.0
+                     }
+                 ],
+    "effects":  [
+
+                ],
+    "likes":  [
+                  "saintmoth",
+                  "mirror_shard",
+                  "bone_trellis"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Feeds Saintmoth",
+                      "Can start the first Bellflower Bloomchain through Saintmoth",
+                      "Can be copied by Mirror Shard"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

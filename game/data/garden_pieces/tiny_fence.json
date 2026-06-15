@@ -1,0 +1,48 @@
+{
+    "id":  "tiny_fence",
+    "name":  "Tiny Fence",
+    "category":  "object",
+    "tags":  [
+                 "object",
+                 "protect",
+                 "stability"
+             ],
+    "simple_description":  "Keeps the garden safe.",
+    "detail_description":  "Reduces corruption or damage to adjacent living pieces. In MVP scaffolding, adjacent Flora production can receive a small tuning bonus.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "protect_adjacent",
+                         "event":  "placement_passive",
+                         "action":  "protect_adjacent_living"
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "protect_adjacent_living",
+                        "production_bonus":  1
+                    }
+                ],
+    "likes":  [
+                  "flora",
+                  "blood_rose",
+                  "saintmoth"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Stabilizes risky gardens",
+                      "Makes defensive objects useful alone"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

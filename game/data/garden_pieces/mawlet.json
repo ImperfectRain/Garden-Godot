@@ -1,0 +1,53 @@
+{
+    "id":  "mawlet",
+    "name":  "Mawlet",
+    "category":  "fauna",
+    "tags":  [
+                 "creature",
+                 "blood",
+                 "repeat"
+             ],
+    "simple_description":  "A small hungry creature that makes the garden act twice.",
+    "detail_description":  "Consumes 2 Blood to repeat the last garden trigger at reduced strength.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+                     {
+                         "resource":  "blood",
+                         "amount":  2
+                     }
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "eat_blood_repeat",
+                         "event":  "resource_available",
+                         "action":  "repeat_last_trigger",
+                         "resource":  "blood",
+                         "cost":  2,
+                         "scalar":  0.5
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "repeat_last_trigger",
+                        "scalar":  0.5
+                    }
+                ],
+    "likes":  [
+                  "blood_rose",
+                  "grave_bell"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Adds controlled repeat power",
+                      "Teaches that repeats need caps"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

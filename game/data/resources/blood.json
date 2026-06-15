@@ -1,0 +1,7 @@
+{
+    "id":  "blood",
+    "name":  "Blood",
+    "plain_description":  "Risk, hunger, aggression, and rough healing.",
+    "technical_description":  "Danger loop input. Produced by Blood Rose and consumed by Mawlet for repeat triggers.",
+    "color":  "#c54855"
+}

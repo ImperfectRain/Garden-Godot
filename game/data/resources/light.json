@@ -1,0 +1,7 @@
+{
+    "id":  "light",
+    "name":  "Light",
+    "plain_description":  "Protection, clarity, moth food, and gentle beams.",
+    "technical_description":  "Primary starter resource. Produced by Lantern Lily, consumed by Saintmoth, and intended for shield-oriented Bloomchains.",
+    "color":  "#ffe89a"
+}

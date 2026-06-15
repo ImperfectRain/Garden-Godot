@@ -1,0 +1,13 @@
+{
+    "id":  "drifter",
+    "name":  "Drifter",
+    "plain_description":  "A slow chaser that teaches movement.",
+    "technical_description":  "Basic enemy archetype. Moves toward the player with low speed and low contact damage.",
+    "health":  20,
+    "speed":  70,
+    "damage":  1,
+    "tags":  [
+                 "basic",
+                 "chaser"
+             ]
+}

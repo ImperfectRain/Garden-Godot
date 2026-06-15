@@ -12,9 +12,9 @@ Owner file: `game/scripts/core/run_manager.gd`
 
 Related data:
 
-- `game/data/rooms/mvp_rooms.json`
-- `game/data/rewards/mvp_reward_pools.json`
-- `game/data/enemies/mvp_enemies.json`
+- `game/data/rooms/*.json`
+- `game/data/rewards/*.json`
+- `game/data/enemies/*.json`
 
 Current planned room order:
 

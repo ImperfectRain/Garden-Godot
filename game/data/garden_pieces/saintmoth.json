@@ -1,0 +1,59 @@
+{
+    "id":  "saintmoth",
+    "name":  "Saintmoth",
+    "category":  "fauna",
+    "tags":  [
+                 "companion",
+                 "heart",
+                 "light",
+                 "shield",
+                 "starter"
+             ],
+    "simple_description":  "Eats Light and protects you.",
+    "detail_description":  "Heart Tile companion. Consumes 2 Light to grant temporary shield. Pulse immediately attempts this effect.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+                     {
+                         "resource":  "light",
+                         "amount":  2
+                     }
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "pulse_shield",
+                         "event":  "on_pulse",
+                         "action":  "grant_player_shield",
+                         "resource":  "light",
+                         "cost":  2,
+                         "amount":  20,
+                         "follow_up_events":  [
+                                                  "garden_woke"
+                                              ]
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "grant_player_shield",
+                        "amount":  20
+                    }
+                ],
+    "likes":  [
+                  "lantern_lily",
+                  "light",
+                  "flora"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Turns Light into safety",
+                      "Makes the first Flora-to-Fauna relationship obvious"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

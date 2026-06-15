@@ -1,0 +1,11 @@
+{
+    "id":  "burrow",
+    "name":  "Burrow",
+    "plain_description":  "A creature-focused room.",
+    "technical_description":  "Fauna reward room. Bias rewards toward Fauna or feeding bonuses.",
+    "reward_pool":  "fauna",
+    "enemy_pool":  [
+                       "burrower",
+                       "drifter"
+                   ]
+}

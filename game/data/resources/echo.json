@@ -1,0 +1,7 @@
+{
+    "id":  "echo",
+    "name":  "Echo",
+    "plain_description":  "Bells, repeats, memory, and chain wakeups.",
+    "technical_description":  "Chain/meta-resource. Produced by Bellflower and stored by Grave Bell.",
+    "color":  "#9fb7ff"
+}

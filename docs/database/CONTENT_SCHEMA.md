@@ -10,12 +10,9 @@ This keeps new Flora, Fauna, Objects, enemies, rooms, and rewards easy to add wi
 
 ### Garden Piece File
 
-Path: `game/data/garden_pieces/mvp_garden_pieces.json`
+Path: `game/data/garden_pieces/*.json`
 
-Root fields:
-
-- `schema_version`: integer schema version.
-- `pieces`: array of garden piece objects.
+Each file should contain one garden piece object and should be named after its stable id, such as `lantern_lily.json`. Add future garden pieces by adding a new JSON file to this folder.
 
 Required garden piece fields:
 
@@ -61,7 +58,9 @@ Reserved actions already present in data for future implementation:
 
 ### Resource File
 
-Path: `game/data/resources/mvp_resources.json`
+Path: `game/data/resources/*.json`
+
+Each file contains one resource object.
 
 Required fields:
 
@@ -73,7 +72,9 @@ Required fields:
 
 ### Enemy File
 
-Path: `game/data/enemies/mvp_enemies.json`
+Path: `game/data/enemies/*.json`
+
+Each file contains one enemy object.
 
 Required fields:
 
@@ -88,7 +89,9 @@ Required fields:
 
 ### Room File
 
-Path: `game/data/rooms/mvp_rooms.json`
+Path: `game/data/rooms/*.json`
+
+Each file contains one room object.
 
 Required fields:
 
@@ -101,7 +104,9 @@ Required fields:
 
 ### Reward Pool File
 
-Path: `game/data/rewards/mvp_reward_pools.json`
+Path: `game/data/rewards/*.json`
+
+Each file contains one reward pool object.
 
 Required fields:
 
@@ -112,7 +117,7 @@ Required fields:
 
 When adding a content entry:
 
-1. Add the JSON object.
+1. Add one new JSON file in the appropriate `game/data` folder.
 2. Keep `id` snake_case and stable.
 3. Include both simple and technical descriptions.
 4. Use existing resource ids unless intentionally adding a new resource.

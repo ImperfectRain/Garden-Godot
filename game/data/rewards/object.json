@@ -1,0 +1,9 @@
+{
+    "id":  "object",
+    "choices":  [
+                    "grave_bell",
+                    "mirror_shard",
+                    "bone_trellis",
+                    "tiny_fence"
+                ]
+}

@@ -1,0 +1,49 @@
+{
+    "id":  "mirror_shard",
+    "name":  "Mirror Shard",
+    "category":  "object",
+    "tags":  [
+                 "object",
+                 "copy",
+                 "repeat"
+             ],
+    "simple_description":  "Copies a faint reflection of the tile across from it.",
+    "detail_description":  "Repeats the output of the opposite tile at reduced strength.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "mirror_opposite",
+                         "event":  "opposite_tile_triggered",
+                         "action":  "copy_output",
+                         "scalar":  0.5
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "copy_output",
+                        "scalar":  0.5
+                    }
+                ],
+    "likes":  [
+                  "lantern_lily",
+                  "grave_bell",
+                  "mawlet"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Makes garden shape matter",
+                      "Teaches capped repeats"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

@@ -1,0 +1,53 @@
+{
+    "id":  "rotling",
+    "name":  "Rotling",
+    "category":  "fauna",
+    "tags":  [
+                 "creature",
+                 "rot",
+                 "summon"
+             ],
+    "simple_description":  "A loyal little thing that eats Rot and spits out helpers.",
+    "detail_description":  "Consumes 2 Rot to spawn a temporary larva helper.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+                     {
+                         "resource":  "rot",
+                         "amount":  2
+                     }
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "eat_rot_spawn_larva",
+                         "event":  "resource_available",
+                         "action":  "spawn_helper",
+                         "resource":  "rot",
+                         "cost":  2,
+                         "amount":  1
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "spawn_helper",
+                        "amount":  1
+                    }
+                ],
+    "likes":  [
+                  "gravecap",
+                  "rot"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Turns Gravecap Rot into field help",
+                      "Can create soft chaos without aiming"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

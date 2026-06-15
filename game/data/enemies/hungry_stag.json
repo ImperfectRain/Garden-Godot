@@ -1,0 +1,14 @@
+{
+    "id":  "hungry_stag",
+    "name":  "The Hungry Stag",
+    "plain_description":  "A slow, readable mini-boss that charges, pauses, and calls Drifters.",
+    "technical_description":  "MVP build check. Needs clear telegraphs, gentle pacing, and summon windows.",
+    "health":  160,
+    "speed":  85,
+    "damage":  2,
+    "tags":  [
+                 "boss",
+                 "charge",
+                 "summoner"
+             ]
+}

@@ -1,0 +1,50 @@
+{
+    "id":  "gravecap",
+    "name":  "Gravecap",
+    "category":  "flora",
+    "tags":  [
+                 "fungus",
+                 "rot",
+                 "corpse"
+             ],
+    "simple_description":  "A mushroom that grows from old things.",
+    "detail_description":  "Produces 1 Rot when an enemy dies near the player or garden influence radius.",
+    "produces":  [
+                     {
+                         "resource":  "rot",
+                         "amount":  1,
+                         "event":  "enemy_died_nearby"
+                     }
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "nearby_death_rot",
+                         "event":  "enemy_died_nearby",
+                         "action":  "produce_resource",
+                         "resource":  "rot",
+                         "amount":  1
+                     }
+                 ],
+    "effects":  [
+
+                ],
+    "likes":  [
+                  "rotling",
+                  "grave_bell"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Feeds Rotling",
+                      "Makes corpse rooms feel useful"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

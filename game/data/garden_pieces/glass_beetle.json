@@ -1,0 +1,49 @@
+{
+    "id":  "glass_beetle",
+    "name":  "Glass Beetle",
+    "category":  "fauna",
+    "tags":  [
+                 "creature",
+                 "carrier",
+                 "resource"
+             ],
+    "simple_description":  "Carries glow from one neighbor to another.",
+    "detail_description":  "Moves 1 resource from one adjacent tile to another adjacent tile that can use it.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "carry_adjacent_resource",
+                         "event":  "resource_available_adjacent",
+                         "action":  "move_resource",
+                         "amount":  1
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "move_resource",
+                        "amount":  1
+                    }
+                ],
+    "likes":  [
+                  "lantern_lily",
+                  "bellflower",
+                  "grave_bell"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Makes adjacency legible",
+                      "Bridges producers and consumers"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

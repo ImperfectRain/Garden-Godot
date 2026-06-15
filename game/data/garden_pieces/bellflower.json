@@ -1,0 +1,51 @@
+{
+    "id":  "bellflower",
+    "name":  "Bellflower",
+    "category":  "flora",
+    "tags":  [
+                 "plant",
+                 "echo",
+                 "bloom"
+             ],
+    "simple_description":  "A little flower that rings when the garden wakes.",
+    "detail_description":  "When the garden wakes from a successful companion Pulse, produces 1 Echo.",
+    "produces":  [
+                     {
+                         "resource":  "echo",
+                         "amount":  1,
+                         "event":  "garden_woke"
+                     }
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "garden_woke_echo",
+                         "event":  "garden_woke",
+                         "action":  "produce_resource",
+                         "resource":  "echo",
+                         "amount":  1
+                     }
+                 ],
+    "effects":  [
+
+                ],
+    "likes":  [
+                  "lantern_lily",
+                  "grave_bell",
+                  "bone_trellis"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Feeds Grave Bell",
+                      "Completes the first Lantern Lily to Saintmoth to Bellflower Bloomchain"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

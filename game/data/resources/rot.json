@@ -1,0 +1,7 @@
+{
+    "id":  "rot",
+    "name":  "Rot",
+    "plain_description":  "Decay, compost, mushrooms, and corpse-fed growth.",
+    "technical_description":  "Corpse/resource loop input. Produced by Gravecap and consumed by Rotling.",
+    "color":  "#8fa35a"
+}

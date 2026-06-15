@@ -1,0 +1,10 @@
+{
+    "id":  "nursery",
+    "name":  "Nursery",
+    "plain_description":  "A plant-focused room.",
+    "technical_description":  "Flora reward room. Bias rewards toward Flora or plant upgrades.",
+    "reward_pool":  "flora",
+    "enemy_pool":  [
+                       "drifter"
+                   ]
+}

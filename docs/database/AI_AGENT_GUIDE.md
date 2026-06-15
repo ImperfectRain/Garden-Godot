@@ -70,7 +70,7 @@ Do not combine multiple roadmap tasks into one commit.
 
 Scope:
 
-- Edit `game/data/garden_pieces/mvp_garden_pieces.json`.
+- Add `game/data/garden_pieces/<id>.json`.
 - If using an existing action, no code changes should be needed.
 - Update `CONTENT_SCHEMA.md` only if schema interpretation changes.
 

@@ -1,0 +1,50 @@
+{
+    "id":  "blood_rose",
+    "name":  "Blood Rose",
+    "category":  "flora",
+    "tags":  [
+                 "plant",
+                 "blood",
+                 "risk"
+             ],
+    "simple_description":  "A thorny flower that drinks danger.",
+    "detail_description":  "Produces 1 Blood when the player takes damage or an enemy dies close to the player.",
+    "produces":  [
+                     {
+                         "resource":  "blood",
+                         "amount":  1,
+                         "event":  "danger"
+                     }
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "danger_blood",
+                         "event":  "player_damaged_or_close_kill",
+                         "action":  "produce_resource",
+                         "resource":  "blood",
+                         "amount":  1
+                     }
+                 ],
+    "effects":  [
+
+                ],
+    "likes":  [
+                  "mawlet",
+                  "tiny_fence"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Feeds Mawlet",
+                      "Rewards risky moments without demanding aggression"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

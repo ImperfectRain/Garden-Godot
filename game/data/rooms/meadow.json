@@ -1,0 +1,11 @@
+{
+    "id":  "meadow",
+    "name":  "Meadow",
+    "plain_description":  "A basic combat room with general rewards.",
+    "technical_description":  "Default room. Use low-stress spawns and broad garden piece reward choices.",
+    "reward_pool":  "general_garden_piece",
+    "enemy_pool":  [
+                       "drifter",
+                       "grazer"
+                   ]
+}

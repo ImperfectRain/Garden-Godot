@@ -1,0 +1,16 @@
+{
+    "id":  "general_garden_piece",
+    "choices":  [
+                    "lantern_lily",
+                    "gravecap",
+                    "blood_rose",
+                    "bellflower",
+                    "rotling",
+                    "mawlet",
+                    "glass_beetle",
+                    "grave_bell",
+                    "mirror_shard",
+                    "bone_trellis",
+                    "tiny_fence"
+                ]
+}

@@ -1,0 +1,58 @@
+{
+    "id":  "grave_bell",
+    "name":  "Grave Bell",
+    "category":  "object",
+    "tags":  [
+                 "object",
+                 "echo",
+                 "store",
+                 "damage"
+             ],
+    "simple_description":  "Rings when enough Echo gathers.",
+    "detail_description":  "Stores Echo. At 3 Echo, rings and damages nearby enemies.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+                     {
+                         "resource":  "echo",
+                         "amount":  3
+                     }
+                 ],
+    "stores":  [
+                   {
+                       "resource":  "echo",
+                       "capacity":  3
+                   }
+               ],
+    "triggers":  [
+                     {
+                         "id":  "echo_ring",
+                         "event":  "stored_resource_threshold",
+                         "action":  "damage_nearby_enemies",
+                         "resource":  "echo",
+                         "threshold":  3,
+                         "amount":  12
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "damage_nearby_enemies",
+                        "amount":  12
+                    }
+                ],
+    "likes":  [
+                  "bellflower",
+                  "gravecap",
+                  "echo"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Pays off Echo chains",
+                      "Gives objects an obvious modifier role"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

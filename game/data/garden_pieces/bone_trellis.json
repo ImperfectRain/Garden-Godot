@@ -1,0 +1,47 @@
+{
+    "id":  "bone_trellis",
+    "name":  "Bone Trellis",
+    "category":  "object",
+    "tags":  [
+                 "object",
+                 "connection",
+                 "flora"
+             ],
+    "simple_description":  "Lets plants share what they grow.",
+    "detail_description":  "Adjacent Flora count as connected for resource sharing.",
+    "produces":  [
+
+                 ],
+    "consumes":  [
+
+                 ],
+    "stores":  [
+
+               ],
+    "triggers":  [
+                     {
+                         "id":  "connect_flora",
+                         "event":  "placement_passive",
+                         "action":  "connect_adjacent_flora"
+                     }
+                 ],
+    "effects":  [
+                    {
+                        "action":  "connect_adjacent_flora"
+                    }
+                ],
+    "likes":  [
+                  "lantern_lily",
+                  "bellflower",
+                  "gravecap"
+              ],
+    "dislikes":  [
+
+                 ],
+    "synergies":  [
+                      "Makes Flora clusters understandable",
+                      "Prepares for chain routing"
+                  ],
+    "visual_asset":  "",
+    "sound_asset":  ""
+}

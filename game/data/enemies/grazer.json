@@ -1,0 +1,13 @@
+{
+    "id":  "grazer",
+    "name":  "Grazer",
+    "plain_description":  "Wanders toward interesting drops and makes the meadow feel alive.",
+    "technical_description":  "Soft-chaos enemy. Wanders and may bias movement toward pickups/resources later.",
+    "health":  14,
+    "speed":  55,
+    "damage":  1,
+    "tags":  [
+                 "wander",
+                 "resource_interest"
+             ]
+}

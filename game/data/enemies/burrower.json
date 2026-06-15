@@ -1,0 +1,13 @@
+{
+    "id":  "burrower",
+    "name":  "Burrower",
+    "plain_description":  "Waits, appears near the player, then creates light pressure.",
+    "technical_description":  "Delayed ambusher. Spawn warning should precede activation.",
+    "health":  16,
+    "speed":  95,
+    "damage":  1,
+    "tags":  [
+                 "ambush",
+                 "pressure"
+             ]
+}

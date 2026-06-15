@@ -171,6 +171,43 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Validate the visual garden panel in Godot and tune its placement/size if it overlaps on target windows.
 
+### 2026-06-15 - data: split content json files
+
+#### Summary
+- Replaced master MVP collection JSON files with one JSON object file per garden piece, resource, enemy, room, and reward pool.
+- Updated `ContentDatabase` to scan content directories recursively and index JSON entries by stable `id`.
+- Kept legacy collection-shaped JSON support in the loader for compatibility, but documented that future content should be added as individual files.
+- Updated active and database documentation to describe the new per-file content workflow.
+
+#### Files Changed
+- `game/scripts/data/content_database.gd`
+- `game/data/garden_pieces/*.json`
+- `game/data/resources/*.json`
+- `game/data/enemies/*.json`
+- `game/data/rooms/*.json`
+- `game/data/rewards/*.json`
+- `docs/CONTENT_SCHEMA.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/database/CONTENT_SCHEMA.md`
+- `docs/database/CODEBASE_INDEX.md`
+- `docs/database/systems/content_database.md`
+- `docs/database/AI_AGENT_GUIDE.md`
+- `docs/database/systems/run_room_system.md`
+- `docs/database/systems/companion_system.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed every JSON file under `game/data` with PowerShell `ConvertFrom-Json`.
+- Confirmed expected split counts: 12 garden pieces, 4 resources, 4 enemies, 5 rooms, and 4 reward pools.
+- Ran a content split validation pass for duplicate ids, id/filename mismatches, garden piece required fields, allowed categories, and trigger `id`/`event`/`action`; it reported 0 errors.
+- Confirmed old master MVP JSON files were removed from `game/data`.
+- Confirmed stale active references to old master JSON paths are gone; remaining matches are historical commit log text only.
+- `where.exe godot` could not find Godot in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add validation for room reward pools, reward choices, resource ids, and enemy ids now that content can scale file-by-file.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary
