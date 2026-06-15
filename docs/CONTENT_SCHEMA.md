@@ -31,6 +31,29 @@ Each garden piece should use these fields:
 - `fauna`
 - `object`
 
+## Garden Piece Validation
+
+`ContentDatabase.load_all()` validates garden pieces after loading JSON. Validation errors are stored in `ContentDatabase.validation_errors` and emitted through `content_load_failed(path, reason)`. Validation reports problems but does not block loading unless a JSON root is invalid.
+
+Required garden piece fields:
+
+- `id`
+- `name`
+- `category`
+- `simple_description`
+- `detail_description`
+- `triggers`
+
+Each `category` must be one of the allowed categories above.
+
+Each trigger entry must include:
+
+- `id`
+- `event`
+- `action`
+
+Indexed collections should not contain duplicate `id` values. Duplicate ids are reported as validation errors and the first loaded entry is kept.
+
 ## Current Resources
 
 - `light`

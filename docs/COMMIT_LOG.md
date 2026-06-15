@@ -42,6 +42,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-14 - architecture: add content validation pass
+
+#### Summary
+- Added `ContentDatabase.validation_errors` and a non-blocking validation pass during `load_all()`.
+- Validates garden piece required fields, allowed categories, and trigger `id`/`event`/`action` fields.
+- Reports duplicate ids in indexed collections through the same validation error path.
+
+#### Files Changed
+- `game/scripts/data/content_database.gd`
+- `docs/CONTENT_SCHEMA.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed all MVP JSON data files with PowerShell `ConvertFrom-Json`.
+- Ran a PowerShell mirror of the garden piece validation rules against `mvp_garden_pieces.json`; it reported 0 errors.
+- Confirmed validation storage, duplicate-id reporting, and garden-piece validation references exist in `ContentDatabase` and docs.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Surface content validation errors in a debug/editor-facing view if needed.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary

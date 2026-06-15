@@ -39,6 +39,12 @@ The debug HUD is temporary readability instrumentation. It shows resources, heal
 - `game/data/rooms/mvp_rooms.json`
 - `game/data/rewards/mvp_reward_pools.json`
 
+## Content Validation
+
+`ContentDatabase.load_all()` validates loaded garden piece content and duplicate ids in indexed collections. Validation errors are stored in `ContentDatabase.validation_errors` and also emitted through `content_load_failed(path, reason)` so debug scenes or editor tooling can show problems clearly.
+
+Garden piece validation currently checks required fields, allowed categories, and required trigger fields. This validation is intentionally non-blocking for parseable JSON so prototype content can still load while problems are reported. Invalid JSON roots still fail that file load and return an empty collection.
+
 ## MVP Enemy Behavior
 
 The first fun test includes one `Drifter` enemy from `res://game/scenes/enemies/drifter.tscn`. It is a slow `CharacterBody2D` that moves toward the player and applies contact damage through `PlayerController.take_damage()`.
