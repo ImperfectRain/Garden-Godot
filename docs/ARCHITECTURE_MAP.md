@@ -50,7 +50,8 @@ Current room/reward flow:
 10. `RewardController` asks `GardenManager` to place the piece in the first empty non-heart cell.
 11. `RewardController` emits reward claimed or failed.
 12. `FirstFunTest` completes the room after a successful reward claim.
-13. `DebugHUD` owns the temporary display refresh and event log.
+13. `DebugHUD` owns the temporary text display refresh and event log.
+14. `GardenGridPanel` owns the temporary visual 3x3 garden display.
 
 ## Current Files and Responsibilities
 
@@ -159,6 +160,13 @@ Current room/reward flow:
 - Reads player state and debug global singletons for display only.
 - Does not own gameplay rules.
 
+### `game/scripts/ui/garden_grid_panel.gd`
+
+- Owns the temporary visual 3x3 garden grid display.
+- Shows empty cells, placed pieces, simple category distinction, and the Heart Tile.
+- Listens to garden placement/reset/trigger signals and refreshes display state.
+- Does not own placement, trigger, or garden effect rules.
+
 ### `game/scripts/core/first_fun_test.gd`
 
 - Temporary debug scene glue.
@@ -177,6 +185,7 @@ Current room/reward flow:
 - `SimpleRoomController` owns temporary room timing, reward readiness, and objective text.
 - `RewardController` owns temporary reward availability, reward pool lookup, reward panel show/hide, selection handling, and first-empty-cell placement.
 - `DebugHUD` owns temporary debug UI, display refresh, room status text, and event log.
+- `GardenGridPanel` owns temporary garden display state and trigger feedback.
 - `Bloomchains` records chains and directly calls `JournalManager`.
 - Resource provenance is global per resource type rather than per produced resource unit.
 - `DebugHUD` is still temporary and debug-only, but it now owns the first fun test display text and event log.
@@ -251,6 +260,12 @@ Current room/reward flow:
 - Own temporary debug display and event log.
 - Observe system signals instead of owning gameplay rules.
 - Current implementation receives high-level updates from `FirstFunTest` and reads debug-only singleton state for display.
+
+### `GardenGridPanel`
+
+- Own temporary visual garden display.
+- Observe garden state and trigger signals.
+- Avoid owning placement rules, reward rules, trigger lookup, or effect logic.
 
 ### `FirstFunTest`
 

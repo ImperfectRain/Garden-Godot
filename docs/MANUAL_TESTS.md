@@ -24,8 +24,12 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 ## Garden Placement
 
+- [ ] Confirm the visual Garden panel shows a 3x3 grid.
+- [ ] Confirm Saintmoth appears in the visually distinct Heart Tile.
+- [ ] Confirm Lantern Lily appears in its starting cell.
 - [ ] Confirm the reward panel appears after the survival room timer completes.
 - [ ] Confirm selecting a reward places the chosen piece into the garden.
+- [ ] Confirm the visual Garden panel updates after reward placement.
 - [ ] Confirm the Heart Tile cannot be overwritten.
 - [ ] Confirm occupied cells reject placement.
 - [ ] Confirm garden debug rows update after placement.
@@ -35,6 +39,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Choose Bellflower from the reward panel.
 - [ ] Wait until Lantern Lily has produced at least 2 Light.
 - [ ] Press Space to Pulse Saintmoth.
+- [ ] Confirm triggered garden cells briefly flash or show an event marker in the visual Garden panel.
 - [ ] Confirm the Bloomchain reaches length 3: Lantern Lily -> Saintmoth -> Bellflower.
 - [ ] Wait for the short chain finalization timeout.
 - [ ] Confirm the finalized Bloomchain appears in the debug UI.

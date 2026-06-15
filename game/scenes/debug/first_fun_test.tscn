@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://first_fun_test"]
+[gd_scene load_steps=9 format=3 uid="uid://first_fun_test"]
 
 [ext_resource type="Script" path="res://game/scripts/core/first_fun_test.gd" id="1"]
 [ext_resource type="Script" path="res://game/scripts/player/player_controller.gd" id="2"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://game/scenes/ui/reward_choice_panel.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://game/scenes/ui/debug_hud.tscn" id="6"]
 [ext_resource type="Script" path="res://game/scripts/player/player_visual_feedback.gd" id="7"]
+[ext_resource type="PackedScene" path="res://game/scenes/ui/garden_grid_panel.tscn" id="8"]
 
 [node name="FirstFunTest" type="Node2D"]
 script = ExtResource("1")
@@ -50,5 +51,7 @@ player_path = NodePath("../Player")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="DebugHUD" parent="CanvasLayer" instance=ExtResource("6")]
+
+[node name="GardenGridPanel" parent="CanvasLayer" instance=ExtResource("8")]
 
 [node name="RewardChoicePanel" parent="CanvasLayer" instance=ExtResource("5")]

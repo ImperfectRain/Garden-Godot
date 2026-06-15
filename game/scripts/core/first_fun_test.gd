@@ -5,6 +5,7 @@ const RewardControllerScript := preload("res://game/scripts/core/reward_controll
 
 @onready var player := $Player
 @onready var debug_hud := $CanvasLayer/DebugHUD
+@onready var garden_grid_panel := $CanvasLayer/GardenGridPanel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 
 var _last_health := 0
@@ -146,6 +147,7 @@ func _refresh_debug() -> void:
 	var room_id := RunManager.get_current_room_id()
 	debug_hud.set_room_info(room_id, RunManager.get_completed_room_count(), _room_controller.get_objective_text())
 	debug_hud.refresh()
+	garden_grid_panel.refresh()
 
 
 func _get_piece_name(piece_id: String) -> String:

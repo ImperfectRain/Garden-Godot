@@ -142,6 +142,35 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Continue extracting low-level trigger request application out of `GardenManager` when ready.
 
+### 2026-06-14 - mvp: add basic garden grid ui
+
+#### Summary
+- Added a temporary `GardenGridPanel` scene and script showing the 3x3 garden visually.
+- Displays empty cells, piece names, simple category colors, and a distinct Heart Tile.
+- Added signal-driven refreshes for grid reset, placement, removal, and trigger flash feedback.
+- Instanced the panel in the first fun test while preserving existing debug text rows.
+
+#### Files Changed
+- `game/scenes/ui/garden_grid_panel.tscn`
+- `game/scripts/ui/garden_grid_panel.gd`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed all MVP JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed `first_fun_test.tscn` instances `res://game/scenes/ui/garden_grid_panel.tscn`.
+- Confirmed the panel connects to `GardenManager` grid reset, placement, removal, and trigger signals.
+- Confirmed manual tests now cover the visual 3x3 grid, Heart Tile, placement updates, and trigger feedback.
+- `where.exe godot` could not find Godot in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Validate the visual garden panel in Godot and tune its placement/size if it overlaps on target windows.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary

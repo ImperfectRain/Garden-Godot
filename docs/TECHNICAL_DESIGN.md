@@ -88,6 +88,12 @@ For now, reward selection uses the first three available piece ids from the room
 
 The HUD may read current resources and garden rows from global singletons for debug display only. Do not use it as a gameplay dependency.
 
+## Garden Grid Panel
+
+`GardenGridPanel` lives at `res://game/scenes/ui/garden_grid_panel.tscn` with script `game/scripts/ui/garden_grid_panel.gd`. It is a temporary prototype UI that shows the current 3x3 garden as cells with text labels, simple category colors, and a distinct Heart Tile.
+
+The panel listens to `GardenManager.grid_reset`, `piece_placed`, `piece_removed`, and `piece_triggered`. Placement signals refresh the grid, and trigger signals briefly flash the triggered cell with an event marker. The text debug rows still exist for now; this panel is only the first readable visual garden UI, not the final garden screen.
+
 ## Garden Interval Ticking
 
 Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, asks `GardenTriggerSystem` for JSON triggers with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.
