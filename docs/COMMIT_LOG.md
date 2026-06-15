@@ -92,6 +92,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add validation for room `reward_pool` ids and reward pool `choices` once content validation expands beyond garden pieces.
 
+### 2026-06-14 - mvp: add visible shield feedback
+
+#### Summary
+- Added a placeholder player shield ring that appears when shield is active and hides when shield reaches 0.
+- Kept shield state in `PlayerController` and moved shield presentation into `PlayerVisualFeedback`.
+- Updated the first fun test scene to attach the visual feedback node to the player.
+- Added manual test checks for visible shield feedback.
+
+#### Files Changed
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/player/player_controller.gd`
+- `game/scripts/player/player_visual_feedback.gd`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed all MVP JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed `first_fun_test.tscn` references `PlayerVisualFeedback` under the `Player` node.
+- Confirmed `PlayerVisualFeedback` listens to `shield_changed`, draws a placeholder ring, hides at 0 shield, and pulses on shield gain.
+- Confirmed manual tests now check visible shield appearance and disappearance.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add a lightweight player damage flash or shield-hit pulse once combat feedback needs more clarity.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary

@@ -10,6 +10,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm Lantern Lily produces Light after roughly 5 seconds.
 - [ ] Confirm pressing Space with less than 2 Light fails clearly in the debug log.
 - [ ] Confirm pressing Space with 2 or more Light grants shield.
+- [ ] Confirm a visible blue placeholder shield ring appears around the player when shield is active.
 - [ ] Confirm Light is spent when Saintmoth grants shield.
 - [ ] Confirm the debug UI updates resources, health, shield, garden rows, status, and event log.
 
@@ -17,6 +18,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 - [ ] Confirm the Drifter slowly follows the player.
 - [ ] Confirm Drifter contact damage reduces shield before health.
+- [ ] Confirm the visible shield ring disappears when shield reaches 0.
 - [ ] Confirm Drifter contact damage reduces health after shield is gone.
 - [ ] Confirm player defeat is visible through the debug status or defeat signal behavior.
 

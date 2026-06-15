@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 signal health_changed(health: int, max_health: int)
+# Visual and debug feedback should listen to this instead of owning shield state.
 signal shield_changed(shield: int)
 signal player_defeated
 
