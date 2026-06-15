@@ -140,6 +140,7 @@ func as_debug_rows() -> Array[String]:
 
 
 func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary = {}) -> bool:
+	# Temporary bridge: keep new action mechanics in GardenEffectResolver, not here.
 	var action := str(trigger.get("action", ""))
 	var trigger_context := _build_trigger_context(piece_id, trigger, context)
 	var effect_result := {}

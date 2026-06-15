@@ -118,6 +118,30 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add a lightweight player damage flash or shield-hit pulse once combat feedback needs more clarity.
 
+### 2026-06-14 - architecture: add system guardrails
+
+#### Summary
+- Confirmed obsolete interval production helpers are no longer present in `GardenManager`.
+- Added a concise code guardrail at the remaining `GardenManager` trigger application bridge.
+- Updated architecture docs to clarify where new effects, interval timing, UI wiring, combat events, and reward choices belong.
+- Corrected stale reward responsibility notes after the data-driven reward refactor.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed all MVP JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed `produce_from_intervals` is not present and `GardenManager` no longer owns interval processing.
+- Confirmed stale hardcoded reward responsibility text was removed from architecture docs.
+- Confirmed `where.exe godot` could not find Godot in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Continue extracting low-level trigger request application out of `GardenManager` when ready.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary

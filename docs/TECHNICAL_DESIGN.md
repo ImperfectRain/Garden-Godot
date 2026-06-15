@@ -39,6 +39,14 @@ The debug HUD is temporary readability instrumentation. It shows resources, heal
 - `game/data/rooms/mvp_rooms.json`
 - `game/data/rewards/mvp_reward_pools.json`
 
+## Architecture Guardrails
+
+- `GardenManager` owns grid state and current trigger bookkeeping; new gameplay action mechanics should go in `GardenEffectResolver`.
+- `GardenTickSystem` owns cooldown timing only; it should not spend resources, grant shields, damage enemies, or apply other gameplay effects directly.
+- `GardenEffectResolver` applies data-defined effects and may emit generic system events, but it should not know about `FirstFunTest`, `DebugHUD`, reward panels, or other UI scenes.
+- `FirstFunTest` is debug-only scene glue. It may wire prototype systems together, but reusable gameplay rules should move into focused systems.
+- Reward choices should come from room data and reward pools, not scene or panel hardcoding.
+
 ## Content Validation
 
 `ContentDatabase.load_all()` validates loaded garden piece content and duplicate ids in indexed collections. Validation errors are stored in `ContentDatabase.validation_errors` and also emitted through `content_load_failed(path, reason)` so debug scenes or editor tooling can show problems clearly.

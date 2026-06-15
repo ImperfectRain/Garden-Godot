@@ -44,12 +44,13 @@ Current room/reward flow:
 4. `FirstFunTest` updates `DebugHUD` with room status and event messages.
 5. When the timer completes, `SimpleRoomController` emits `reward_ready`.
 6. `FirstFunTest` asks `RewardController` to show rewards.
-7. `RewardController` shows `RewardChoicePanel`.
-8. `RewardChoicePanel` emits a selected piece id.
-9. `RewardController` asks `GardenManager` to place the piece in the first empty non-heart cell.
-10. `RewardController` emits reward claimed or failed.
-11. `FirstFunTest` completes the room after a successful reward claim.
-12. `DebugHUD` owns the temporary display refresh and event log.
+7. `RewardController` resolves the room's `reward_pool` through `ContentDatabase`.
+8. `RewardController` gives the first three available reward ids to `RewardChoicePanel`.
+9. `RewardChoicePanel` emits a selected piece id.
+10. `RewardController` asks `GardenManager` to place the piece in the first empty non-heart cell.
+11. `RewardController` emits reward claimed or failed.
+12. `FirstFunTest` completes the room after a successful reward claim.
+13. `DebugHUD` owns the temporary display refresh and event log.
 
 ## Current Files and Responsibilities
 
@@ -146,7 +147,7 @@ Current room/reward flow:
 
 ### `game/scripts/ui/reward_choice_panel.gd`
 
-- Presents three hardcoded reward choices.
+- Presents reward choices supplied by `RewardController`.
 - Displays name, category, and simple description.
 - Emits `reward_selected`.
 - Does not place rewards or decide whether a reward is currently available.
@@ -174,10 +175,9 @@ Current room/reward flow:
 - Effect resolution is partially migrated: `produce_resource` and `grant_player_shield` live in `GardenEffectResolver`, while unsupported actions still fail.
 - `first_fun_test.gd` owns run start and prototype wiring.
 - `SimpleRoomController` owns temporary room timing, reward readiness, and objective text.
-- `RewardController` owns temporary reward availability, reward panel show/hide, selection handling, and first-empty-cell placement.
+- `RewardController` owns temporary reward availability, reward pool lookup, reward panel show/hide, selection handling, and first-empty-cell placement.
 - `DebugHUD` owns temporary debug UI, display refresh, room status text, and event log.
 - `Bloomchains` records chains and directly calls `JournalManager`.
-- Reward choices are hardcoded in `RewardChoicePanel`.
 - Resource provenance is global per resource type rather than per produced resource unit.
 - `DebugHUD` is still temporary and debug-only, but it now owns the first fun test display text and event log.
 
@@ -187,12 +187,14 @@ Current room/reward flow:
 
 - Own grid state, placement, cell lookup, and garden-level events only.
 - Avoid directly applying gameplay effects long-term.
+- New effect actions belong in `GardenEffectResolver`, not in `GardenManager`.
 
 ### `GardenTickSystem`
 
 - Own interval and cooldown ticking for garden pieces.
 - Read timing from content data.
 - Produce trigger requests instead of applying effects directly.
+- Do not spend resources, grant shields, damage enemies, or mutate gameplay effects here.
 - Current implementation owns timers, asks `GardenTriggerSystem` for interval matches, and delegates completed trigger application back to `GardenManager`.
 
 ### `GardenTriggerSystem`
@@ -207,6 +209,7 @@ Current room/reward flow:
 - Own generic action application for data-defined effects.
 - Emit effect results for resources, combat, spawning, chain tracking, and UI consumers.
 - Avoid knowing about specific debug scenes.
+- Do not call `FirstFunTest`, `DebugHUD`, reward panels, or other UI scenes directly.
 - Currently owns `produce_resource` and `grant_player_shield`; future tasks should move one additional action at a time.
 
 ### `CombatEvents`
@@ -253,6 +256,7 @@ Current room/reward flow:
 
 - Remain temporary debug scene glue only.
 - Wire prototype presentation, not permanent gameplay rules.
+- Do not add reusable gameplay mechanics here; create or extend a system instead.
 - Forward display state to `DebugHUD` instead of composing HUD text directly.
 - Start reward flow through `RewardController` instead of placing rewards directly.
 - React to room and reward result signals instead of owning their internal state.
@@ -266,6 +270,9 @@ Current room/reward flow:
 - Keep data definitions stable unless the task is explicitly schema/content work.
 - Update `docs/TECHNICAL_DESIGN.md`, `docs/ARCHITECTURE_MAP.md`, `docs/CONTENT_SCHEMA.md`, `docs/MANUAL_TESTS.md`, and `docs/COMMIT_LOG.md` when relevant.
 - Prefer generic systems that can support future Flora, Fauna, Objects, companions, enemies, rooms, and effects.
+- Do not hardcode a mechanic to a specific piece id unless the task explicitly says it is temporary debug wiring.
+- Do not reintroduce scene-specific combat effect application; route combat-facing effects through `CombatEvents`.
+- Do not reintroduce scene-owned reward choices; route rewards through room data and reward pools.
 
 ## Do Not Do Yet
 
