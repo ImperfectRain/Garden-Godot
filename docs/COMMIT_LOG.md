@@ -264,6 +264,33 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Move reward choice flow out of `FirstFunTest` into a small reward controller scaffold.
 
+### 2026-06-14 - architecture: extract reward controller
+
+#### Summary
+- Added a temporary `RewardController` for reward availability, panel show/hide, selection handling, first-empty-cell placement, and reward result signals.
+- Kept hardcoded reward choices in `RewardChoicePanel`.
+- Removed detailed reward placement logic from `FirstFunTest`.
+
+#### Files Changed
+- `game/scripts/core/reward_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/ui/reward_choice_panel.gd`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git status` showed only RewardController, FirstFunTest, RewardChoicePanel, and requested docs files modified or added.
+- `git diff --check` passed.
+- MVP JSON files parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed `FirstFunTest` no longer connects directly to `RewardChoicePanel.reward_selected`.
+- Confirmed `FirstFunTest` no longer calls `GardenManager.place_piece_in_first_empty_cell()`.
+- Confirmed `RewardController` owns reward availability, panel show/hide, selected reward handling, first-empty-cell placement, and reward result signals.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Move room objective ownership out of `FirstFunTest` into a small room controller node or scene-facing coordinator.
+
 ### 2026-06-14 - architecture: document current responsibilities
 
 #### Summary

@@ -55,7 +55,9 @@ When the timer completes, the reward choice panel appears. After the player choo
 
 The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It shows three hardcoded MVP rewards, displays each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.
 
-Selection currently calls `GardenManager.place_piece_in_first_empty_cell(piece_id)` and auto-places the reward into the first empty non-heart garden cell. This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, drag-and-drop garden UI, or polished reward screen.
+`RewardController` lives at `game/scripts/core/reward_controller.gd`. It tracks whether a reward is currently available, shows or hides the reward panel, receives selected reward ids, places the reward through `GardenManager.place_piece_in_first_empty_cell(piece_id)`, and emits reward claim or failure results back to the scene.
+
+This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, reward pool resolver, drag-and-drop garden UI, or polished reward screen. Hardcoded reward choices still live in `RewardChoicePanel` for now.
 
 ## Debug HUD
 

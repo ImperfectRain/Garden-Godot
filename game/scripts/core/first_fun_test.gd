@@ -1,6 +1,7 @@
 extends Node2D
 
 const SimpleRoomControllerScript := preload("res://game/scripts/core/simple_room_controller.gd")
+const RewardControllerScript := preload("res://game/scripts/core/reward_controller.gd")
 
 @onready var player := $Player
 @onready var debug_hud := $CanvasLayer/DebugHUD
@@ -10,9 +11,8 @@ const ROOM_SURVIVAL_SECONDS := 30.0
 
 var _last_health := 0
 var _last_shield := 0
-var _reward_has_been_claimed := false
 var _room_controller := SimpleRoomControllerScript.new()
-var _room_reward_ready := false
+var _reward_controller := RewardControllerScript.new()
 
 
 func _ready() -> void:
@@ -29,14 +29,15 @@ func _ready() -> void:
 	GardenManager.piece_placed.connect(_on_piece_placed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
 	Bloomchains.chain_finished.connect(_on_bloomchain_finished)
-	reward_choice_panel.reward_selected.connect(_on_reward_selected)
+	_reward_controller.setup(reward_choice_panel)
+	_reward_controller.reward_claimed.connect(_on_reward_claimed)
+	_reward_controller.reward_failed.connect(_on_reward_failed)
 	_last_health = player.health
 	_last_shield = player.shield
 	debug_hud.add_event("Lantern Lily produces +1 Light every 5 seconds.")
 	debug_hud.add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
 	debug_hud.add_event("Room started: %s." % RunManager.get_current_room_id())
 	debug_hud.add_event("Survive 30 seconds, then choose Bellflower with 2.")
-	reward_choice_panel.hide()
 	_room_controller.start(ROOM_SURVIVAL_SECONDS)
 	_refresh_debug()
 
@@ -64,19 +65,15 @@ func _on_piece_placed(cell: Vector2i, piece_id: String) -> void:
 	_refresh_debug()
 
 
-func _on_reward_selected(piece_id: String) -> void:
-	if _reward_has_been_claimed or not _room_reward_ready:
-		return
-	var placed_cell := GardenManager.place_piece_in_first_empty_cell(piece_id)
-	if placed_cell == Vector2i(-1, -1):
-		debug_hud.add_event("No empty garden cell for %s." % _get_piece_name(piece_id))
-		_refresh_debug()
-		return
-	_reward_has_been_claimed = true
-	reward_choice_panel.hide()
+func _on_reward_claimed(piece_id: String, _cell: Vector2i) -> void:
 	debug_hud.set_status("Reward placed: %s" % _get_piece_name(piece_id))
 	RunManager.complete_current_room()
 	debug_hud.add_event("Room complete. Advanced to %s." % RunManager.get_current_room_id())
+	_refresh_debug()
+
+
+func _on_reward_failed(piece_id: String, reason: String) -> void:
+	debug_hud.add_event("%s for %s." % [reason, _get_piece_name(piece_id)])
 	_refresh_debug()
 
 
@@ -131,18 +128,24 @@ func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
 
 
 func _on_room_survival_complete() -> void:
-	_room_reward_ready = true
 	debug_hud.set_status("Room survived - choose a reward")
 	debug_hud.add_event("Meadow survived. Choose one reward with 1, 2, or 3.")
-	reward_choice_panel.show()
+	_reward_controller.show_rewards()
 	_refresh_debug()
 
 
 func _refresh_debug() -> void:
 	var room_id := RunManager.get_current_room_id()
-	var room_timer := "Reward ready" if _room_reward_ready else "%.1fs" % _room_controller.get_remaining_seconds()
-	debug_hud.set_room_info(room_id, RunManager.get_completed_room_count(), "survive %s" % room_timer)
+	debug_hud.set_room_info(room_id, RunManager.get_completed_room_count(), _get_room_objective_text())
 	debug_hud.refresh()
+
+
+func _get_room_objective_text() -> String:
+	if _reward_controller.is_reward_available:
+		return "Reward ready"
+	if _reward_controller.has_claimed_reward():
+		return "Reward claimed"
+	return "survive %.1fs" % _room_controller.get_remaining_seconds()
 
 
 func _get_piece_name(piece_id: String) -> String:

@@ -41,11 +41,13 @@ Current room/reward flow:
 1. `FirstFunTest` starts `RunManager`.
 2. `FirstFunTest` starts `SimpleRoomController` for a 30-second survival timer.
 3. `FirstFunTest` updates `DebugHUD` with room status and event messages.
-4. When the timer completes, `FirstFunTest` shows `RewardChoicePanel`.
-5. `RewardChoicePanel` emits a selected piece id.
-6. `FirstFunTest` asks `GardenManager` to place the piece in the first empty non-heart cell.
-7. `FirstFunTest` calls `RunManager.complete_current_room()`.
-8. `DebugHUD` owns the temporary display refresh and event log.
+4. When the timer completes, `FirstFunTest` asks `RewardController` to show rewards.
+5. `RewardController` shows `RewardChoicePanel`.
+6. `RewardChoicePanel` emits a selected piece id.
+7. `RewardController` asks `GardenManager` to place the piece in the first empty non-heart cell.
+8. `RewardController` emits reward claimed or failed.
+9. `FirstFunTest` completes the room after a successful reward claim.
+10. `DebugHUD` owns the temporary display refresh and event log.
 
 ## Current Files and Responsibilities
 
@@ -129,11 +131,20 @@ Current room/reward flow:
 - Owns the temporary first-fun-test survival timer.
 - Reports when the survival objective completes.
 
+### `game/scripts/core/reward_controller.gd`
+
+- Owns temporary reward availability for the first fun test.
+- Shows and hides the reward panel through a small API.
+- Receives selected reward ids from `RewardChoicePanel`.
+- Places selected rewards through `GardenManager.place_piece_in_first_empty_cell()`.
+- Emits `reward_claimed` or `reward_failed` results.
+
 ### `game/scripts/ui/reward_choice_panel.gd`
 
 - Presents three hardcoded reward choices.
 - Displays name, category, and simple description.
 - Emits `reward_selected`.
+- Does not place rewards or decide whether a reward is currently available.
 
 ### `game/scripts/ui/debug_hud.gd`
 
@@ -146,7 +157,8 @@ Current room/reward flow:
 
 - Temporary debug scene glue.
 - Starts the run and room timer.
-- Wires reward selection to garden placement.
+- Starts the reward flow when the survival room completes.
+- Completes the room after `RewardController` reports a successful reward claim.
 - Sends high-level status, room info, Bloomchain, and event messages to `DebugHUD`.
 
 ## Responsibility Problems
@@ -155,7 +167,8 @@ Current room/reward flow:
 - `GardenTickSystem` owns interval ticking, but it still asks `GardenManager` to apply completed triggers.
 - `GardenTriggerSystem` owns event-to-trigger lookup, but `GardenManager` still owns low-level trigger application and follow-up event handoff.
 - Effect resolution is partially migrated: `produce_resource` and `grant_player_shield` live in `GardenEffectResolver`, while unsupported actions still fail.
-- `first_fun_test.gd` owns room timing, rewards, run start, and prototype wiring.
+- `first_fun_test.gd` owns room timing, run start, and prototype wiring.
+- `RewardController` owns temporary reward availability, reward panel show/hide, selection handling, and first-empty-cell placement.
 - `DebugHUD` owns temporary debug UI, display refresh, room status text, and event log.
 - `Bloomchains` records chains and directly calls `JournalManager`.
 - Reward choices are hardcoded in `RewardChoicePanel`.
@@ -216,6 +229,7 @@ Current room/reward flow:
 
 - Own reward selection flow and reward pool resolution.
 - Keep reward presentation separate in `RewardChoicePanel`.
+- Current implementation owns reward availability and placement, but hardcoded choices remain in `RewardChoicePanel`.
 
 ### `RewardChoicePanel`
 
@@ -233,6 +247,7 @@ Current room/reward flow:
 - Remain temporary debug scene glue only.
 - Wire prototype presentation, not permanent gameplay rules.
 - Forward display state to `DebugHUD` instead of composing HUD text directly.
+- Start reward flow through `RewardController` instead of placing rewards directly.
 
 ## Refactor Rules
 

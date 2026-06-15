@@ -11,6 +11,14 @@ func _ready() -> void:
 	_build_choices()
 
 
+func show_rewards() -> void:
+	show()
+
+
+func hide_rewards() -> void:
+	hide()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or (event is InputEventKey) == false or not event.is_pressed():
 		return
