@@ -61,6 +61,23 @@ Indexed collections should not contain duplicate `id` values. Duplicate ids are 
 - `blood`
 - `echo`
 
+## Room Reward Pools
+
+Rooms are currently defined in:
+
+- `game/data/rooms/mvp_rooms.json`
+
+Each room should include a `reward_pool` id. `RewardController` uses that id to look up a pool in:
+
+- `game/data/rewards/mvp_reward_pools.json`
+
+Reward pools currently use:
+
+- `id`: stable pool identifier.
+- `choices`: ordered list of garden piece ids.
+
+The first fun test currently takes the first three available choices from the room's pool and skips pieces already placed in the garden. This is deterministic MVP behavior, not the final weighted or random reward resolver.
+
 ## Trigger Fields
 
 Trigger entries currently support:

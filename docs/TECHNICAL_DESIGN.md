@@ -68,11 +68,11 @@ Player defeat calls `SimpleRoomController.stop()`, preventing the room timer fro
 
 ## Reward Choice Scaffold
 
-The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It shows three hardcoded MVP rewards, displays each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.
+The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It displays the reward ids it is given, looks up each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.
 
-`RewardController` lives at `game/scripts/core/reward_controller.gd`. It tracks whether a reward is currently available, shows or hides the reward panel, receives selected reward ids, places the reward through `GardenManager.place_piece_in_first_empty_cell(piece_id)`, and emits reward claim or failure results back to the scene.
+`RewardController` lives at `game/scripts/core/reward_controller.gd`. It tracks whether a reward is currently available, resolves the current room's `reward_pool` through `ContentDatabase.get_room(room_id)` and `ContentDatabase.get_reward_pool(pool_id)`, passes reward ids to `RewardChoicePanel.set_rewards(piece_ids)`, receives selected reward ids, places the reward through `GardenManager.place_piece_in_first_empty_cell(piece_id)`, and emits reward claim or failure results back to the scene.
 
-This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, reward pool resolver, drag-and-drop garden UI, or polished reward screen. Hardcoded reward choices still live in `RewardChoicePanel` for now.
+For now, reward selection uses the first three available piece ids from the room's pool, skipping pieces already placed in the garden. This keeps the Meadow room data-driven through `general_garden_piece` while still offering useful new pieces. This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, weighted reward resolver, drag-and-drop garden UI, or polished reward screen.
 
 ## Debug HUD
 

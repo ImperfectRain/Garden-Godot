@@ -2,13 +2,19 @@ extends PanelContainer
 
 signal reward_selected(piece_id: String)
 
-@export var reward_piece_ids: Array[String] = ["gravecap", "bellflower", "grave_bell"]
-
 @onready var choices_box := $MarginContainer/VBoxContainer/Choices
+
+var reward_piece_ids: Array[String] = []
 
 
 func _ready() -> void:
 	_build_choices()
+
+
+func set_rewards(piece_ids: Array[String]) -> void:
+	reward_piece_ids = piece_ids.duplicate()
+	if choices_box != null:
+		_build_choices()
 
 
 func show_rewards() -> void:

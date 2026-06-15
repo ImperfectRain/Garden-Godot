@@ -36,7 +36,7 @@ func _ready() -> void:
 	_last_shield = player.shield
 	debug_hud.add_event("Lantern Lily produces +1 Light every 5 seconds.")
 	debug_hud.add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
-	debug_hud.add_event("Survive 30 seconds, then choose Bellflower with 2.")
+	debug_hud.add_event("Survive 30 seconds, then choose a garden reward.")
 	_room_controller.start(RunManager.get_current_room_id())
 	_refresh_debug()
 
@@ -72,6 +72,10 @@ func _on_reward_claimed(piece_id: String, _cell: Vector2i) -> void:
 
 
 func _on_reward_failed(piece_id: String, reason: String) -> void:
+	if piece_id.is_empty():
+		debug_hud.add_event(reason)
+		_refresh_debug()
+		return
 	debug_hud.add_event("%s for %s." % [reason, _get_piece_name(piece_id)])
 	_refresh_debug()
 
@@ -131,10 +135,10 @@ func _on_room_started(room_id: String) -> void:
 	_refresh_debug()
 
 
-func _on_room_reward_ready(_room_id: String) -> void:
+func _on_room_reward_ready(room_id: String) -> void:
 	debug_hud.set_status("Room survived - choose a reward")
 	debug_hud.add_event("Meadow survived. Choose one reward with 1, 2, or 3.")
-	_reward_controller.show_rewards()
+	_reward_controller.show_rewards_for_room(room_id)
 	_refresh_debug()
 
 

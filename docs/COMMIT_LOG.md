@@ -65,6 +65,33 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Surface content validation errors in a debug/editor-facing view if needed.
 
+### 2026-06-14 - architecture: make rewards data driven
+
+#### Summary
+- Removed hardcoded default gameplay reward choices from `RewardChoicePanel`.
+- Added `RewardChoicePanel.set_rewards(piece_ids)` so the panel displays controller-provided rewards.
+- Updated `RewardController` to resolve the current room's reward pool from `ContentDatabase` and choose the first three available rewards.
+- Updated `FirstFunTest` to request rewards by room id when the room controller reports reward readiness.
+
+#### Files Changed
+- `game/scripts/ui/reward_choice_panel.gd`
+- `game/scripts/core/reward_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/CONTENT_SCHEMA.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Parsed all MVP JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed the old hardcoded reward list is no longer present in gameplay scripts.
+- Simulated Meadow reward lookup from `mvp_rooms.json` and `mvp_reward_pools.json` with existing starting garden pieces skipped; the first three rewards are `gravecap`, `blood_rose`, and `bellflower`.
+- Confirmed `FirstFunTest` now requests rewards through `RewardController.show_rewards_for_room(room_id)`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add validation for room `reward_pool` ids and reward pool `choices` once content validation expands beyond garden pieces.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary
