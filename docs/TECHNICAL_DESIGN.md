@@ -169,6 +169,15 @@ Likely binary art and audio assets should be tracked with Git LFS through `.gita
 
 Keep placeholder scripts, scenes, JSON data, and documentation in normal Git. If automated exports are added later, review whether `export_presets.cfg` should remain ignored or become committed project configuration.
 
+## External Placeholder Assets
+
+Repo-safe placeholder assets live under `game/art/external/`. Current imported packs are:
+
+- `game/art/external/kenney/tiny_town/`
+- `game/art/external/kenney/roguelike_rpg/`
+
+Both imported Kenney packs are Creative Commons Zero, CC0, and include their original license files. These are development placeholders only. Future non-CC0 asset packs should not be committed unless their license explicitly allows redistribution in this repository.
+
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.

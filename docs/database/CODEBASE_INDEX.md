@@ -52,6 +52,10 @@ Add future content by adding a new JSON file to the appropriate folder. Do not r
 
 Placeholder asset folders. Binary art/audio source files should be stored with Git LFS.
 
+- `game/art/external/kenney/tiny_town/`: CC0 Kenney Tiny Town placeholder assets.
+- `game/art/external/kenney/roguelike_rpg/`: CC0 Kenney Roguelike/RPG placeholder assets.
+- `game/art/external/kenney/README.md`: source, license, and usage notes for imported Kenney assets.
+
 ## Ownership Rules
 
 - Content numbers and descriptions belong in `game/data`.

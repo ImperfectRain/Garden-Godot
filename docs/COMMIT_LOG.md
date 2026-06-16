@@ -208,6 +208,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add validation for room reward pools, reward choices, resource ids, and enemy ids now that content can scale file-by-file.
 
+### 2026-06-16 - assets: add kenney placeholder packs
+
+#### Summary
+- Imported Kenney Tiny Town and Kenney Roguelike/RPG Pack under `game/art/external/kenney/`.
+- Added an external asset README with source URLs, CC0 license notes, and placeholder usage rules.
+- Documented that Sprout Lands and Cozy Farm were not imported because their free/paid licenses are not repo-redistribution friendly.
+- Updated technical and database docs to list the imported external placeholder assets.
+
+#### Files Changed
+- `game/art/external/kenney/`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/database/CODEBASE_INDEX.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- Ran `git diff --check`; no whitespace errors reported.
+- Confirmed 141 PNG files were imported under `game/art/external/kenney/`.
+- Confirmed both imported packs include `License.txt` files stating Creative Commons Zero, CC0, and personal/commercial use.
+- Confirmed representative PNG files resolve to Git LFS through `git check-attr filter`.
+- Confirmed `git lfs version` reports Git LFS is installed.
+- Parsed all current `game/data` JSON files with PowerShell `ConvertFrom-Json`.
+- `where.exe godot` could not find Godot in PATH, so editor-level import validation was not run.
+
+#### Next Recommended Task
+- Map a small subset of imported placeholder sprites to player, Drifter, Saintmoth, garden pieces, and room floor visuals through scenes or `visual_asset` data fields.
+
 ### 2026-06-14 - architecture: add garden effect resolver scaffold
 
 #### Summary
