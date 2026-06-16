@@ -68,6 +68,7 @@ Current room/reward flow:
 ### `game/scripts/garden/garden_manager.gd`
 
 - Owns garden grid state, Heart Tile placement, cell lookup, and placement validation.
+- Owns current garden selected cell state and emits selection changes.
 - Currently also owns low-level trigger application, resource provenance, follow-up event handoff, and first-empty-cell reward placement.
 - Provides `get_all_cells()` so systems can read garden state without mutating it.
 - Delegates `produce_resource` action application to `GardenEffectResolver`.
@@ -157,6 +158,13 @@ Current room/reward flow:
 - Displays name, category, and simple description.
 - Emits `reward_selected`.
 - Does not place rewards or decide whether a reward is currently available.
+
+### `game/scripts/ui/garden_grid_panel.gd`
+
+- Displays the temporary visual 3x3 garden grid.
+- Observes placement, trigger, and selection signals from `GardenManager`.
+- Shows selected-cell and pending-placement highlights.
+- Uses temporary hardcoded placeholder icon paths until `visual_asset` resolution is data-driven.
 
 ### `game/scripts/ui/debug_hud.gd`
 

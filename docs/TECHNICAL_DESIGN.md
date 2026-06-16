@@ -201,6 +201,12 @@ Temporary controls during placement:
 
 `GardenManager.get_placement_error()` and `GardenManager.can_place_piece()` provide non-mutating placement validation for UI previews. The Heart Tile and occupied cells are rejected before placement. `GardenGridPanel` displays a temporary placement highlight and validity color for the pending piece.
 
+## Garden Cell Selection
+
+`GardenManager` owns the current `selected_cell` and exposes `set_selected_cell()`, `select_heart_cell()`, and `move_selected_cell()` helpers. Selection changes emit `selected_cell_changed`, which the temporary Garden UI uses to refresh its selected-cell highlight.
+
+Current Pulse behavior still selects the Heart Tile before pulsing so the first fun test remains focused on Saintmoth. Future inspect, tend, and selected-piece Pulse behavior should use these selection helpers instead of directly assigning `selected_cell`.
+
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.
@@ -211,3 +217,4 @@ Temporary controls during placement:
 - Shield application now routes through `CombatEvents`, but other combat-facing effects are still not implemented.
 - Placeholder actor and garden piece sprites are hardcoded in scenes/UI for now and should move to data-driven `visual_asset` resolution later.
 - Manual garden placement is keyboard-only and temporary; no mouse, drag-and-drop, or controller-specific placement polish exists yet.
+- General garden selection exists, but only Heart Tile Pulse and reward placement currently use garden cell state.

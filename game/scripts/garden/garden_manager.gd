@@ -5,6 +5,7 @@ signal piece_placed(cell: Vector2i, piece_id: String)
 signal piece_removed(cell: Vector2i, piece_id: String)
 signal piece_triggered(cell: Vector2i, piece_id: String, trigger: Dictionary)
 signal placement_failed(cell: Vector2i, piece_id: String, reason: String)
+signal selected_cell_changed(cell: Vector2i)
 
 const GRID_SIZE := Vector2i(3, 3)
 const HEART_CELL := Vector2i(1, 1)
@@ -24,7 +25,7 @@ func reset_grid() -> void:
 	cells.clear()
 	_resource_sources.clear()
 	_next_chain_index = 1
-	selected_cell = HEART_CELL
+	set_selected_cell(HEART_CELL)
 	for y in range(GRID_SIZE.y):
 		for x in range(GRID_SIZE.x):
 			cells[Vector2i(x, y)] = ""
@@ -80,6 +81,27 @@ func remove_piece(cell: Vector2i) -> String:
 
 func trigger_piece(cell: Vector2i, event_name: String) -> bool:
 	return GardenTriggerSystem.trigger_cell_event(cell, event_name, {})
+
+
+func set_selected_cell(cell: Vector2i) -> bool:
+	if not is_valid_cell(cell):
+		return false
+	if selected_cell == cell:
+		return true
+	selected_cell = cell
+	selected_cell_changed.emit(selected_cell)
+	return true
+
+
+func select_heart_cell() -> void:
+	set_selected_cell(HEART_CELL)
+
+
+func move_selected_cell(offset: Vector2i) -> bool:
+	var next_cell := selected_cell + offset
+	next_cell.x = clampi(next_cell.x, 0, GRID_SIZE.x - 1)
+	next_cell.y = clampi(next_cell.y, 0, GRID_SIZE.y - 1)
+	return set_selected_cell(next_cell)
 
 
 func pulse_selected() -> bool:

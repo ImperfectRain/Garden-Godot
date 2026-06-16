@@ -93,6 +93,31 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add reusable garden adjacency query helpers so placement can affect production, consumption, copying, and protection.
 
+### 2026-06-16 - mvp: add garden cell selection state
+
+#### Summary
+- Added explicit GardenManager selected-cell helpers and a `selected_cell_changed` signal.
+- Updated player Pulse to select the Heart Tile through the GardenManager API instead of direct variable assignment.
+- Updated the visual Garden panel to highlight the selected cell separately from pending placement.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/player/player_controller.gd`
+- `game/scripts/ui/garden_grid_panel.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed direct assignment to `GardenManager.selected_cell` is no longer used outside `GardenManager`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add reusable garden adjacency query helpers for placement-sensitive effects.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

@@ -28,6 +28,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 - [ ] Confirm the visual Garden panel shows a 3x3 grid.
 - [ ] Confirm Saintmoth appears in the visually distinct Heart Tile.
+- [ ] Confirm the currently selected garden cell has a visible selection highlight.
 - [ ] Confirm Lantern Lily appears in its starting cell.
 - [ ] Confirm occupied garden cells show temporary placeholder icons alongside readable text.
 - [ ] Confirm the reward panel appears after the survival room timer completes.

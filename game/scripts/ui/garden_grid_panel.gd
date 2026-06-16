@@ -41,6 +41,7 @@ func _ready() -> void:
 	GardenManager.piece_placed.connect(_on_piece_changed)
 	GardenManager.piece_removed.connect(_on_piece_changed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
+	GardenManager.selected_cell_changed.connect(_on_selected_cell_changed)
 	_build_cells()
 	refresh()
 
@@ -136,6 +137,8 @@ func _get_cell_color(piece: Dictionary, is_heart: bool) -> Color:
 func _get_border_color(cell: Vector2i, is_heart: bool) -> Color:
 	if _placement_active and cell == _placement_cell:
 		return Color(0.36, 0.95, 0.52, 1.0) if GardenManager.can_place_piece(cell, _placement_piece_id) else Color(1.0, 0.28, 0.22, 1.0)
+	if cell == GardenManager.selected_cell:
+		return Color(0.46, 0.78, 1.0, 1.0)
 	return Color(1.0, 0.86, 0.34, 1.0) if is_heart else Color(0.38, 0.44, 0.38, 1.0)
 
 
@@ -167,6 +170,10 @@ func _make_cell_style(fill_color: Color, border_color: Color) -> StyleBoxFlat:
 
 
 func _on_piece_changed(_cell: Vector2i, _piece_id: String) -> void:
+	refresh()
+
+
+func _on_selected_cell_changed(_cell: Vector2i) -> void:
 	refresh()
 
 

@@ -28,7 +28,7 @@ func _physics_process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pulse"):
-		GardenManager.selected_cell = GardenManager.HEART_CELL
+		GardenManager.select_heart_cell()
 		GardenManager.pulse_selected()
 
 
