@@ -24,6 +24,7 @@ func reset_grid() -> void:
 	cells.clear()
 	_resource_sources.clear()
 	_next_chain_index = 1
+	selected_cell = HEART_CELL
 	for y in range(GRID_SIZE.y):
 		for x in range(GRID_SIZE.x):
 			cells[Vector2i(x, y)] = ""
@@ -32,32 +33,36 @@ func reset_grid() -> void:
 
 
 func place_piece(cell: Vector2i, piece_id: String, allow_heart := false) -> bool:
-	if not is_valid_cell(cell):
-		placement_failed.emit(cell, piece_id, "Cell is outside the 3x3 garden")
-		return false
-	if cell == HEART_CELL and not allow_heart:
-		placement_failed.emit(cell, piece_id, "Heart Tile is reserved for the companion")
-		return false
-	if not cells.get(cell, "").is_empty():
-		placement_failed.emit(cell, piece_id, "Cell already has a garden piece")
-		return false
-	if ContentDatabase.get_garden_piece(piece_id).is_empty():
-		placement_failed.emit(cell, piece_id, "Unknown garden piece id")
+	var error := get_placement_error(cell, piece_id, allow_heart)
+	if not error.is_empty():
+		placement_failed.emit(cell, piece_id, error)
 		return false
 	cells[cell] = piece_id
 	piece_placed.emit(cell, piece_id)
 	return true
 
 
+func can_place_piece(cell: Vector2i, piece_id: String, allow_heart := false) -> bool:
+	return get_placement_error(cell, piece_id, allow_heart).is_empty()
+
+
+func get_placement_error(cell: Vector2i, piece_id: String, allow_heart := false) -> String:
+	if not is_valid_cell(cell):
+		return "Cell is outside the 3x3 garden"
+	if cell == HEART_CELL and not allow_heart:
+		return "Heart Tile is reserved for the companion"
+	if not cells.get(cell, "").is_empty():
+		return "Cell already has a garden piece"
+	if ContentDatabase.get_garden_piece(piece_id).is_empty():
+		return "Unknown garden piece id"
+	return ""
+
+
 func place_piece_in_first_empty_cell(piece_id: String) -> Vector2i:
 	for y in range(GRID_SIZE.y):
 		for x in range(GRID_SIZE.x):
 			var cell := Vector2i(x, y)
-			if cell == HEART_CELL:
-				continue
-			if not str(cells.get(cell, "")).is_empty():
-				continue
-			if place_piece(cell, piece_id):
+			if can_place_piece(cell, piece_id) and place_piece(cell, piece_id):
 				return cell
 	return Vector2i(-1, -1)
 

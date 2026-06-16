@@ -31,7 +31,10 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm Lantern Lily appears in its starting cell.
 - [ ] Confirm occupied garden cells show temporary placeholder icons alongside readable text.
 - [ ] Confirm the reward panel appears after the survival room timer completes.
-- [ ] Confirm selecting a reward places the chosen piece into the garden.
+- [ ] Confirm selecting a reward starts manual garden placement instead of immediately placing the piece.
+- [ ] Confirm Arrow keys move the highlighted placement cell in the visual Garden panel.
+- [ ] Confirm Enter or E places the chosen piece in the highlighted valid cell.
+- [ ] Confirm Escape cancels placement and returns to reward choice.
 - [ ] Confirm the visual Garden panel updates after reward placement.
 - [ ] Confirm the Heart Tile cannot be overwritten.
 - [ ] Confirm occupied cells reject placement.

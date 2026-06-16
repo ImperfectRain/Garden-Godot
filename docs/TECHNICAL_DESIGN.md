@@ -189,6 +189,18 @@ The first fun test now uses imported Kenney placeholder sprites for visible fiel
 
 This is a prototype readability pass only. Long-term visual assignment should come from content data such as `visual_asset`, with a small resolver or lookup layer instead of hardcoded UI icon paths.
 
+## Manual Garden Placement
+
+Reward selection now starts a manual placement step instead of placing the chosen piece in the first empty cell. `RewardChoicePanel` still presents the reward choices, but `RewardController` owns the pending piece id, placement cursor, confirm/cancel input, and final placement request.
+
+Temporary controls during placement:
+
+- Arrow keys move the garden placement cursor.
+- Enter or E confirms placement.
+- Escape cancels placement and returns to the reward choices.
+
+`GardenManager.get_placement_error()` and `GardenManager.can_place_piece()` provide non-mutating placement validation for UI previews. The Heart Tile and occupied cells are rejected before placement. `GardenGridPanel` displays a temporary placement highlight and validity color for the pending piece.
+
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.
@@ -198,3 +210,4 @@ This is a prototype readability pass only. Long-term visual assignment should co
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
 - Shield application now routes through `CombatEvents`, but other combat-facing effects are still not implemented.
 - Placeholder actor and garden piece sprites are hardcoded in scenes/UI for now and should move to data-driven `visual_asset` resolution later.
+- Manual garden placement is keyboard-only and temporary; no mouse, drag-and-drop, or controller-specific placement polish exists yet.

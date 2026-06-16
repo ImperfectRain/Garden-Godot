@@ -66,6 +66,33 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Move temporary visual placeholder paths into data-driven `visual_asset` fields and add a small visual asset resolver.
 
+### 2026-06-16 - mvp: add manual garden placement
+
+#### Summary
+- Changed reward selection from automatic first-empty placement to pending manual placement.
+- Added keyboard placement cursor controls, confirm, cancel, and non-mutating placement validation.
+- Added visual Garden panel placement highlighting for valid and invalid target cells.
+
+#### Files Changed
+- `game/scripts/core/reward_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/ui/garden_grid_panel.gd`
+- `game/scripts/ui/debug_hud.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed reward placement no longer calls `GardenManager.place_piece_in_first_empty_cell()` from `RewardController`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add reusable garden adjacency query helpers so placement can affect production, consumption, copying, and protection.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

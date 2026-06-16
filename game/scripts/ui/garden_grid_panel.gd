@@ -31,6 +31,9 @@ var _cell_icons: Dictionary = {}
 var _cell_labels: Dictionary = {}
 var _flash_tweens: Dictionary = {}
 var _texture_cache: Dictionary = {}
+var _placement_active := false
+var _placement_piece_id := ""
+var _placement_cell := Vector2i.ZERO
 
 
 func _ready() -> void:
@@ -45,6 +48,13 @@ func _ready() -> void:
 func refresh() -> void:
 	for cell in _cell_labels.keys():
 		_update_cell(cell)
+
+
+func set_placement_preview(active: bool, piece_id := "", cell := Vector2i.ZERO) -> void:
+	_placement_active = active
+	_placement_piece_id = piece_id
+	_placement_cell = cell
+	refresh()
 
 
 func _build_cells() -> void:
@@ -92,11 +102,16 @@ func _update_cell(cell: Vector2i) -> void:
 	icon.texture = _get_icon_texture(piece_id, piece, is_heart)
 	icon.visible = icon.texture != null
 	label.text = _get_cell_text(cell, piece_id, piece, false)
-	panel.add_theme_stylebox_override("panel", _make_cell_style(_get_cell_color(piece, is_heart), _get_border_color(is_heart)))
+	panel.add_theme_stylebox_override("panel", _make_cell_style(_get_cell_color(piece, is_heart), _get_border_color(cell, is_heart)))
 
 
 func _get_cell_text(cell: Vector2i, piece_id: String, piece: Dictionary, triggered: bool) -> String:
 	var marker := TRIGGER_MARKER if triggered else ""
+	if _placement_active and cell == _placement_cell and piece_id.is_empty():
+		var pending_piece := ContentDatabase.get_garden_piece(_placement_piece_id)
+		return "Place\n%s%s" % [pending_piece.get("name", _placement_piece_id), marker]
+	if _placement_active and cell == _placement_cell and not GardenManager.can_place_piece(cell, _placement_piece_id):
+		return "Blocked\n%s%s" % [piece.get("name", piece_id), marker]
 	if piece_id.is_empty():
 		return "Heart\n%s%s" % [EMPTY_TEXT, marker] if cell == GardenManager.HEART_CELL else "%s%s" % [EMPTY_TEXT, marker]
 	var display_name := str(piece.get("name", piece_id))
@@ -118,7 +133,9 @@ func _get_cell_color(piece: Dictionary, is_heart: bool) -> Color:
 			return Color(0.15, 0.18, 0.16, 0.92)
 
 
-func _get_border_color(is_heart: bool) -> Color:
+func _get_border_color(cell: Vector2i, is_heart: bool) -> Color:
+	if _placement_active and cell == _placement_cell:
+		return Color(0.36, 0.95, 0.52, 1.0) if GardenManager.can_place_piece(cell, _placement_piece_id) else Color(1.0, 0.28, 0.22, 1.0)
 	return Color(1.0, 0.86, 0.34, 1.0) if is_heart else Color(0.38, 0.44, 0.38, 1.0)
 
 

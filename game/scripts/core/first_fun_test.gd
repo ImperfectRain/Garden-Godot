@@ -31,6 +31,9 @@ func _ready() -> void:
 	_room_controller.room_started.connect(_on_room_started)
 	_room_controller.reward_ready.connect(_on_room_reward_ready)
 	_reward_controller.setup(reward_choice_panel)
+	_reward_controller.placement_started.connect(_on_reward_placement_started)
+	_reward_controller.placement_cursor_changed.connect(_on_reward_placement_cursor_changed)
+	_reward_controller.placement_cancelled.connect(_on_reward_placement_cancelled)
 	_reward_controller.reward_claimed.connect(_on_reward_claimed)
 	_reward_controller.reward_failed.connect(_on_reward_failed)
 	_last_health = player.health
@@ -46,6 +49,12 @@ func _process(delta: float) -> void:
 	GardenTickSystem.process_intervals(delta)
 	_room_controller.process(delta)
 	_refresh_debug()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if _reward_controller.handle_placement_input(event):
+		get_viewport().set_input_as_handled()
+		_refresh_debug()
 
 
 func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary) -> void:
@@ -65,6 +74,7 @@ func _on_piece_placed(cell: Vector2i, piece_id: String) -> void:
 
 
 func _on_reward_claimed(piece_id: String, _cell: Vector2i) -> void:
+	garden_grid_panel.set_placement_preview(false)
 	_room_controller.mark_reward_claimed()
 	debug_hud.set_status("Reward placed: %s" % _get_piece_name(piece_id))
 	RunManager.complete_current_room()
@@ -78,6 +88,25 @@ func _on_reward_failed(piece_id: String, reason: String) -> void:
 		_refresh_debug()
 		return
 	debug_hud.add_event("%s for %s." % [reason, _get_piece_name(piece_id)])
+	_refresh_debug()
+
+
+func _on_reward_placement_started(piece_id: String, cell: Vector2i) -> void:
+	garden_grid_panel.set_placement_preview(true, piece_id, cell)
+	debug_hud.set_status("Place %s with Arrow keys, Enter/E confirm, Esc cancel" % _get_piece_name(piece_id))
+	debug_hud.add_event("Choose a garden cell for %s." % _get_piece_name(piece_id))
+	_refresh_debug()
+
+
+func _on_reward_placement_cursor_changed(piece_id: String, cell: Vector2i) -> void:
+	garden_grid_panel.set_placement_preview(true, piece_id, cell)
+	_refresh_debug()
+
+
+func _on_reward_placement_cancelled(piece_id: String) -> void:
+	garden_grid_panel.set_placement_preview(false)
+	debug_hud.set_status("Choose a reward")
+	debug_hud.add_event("Placement cancelled for %s." % _get_piece_name(piece_id))
 	_refresh_debug()
 
 
@@ -138,7 +167,7 @@ func _on_room_started(room_id: String) -> void:
 
 func _on_room_reward_ready(room_id: String) -> void:
 	debug_hud.set_status("Room survived - choose a reward")
-	debug_hud.add_event("Meadow survived. Choose one reward with 1, 2, or 3.")
+	debug_hud.add_event("Meadow survived. Choose one reward with 1, 2, or 3, then place it.")
 	_reward_controller.show_rewards_for_room(room_id)
 	_refresh_debug()
 

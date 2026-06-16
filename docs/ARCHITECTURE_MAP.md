@@ -47,11 +47,15 @@ Current room/reward flow:
 7. `RewardController` resolves the room's `reward_pool` through `ContentDatabase`.
 8. `RewardController` gives the first three available reward ids to `RewardChoicePanel`.
 9. `RewardChoicePanel` emits a selected piece id.
-10. `RewardController` asks `GardenManager` to place the piece in the first empty non-heart cell.
-11. `RewardController` emits reward claimed or failed.
-12. `FirstFunTest` completes the room after a successful reward claim.
-13. `DebugHUD` owns the temporary text display refresh and event log.
-14. `GardenGridPanel` owns the temporary visual 3x3 garden display.
+10. `RewardController` hides the reward panel and starts pending manual placement for the selected piece.
+11. `FirstFunTest` forwards placement input to `RewardController`.
+12. `RewardController` moves the placement cursor, confirms placement, or cancels back to reward choice.
+13. `GardenGridPanel` displays the pending placement cell and whether it is valid.
+14. `RewardController` asks `GardenManager` to place the piece only after the player confirms a valid cell.
+15. `RewardController` emits reward claimed or failed.
+16. `FirstFunTest` completes the room after a successful reward claim.
+17. `DebugHUD` owns the temporary text display refresh and event log.
+18. `GardenGridPanel` owns the temporary visual 3x3 garden display.
 
 ## Current Files and Responsibilities
 
@@ -143,7 +147,8 @@ Current room/reward flow:
 - Owns temporary reward availability for the first fun test.
 - Shows and hides the reward panel through a small API.
 - Receives selected reward ids from `RewardChoicePanel`.
-- Places selected rewards through `GardenManager.place_piece_in_first_empty_cell()`.
+- Owns pending reward placement state, placement cursor movement, confirm/cancel handling, and final placement requests.
+- Places selected rewards through `GardenManager.place_piece()` only after player confirmation.
 - Emits `reward_claimed` or `reward_failed` results.
 
 ### `game/scripts/ui/reward_choice_panel.gd`
