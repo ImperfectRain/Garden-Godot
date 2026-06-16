@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://first_fun_test"]
+[gd_scene load_steps=12 format=3 uid="uid://first_fun_test"]
 
 [ext_resource type="Script" path="res://game/scripts/core/first_fun_test.gd" id="1"]
 [ext_resource type="Script" path="res://game/scripts/player/player_controller.gd" id="2"]
@@ -8,6 +8,15 @@
 [ext_resource type="PackedScene" path="res://game/scenes/ui/debug_hud.tscn" id="6"]
 [ext_resource type="Script" path="res://game/scripts/player/player_visual_feedback.gd" id="7"]
 [ext_resource type="PackedScene" path="res://game/scenes/ui/garden_grid_panel.tscn" id="8"]
+[ext_resource type="Texture2D" path="res://game/art/external/kenney/roguelike_rpg/Spritesheet/roguelikeSheet_transparent.png" id="9"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_player_placeholder"]
+atlas = ExtResource("9")
+region = Rect2(918, 255, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_saintmoth_placeholder"]
+atlas = ExtResource("9")
+region = Rect2(935, 255, 16, 16)
 
 [node name="FirstFunTest" type="Node2D"]
 script = ExtResource("1")
@@ -23,9 +32,10 @@ color = Color(0.13, 0.18, 0.14, 1)
 position = Vector2(0, 0)
 script = ExtResource("2")
 
-[node name="PlayerSprite" type="Polygon2D" parent="Player"]
-color = Color(0.82, 0.92, 0.86, 1)
-polygon = PackedVector2Array(-10, -12, 12, 0, -10, 12)
+[node name="PlayerSprite" type="Sprite2D" parent="Player"]
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = SubResource("AtlasTexture_player_placeholder")
 
 [node name="PlayerVisualFeedback" type="Node2D" parent="Player"]
 script = ExtResource("7")
@@ -35,9 +45,11 @@ position = Vector2(-42, -18)
 script = ExtResource("3")
 player_path = NodePath("../Player")
 
-[node name="SaintmothSprite" type="Polygon2D" parent="Saintmoth"]
-color = Color(1, 0.89, 0.58, 1)
-polygon = PackedVector2Array(0, -10, 14, 0, 0, 10, -14, 0)
+[node name="SaintmothSprite" type="Sprite2D" parent="Saintmoth"]
+texture_filter = 1
+modulate = Color(1, 0.91, 0.55, 1)
+scale = Vector2(1.75, 1.75)
+texture = SubResource("AtlasTexture_saintmoth_placeholder")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 zoom = Vector2(1.35, 1.35)

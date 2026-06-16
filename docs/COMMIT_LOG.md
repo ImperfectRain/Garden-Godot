@@ -42,6 +42,30 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Make the Lantern Lily -> Light -> Saintmoth -> Shield loop fully playable and verify it in Godot.
 
+### 2026-06-16 - mvp: apply placeholder sprites
+
+#### Summary
+- Replaced field polygon placeholders for the player, Saintmoth, and Drifter with imported Kenney `Sprite2D` placeholders.
+- Added temporary garden grid icons for current garden piece ids using imported Tiny Town tiles.
+- Documented that these visual assignments are development placeholders and should become data-driven through `visual_asset` later.
+
+#### Files Changed
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scenes/enemies/drifter.tscn`
+- `game/scripts/ui/garden_grid_panel.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed no `Polygon2D` placeholders remain in the first fun test scene or Drifter scene.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Move temporary visual placeholder paths into data-driven `visual_asset` fields and add a small visual asset resolver.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

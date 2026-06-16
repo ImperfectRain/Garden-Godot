@@ -7,6 +7,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Open the project in Godot 4.
 - [ ] Run `res://game/scenes/debug/first_fun_test.tscn`.
 - [ ] Confirm WASD movement works.
+- [ ] Confirm the player and Saintmoth render as temporary sprite placeholders instead of polygon-only shapes.
 - [ ] Confirm Lantern Lily produces Light after roughly 5 seconds.
 - [ ] Confirm pressing Space with less than 2 Light fails clearly in the debug log.
 - [ ] Confirm pressing Space with 2 or more Light grants shield.
@@ -16,6 +17,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 ## Enemy Pressure
 
+- [ ] Confirm the Drifter renders as a temporary sprite placeholder instead of a polygon-only shape.
 - [ ] Confirm the Drifter slowly follows the player.
 - [ ] Confirm Drifter contact damage reduces shield before health.
 - [ ] Confirm the visible shield ring disappears when shield reaches 0.
@@ -27,6 +29,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm the visual Garden panel shows a 3x3 grid.
 - [ ] Confirm Saintmoth appears in the visually distinct Heart Tile.
 - [ ] Confirm Lantern Lily appears in its starting cell.
+- [ ] Confirm occupied garden cells show temporary placeholder icons alongside readable text.
 - [ ] Confirm the reward panel appears after the survival room timer completes.
 - [ ] Confirm selecting a reward places the chosen piece into the garden.
 - [ ] Confirm the visual Garden panel updates after reward placement.

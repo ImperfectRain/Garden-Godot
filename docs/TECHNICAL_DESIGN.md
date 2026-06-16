@@ -178,6 +178,17 @@ Repo-safe placeholder assets live under `game/art/external/`. Current imported p
 
 Both imported Kenney packs are Creative Commons Zero, CC0, and include their original license files. These are development placeholders only. Future non-CC0 asset packs should not be committed unless their license explicitly allows redistribution in this repository.
 
+## Placeholder Sprite Application
+
+The first fun test now uses imported Kenney placeholder sprites for visible field actors instead of pure polygon shapes:
+
+- `PlayerSprite` uses a temporary `Sprite2D` atlas region from the Kenney Roguelike/RPG sheet.
+- `SaintmothSprite` uses a temporary `Sprite2D` atlas region from the Kenney Roguelike/RPG sheet.
+- `Drifter/Body` uses a temporary `Sprite2D` atlas region from the Kenney Roguelike/RPG sheet.
+- `GardenGridPanel` shows small temporary Tiny Town tile icons for current garden piece ids.
+
+This is a prototype readability pass only. Long-term visual assignment should come from content data such as `visual_asset`, with a small resolver or lookup layer instead of hardcoded UI icon paths.
+
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.
@@ -186,3 +197,4 @@ Both imported Kenney packs are Creative Commons Zero, CC0, and include their ori
 - Room objective timing has moved to `SimpleRoomController`, but `FirstFunTest` still wires room-ready and reward-claimed outcomes.
 - Bloomchain causality is minimal and still lacks per-resource-unit provenance or visual path playback.
 - Shield application now routes through `CombatEvents`, but other combat-facing effects are still not implemented.
+- Placeholder actor and garden piece sprites are hardcoded in scenes/UI for now and should move to data-driven `visual_asset` resolution later.
