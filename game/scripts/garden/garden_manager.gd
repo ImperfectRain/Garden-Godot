@@ -151,6 +151,88 @@ func get_neighbors(cell: Vector2i, include_diagonal := false) -> Array[Vector2i]
 	return result
 
 
+func get_orthogonal_neighbors(cell: Vector2i) -> Array[Vector2i]:
+	return get_neighbors(cell, false)
+
+
+func get_diagonal_neighbors(cell: Vector2i) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for offset in [
+		Vector2i(-1, -1),
+		Vector2i(1, -1),
+		Vector2i(1, 1),
+		Vector2i(-1, 1)
+	]:
+		var neighbor := cell + offset
+		if is_valid_cell(neighbor):
+			result.append(neighbor)
+	return result
+
+
+func get_opposite_cell(origin_cell: Vector2i, pivot_cell: Vector2i) -> Vector2i:
+	var opposite := pivot_cell + (pivot_cell - origin_cell)
+	return opposite if is_valid_cell(opposite) else Vector2i(-1, -1)
+
+
+func are_cells_adjacent(a: Vector2i, b: Vector2i, include_diagonal := false) -> bool:
+	return get_neighbors(a, include_diagonal).has(b)
+
+
+func get_adjacent_piece_cells(cell: Vector2i, include_diagonal := false) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for neighbor in get_neighbors(cell, include_diagonal):
+		if not get_piece_id_at(neighbor).is_empty():
+			result.append(neighbor)
+	return result
+
+
+func get_adjacent_piece_ids(cell: Vector2i, include_diagonal := false) -> Array[String]:
+	var result: Array[String] = []
+	for neighbor in get_adjacent_piece_cells(cell, include_diagonal):
+		result.append(get_piece_id_at(neighbor))
+	return result
+
+
+func get_adjacent_cells_by_category(cell: Vector2i, category: String, include_diagonal := false) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for neighbor in get_adjacent_piece_cells(cell, include_diagonal):
+		if get_piece_category_at(neighbor) == category:
+			result.append(neighbor)
+	return result
+
+
+func get_adjacent_cells_by_tag(cell: Vector2i, tag: String, include_diagonal := false) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for neighbor in get_adjacent_piece_cells(cell, include_diagonal):
+		if get_piece_tags_at(neighbor).has(tag):
+			result.append(neighbor)
+	return result
+
+
+func get_cells_by_category(category: String) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for cell in cells.keys():
+		if get_piece_category_at(cell) == category:
+			result.append(cell)
+	return result
+
+
+func get_cells_by_tag(tag: String) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for cell in cells.keys():
+		if get_piece_tags_at(cell).has(tag):
+			result.append(cell)
+	return result
+
+
+func get_piece_category_at(cell: Vector2i) -> String:
+	return str(get_piece_at(cell).get("category", ""))
+
+
+func get_piece_tags_at(cell: Vector2i) -> Array:
+	return get_piece_at(cell).get("tags", [])
+
+
 func is_valid_cell(cell: Vector2i) -> bool:
 	return cell.x >= 0 and cell.x < GRID_SIZE.x and cell.y >= 0 and cell.y < GRID_SIZE.y
 

@@ -207,6 +207,23 @@ Temporary controls during placement:
 
 Current Pulse behavior still selects the Heart Tile before pulsing so the first fun test remains focused on Saintmoth. Future inspect, tend, and selected-piece Pulse behavior should use these selection helpers instead of directly assigning `selected_cell`.
 
+## Garden Adjacency Queries
+
+`GardenManager` exposes read-only helpers for placement-sensitive effects:
+
+- `get_orthogonal_neighbors(cell)`
+- `get_diagonal_neighbors(cell)`
+- `get_opposite_cell(origin_cell, pivot_cell)`
+- `are_cells_adjacent(a, b, include_diagonal)`
+- `get_adjacent_piece_cells(cell, include_diagonal)`
+- `get_adjacent_piece_ids(cell, include_diagonal)`
+- `get_adjacent_cells_by_category(cell, category, include_diagonal)`
+- `get_adjacent_cells_by_tag(cell, tag, include_diagonal)`
+- `get_cells_by_category(category)`
+- `get_cells_by_tag(tag)`
+
+These helpers do not apply effects. They exist so later Flora/Fauna/Object behavior can ask placement questions consistently before `GardenEffectResolver` applies an action.
+
 ## Known Temporary Limitations
 
 - Resources are global to the garden instead of stored per tile or per piece.

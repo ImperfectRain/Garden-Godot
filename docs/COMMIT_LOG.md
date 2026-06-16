@@ -118,6 +118,27 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add reusable garden adjacency query helpers for placement-sensitive effects.
 
+### 2026-06-16 - architecture: add garden adjacency queries
+
+#### Summary
+- Added read-only GardenManager query helpers for orthogonal/diagonal neighbors, opposite cells, adjacency checks, and category/tag filtering.
+- Kept effect application unchanged; helpers are groundwork for placement-sensitive Flora, Fauna, and Object behavior.
+- Documented the helper API and current ownership.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add generic effect primitives to `GardenEffectResolver` without wiring every garden piece at once.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

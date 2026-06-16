@@ -69,6 +69,7 @@ Current room/reward flow:
 
 - Owns garden grid state, Heart Tile placement, cell lookup, and placement validation.
 - Owns current garden selected cell state and emits selection changes.
+- Owns read-only adjacency query helpers for current placement-sensitive effect work.
 - Currently also owns low-level trigger application, resource provenance, follow-up event handoff, and first-empty-cell reward placement.
 - Provides `get_all_cells()` so systems can read garden state without mutating it.
 - Delegates `produce_resource` action application to `GardenEffectResolver`.
