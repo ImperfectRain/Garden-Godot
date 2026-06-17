@@ -28,7 +28,9 @@ const CATEGORY_ICON_PATHS := {
 var _cell_panels: Dictionary = {}
 var _cell_icons: Dictionary = {}
 var _cell_labels: Dictionary = {}
+var _cell_feedback_labels: Dictionary = {}
 var _flash_tweens: Dictionary = {}
+var _feedback_tweens: Dictionary = {}
 var _texture_cache: Dictionary = {}
 var _placement_active := false
 var _placement_piece_id := ""
@@ -61,6 +63,7 @@ func _build_cells() -> void:
 	for child in grid.get_children():
 		child.queue_free()
 	_cell_panels.clear()
+	_cell_feedback_labels.clear()
 	_cell_labels.clear()
 	for y in range(GardenManager.GRID_SIZE.y):
 		for x in range(GardenManager.GRID_SIZE.x):
@@ -87,9 +90,16 @@ func _build_cells() -> void:
 			label.add_theme_font_size_override("font_size", 11)
 			content.add_child(label)
 
+			var feedback_label := Label.new()
+			feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			feedback_label.add_theme_font_size_override("font_size", 12)
+			feedback_label.modulate = Color(1, 1, 1, 0)
+			content.add_child(feedback_label)
+
 			_cell_panels[cell] = panel
 			_cell_icons[cell] = icon
 			_cell_labels[cell] = label
+			_cell_feedback_labels[cell] = feedback_label
 
 
 func _update_cell(cell: Vector2i) -> void:
@@ -179,6 +189,7 @@ func _on_selected_cell_changed(_cell: Vector2i) -> void:
 
 func _on_piece_triggered(cell: Vector2i, _piece_id: String, _trigger: Dictionary) -> void:
 	_flash_cell(cell, _trigger)
+	_show_cell_feedback(cell, _get_feedback_text(_trigger))
 
 
 func _flash_cell(cell: Vector2i, trigger: Dictionary) -> void:
@@ -203,6 +214,22 @@ func _flash_cell(cell: Vector2i, trigger: Dictionary) -> void:
 func _on_flash_finished(cell: Vector2i) -> void:
 	_flash_tweens.erase(cell)
 	_update_cell(cell)
+
+
+func _show_cell_feedback(cell: Vector2i, text: String) -> void:
+	if text.is_empty() or not _cell_feedback_labels.has(cell):
+		return
+	var label: Label = _cell_feedback_labels[cell]
+	label.text = text
+	label.modulate = Color(1, 1, 1, 1)
+	if _feedback_tweens.has(cell):
+		var old_tween: Tween = _feedback_tweens[cell]
+		if old_tween != null:
+			old_tween.kill()
+	var tween := create_tween()
+	_feedback_tweens[cell] = tween
+	tween.tween_property(label, "modulate", Color(1, 1, 1, 0), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.finished.connect(_feedback_tweens.erase.bind(cell))
 
 
 func _pending_piece_likes_cell(cell: Vector2i) -> bool:
@@ -235,6 +262,32 @@ func _get_trigger_marker(trigger: Dictionary) -> String:
 			return " x"
 		_:
 			return " *"
+
+
+func _get_feedback_text(trigger: Dictionary) -> String:
+	var amount := int(trigger.get("amount", trigger.get("cost", 0)))
+	match str(trigger.get("action", "")):
+		"produce_resource":
+			return "+%s %s" % [amount, str(trigger.get("resource", ""))]
+		"grant_player_shield":
+			return "+Shield"
+		"store_resource":
+			return "Store %s" % str(trigger.get("resource", ""))
+		"damage_enemy", "damage_nearby_enemies":
+			return "Hit %s" % amount
+		"spawn_helper":
+			return "+Helper"
+		"repeat_last_trigger":
+			return "Repeat"
+		"move_resource":
+			return "Move"
+		"copy_output":
+			return "Copy"
+		"protect_adjacent_living":
+			return "Protect"
+		"connect_adjacent_flora":
+			return "Connect"
+	return ""
 
 
 func _get_flash_color(piece: Dictionary, trigger: Dictionary) -> Color:

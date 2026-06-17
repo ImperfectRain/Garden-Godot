@@ -456,6 +456,25 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add floating garden feedback for resource and combat events.
 
+### 2026-06-17 - mvp: add garden floating feedback
+
+#### Summary
+- Added transient feedback labels inside garden grid cells.
+- Garden triggers now briefly show readable text such as resource gain, storage, damage, helper, repeat, move, copy, protect, and connect feedback.
+
+#### Files Changed
+- `game/scripts/ui/garden_grid_panel.gd`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Add garden inspect mode for safe review of placed pieces.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

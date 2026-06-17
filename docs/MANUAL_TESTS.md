@@ -75,6 +75,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Press Space to Pulse Saintmoth.
 - [ ] Confirm triggered garden cells briefly flash or show an event marker in the visual Garden panel.
 - [ ] Confirm different trigger types use readable markers such as production `+`, movement/copy `>`, damage `!`, and repeat `x`.
+- [ ] Confirm triggered garden cells show short fading feedback text such as `+1 light`, `Store echo`, `Hit`, `Copy`, or `Repeat`.
 - [ ] Confirm the Bloomchain reaches length 3: Lantern Lily -> Saintmoth -> Bellflower.
 - [ ] Wait for the short chain finalization timeout.
 - [ ] Confirm the finalized Bloomchain appears in the debug UI.
