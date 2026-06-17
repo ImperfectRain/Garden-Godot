@@ -4,6 +4,8 @@ signal player_shield_requested(amount: int, source: Dictionary)
 signal player_damage_requested(amount: int, source: Dictionary)
 signal player_damaged(amount: int, source: Dictionary)
 signal enemy_damage_requested(amount: int, source: Dictionary)
+signal enemy_damaged(enemy_id: String, amount: int, source: Dictionary)
+signal enemy_defeated(enemy_id: String, world_position: Vector2, source: Dictionary)
 signal helper_spawn_requested(helper_id: String, amount: int, source: Dictionary)
 
 # Generic combat-facing effect bus.

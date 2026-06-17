@@ -210,6 +210,35 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add enemy health/death events so Gravecap can produce Rot and enemy-facing Object effects can matter.
 
+### 2026-06-16 - mvp: add enemy damage and death events
+
+#### Summary
+- Added `EnemyRegistry` to route generic enemy damage requests to registered field enemies.
+- Added Drifter health, enemy damage handling, and enemy defeated events.
+- Routed enemy defeat into garden events so Gravecap and Blood Rose can react.
+- Updated Gravecap to use the generic `enemy_died` event.
+
+#### Files Changed
+- `project.godot`
+- `game/scripts/combat/combat_events.gd`
+- `game/scripts/combat/enemy_registry.gd`
+- `game/scripts/enemies/drifter_enemy.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `game/data/garden_pieces/gravecap.json`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed `EnemyRegistry` is registered as a project autoload.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Implement Fauna resource reactions for Rotling, Mawlet, and Glass Beetle.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

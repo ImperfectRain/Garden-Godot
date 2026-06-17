@@ -136,9 +136,11 @@ Some of these are minimal primitives that emit structured outputs but are not ye
 
 `CombatEvents` is a generic signal bus for combat-facing effects that need to target players, enemies, or helper spawns without binding gameplay systems to a specific scene. It currently exposes requests for player shield, player damage, enemy damage, and helper spawning.
 
-Player shield requests now route through `CombatEvents.player_shield_requested`. `PlayerController` listens for that signal and applies shield with `add_shield(amount)`. Enemy damage and helper spawning are still scaffold-only requests.
+Player shield requests now route through `CombatEvents.player_shield_requested`. `PlayerController` listens for that signal and applies shield with `add_shield(amount)`. Enemy damage requests route through `EnemyRegistry`, which damages the nearest registered enemy that supports `take_damage(amount, source)`. Helper spawning is still scaffold-only.
 
 `PlayerController` also emits `CombatEvents.player_damaged` after actual health damage is applied. The first fun test temporarily translates that event into the garden event `player_damaged_or_close_kill`, allowing Blood Rose to produce Blood when the player takes unshielded damage.
+
+`Drifter` registers itself with `EnemyRegistry`, has simple health, emits `enemy_damaged`, and emits `enemy_defeated` before being removed. The first fun test translates enemy defeat into `enemy_died`, `enemy_died_nearby`, and `player_damaged_or_close_kill` garden events so Gravecap and Blood Rose can react.
 
 ## Flora Runtime Behavior
 
@@ -147,7 +149,7 @@ Current Flora behavior:
 - Lantern Lily produces Light through its interval trigger.
 - Bellflower produces Echo when the garden receives `garden_woke`.
 - Blood Rose produces Blood when the player takes actual health damage in the first fun test.
-- Gravecap has authored `enemy_died_nearby` data, but it needs enemy health/death events before it can fully function.
+- Gravecap produces Rot when an enemy defeat emits the `enemy_died` garden event.
 
 ## Causal Bloomchain Detection
 

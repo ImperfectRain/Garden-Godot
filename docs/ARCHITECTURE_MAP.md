@@ -101,10 +101,16 @@ Current room/reward flow:
 ### `game/scripts/combat/combat_events.gd`
 
 - Autoload scaffold for player/enemy-facing combat effect requests.
-- Defines generic signals for player shield, player damage, enemy damage, and helper spawning.
+- Defines generic signals for player shield, player damage, enemy damage, enemy defeat, and helper spawning.
 - Routes current player shield requests from `GardenEffectResolver` to interested combat receivers.
 - Broadcasts actual player health damage after `PlayerController.take_damage()` applies shield-before-health logic.
 - Exists to replace scene-specific combat wiring in focused steps.
+
+### `game/scripts/combat/enemy_registry.gd`
+
+- Tracks currently registered field enemies.
+- Receives `CombatEvents.enemy_damage_requested` and damages the nearest registered enemy that supports `take_damage(amount, source)`.
+- Keeps enemy targeting out of garden effects and debug scenes.
 
 ### `game/scripts/garden/bloomchain_manager.gd`
 

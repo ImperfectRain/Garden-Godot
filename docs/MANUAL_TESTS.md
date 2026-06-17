@@ -23,6 +23,9 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm the visible shield ring disappears when shield reaches 0.
 - [ ] Confirm Drifter contact damage reduces health after shield is gone.
 - [ ] Confirm player defeat is visible through the debug status or defeat signal behavior.
+- [ ] Confirm Grave Bell or another enemy damage effect can damage Drifter when triggered.
+- [ ] Confirm defeated Drifter logs a death event and disappears.
+- [ ] Confirm Gravecap produces Rot after a Drifter death if Gravecap is placed.
 
 ## Garden Placement
 

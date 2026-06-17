@@ -25,7 +25,7 @@
     "triggers":  [
                      {
                          "id":  "nearby_death_rot",
-                         "event":  "enemy_died_nearby",
+                         "event":  "enemy_died",
                          "action":  "produce_resource",
                          "resource":  "rot",
                          "amount":  1
