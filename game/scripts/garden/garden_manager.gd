@@ -9,6 +9,21 @@ signal selected_cell_changed(cell: Vector2i)
 
 const GRID_SIZE := Vector2i(3, 3)
 const HEART_CELL := Vector2i(1, 1)
+const RESOLVER_ACTIONS := [
+	"produce_resource",
+	"grant_player_shield",
+	"consume_resource",
+	"store_resource",
+	"damage_enemy",
+	"damage_nearby_enemies",
+	"spawn_helper",
+	"repeat_last_trigger",
+	"move_resource",
+	"copy_output",
+	"modify_production",
+	"protect_adjacent_living",
+	"connect_adjacent_flora"
+]
 
 var cells: Dictionary = {}
 var selected_cell := HEART_CELL
@@ -25,6 +40,7 @@ func reset_grid() -> void:
 	cells.clear()
 	_resource_sources.clear()
 	_next_chain_index = 1
+	GardenEffectResolver.reset()
 	set_selected_cell(HEART_CELL)
 	for y in range(GRID_SIZE.y):
 		for x in range(GRID_SIZE.x):
@@ -254,17 +270,11 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 	var trigger_context := _build_trigger_context(piece_id, trigger, context)
 	var effect_result := {}
 	var succeeded := false
-	match action:
-		"produce_resource":
-			effect_result = GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
-			succeeded = bool(effect_result.get("success", false))
-			if succeeded:
-				_store_resource_source_from_effect(effect_result, trigger_context)
-		"grant_player_shield":
-			effect_result = GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
-			succeeded = bool(effect_result.get("success", false))
-		_:
-			succeeded = false
+	if RESOLVER_ACTIONS.has(action):
+		effect_result = GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
+		succeeded = bool(effect_result.get("success", false))
+		if succeeded and action == "produce_resource":
+			_store_resource_source_from_effect(effect_result, trigger_context)
 	if not succeeded:
 		return false
 	last_trigger = {

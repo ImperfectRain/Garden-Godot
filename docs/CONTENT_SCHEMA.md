@@ -93,6 +93,22 @@ Trigger entries currently support:
 - `cooldown`: interval seconds for `on_interval` triggers.
 - `follow_up_events`: optional event names dispatched after this trigger succeeds.
 
+Currently recognized trigger `action` values:
+
+- `produce_resource`
+- `grant_player_shield`
+- `consume_resource`
+- `store_resource`
+- `damage_enemy`
+- `damage_nearby_enemies`
+- `spawn_helper`
+- `repeat_last_trigger`
+- `move_resource`
+- `copy_output`
+- `modify_production`
+- `protect_adjacent_living`
+- `connect_adjacent_flora`
+
 Current causal Bloomchain support uses `follow_up_events` plus runtime chain context from `GardenManager`. The chain context is not authored directly in JSON yet; it is generated when successful triggers produce or spend resources.
 
 Current first-chain authored events:

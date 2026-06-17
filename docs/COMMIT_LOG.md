@@ -139,6 +139,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add generic effect primitives to `GardenEffectResolver` without wiring every garden piece at once.
 
+### 2026-06-16 - architecture: expand garden effect primitives
+
+#### Summary
+- Added generic `GardenEffectResolver` support for current MVP action names beyond Light production and Saintmoth shield.
+- Added resource consumption, resource storage, enemy damage request, helper spawn request, repeat/copy/move outputs, production modifier outputs, and marker effects for adjacent protection and Flora connection.
+- Routed known generic resolver actions through `GardenManager` so future piece triggers can use them.
+
+#### Files Changed
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/CONTENT_SCHEMA.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add lightweight resource routing/provenance improvements so placement can influence who consumes or modifies produced resources.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

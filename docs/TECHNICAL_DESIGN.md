@@ -116,6 +116,22 @@ The current Lantern Lily trigger comes from `game/data/garden_pieces/lantern_lil
 
 For `grant_player_shield`, `GardenEffectResolver` validates the resource id, cost, and shield amount, spends the resource through `GardenResources.spend()`, and emits `CombatEvents.player_shield_requested`. `GardenManager` still owns resource provenance, trigger success bookkeeping, `piece_triggered`, Bloomchain recording, and follow-up dispatch for now.
 
+The resolver also recognizes the current generic MVP action vocabulary:
+
+- `consume_resource`
+- `store_resource`
+- `damage_enemy`
+- `damage_nearby_enemies`
+- `spawn_helper`
+- `repeat_last_trigger`
+- `move_resource`
+- `copy_output`
+- `modify_production`
+- `protect_adjacent_living`
+- `connect_adjacent_flora`
+
+Some of these are minimal primitives that emit structured outputs but are not yet fully wired into piece-specific behavior. They are intentionally generic so later Flora, Fauna, and Object passes can reuse the same actions instead of hardcoding individual pieces.
+
 ## Combat Event Bus
 
 `CombatEvents` is a generic signal bus for combat-facing effects that need to target players, enemies, or helper spawns without binding gameplay systems to a specific scene. It currently exposes requests for player shield, player damage, enemy damage, and helper spawning.

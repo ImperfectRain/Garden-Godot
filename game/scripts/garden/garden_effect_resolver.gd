@@ -3,6 +3,8 @@ extends Node
 signal effect_resolved(result: Dictionary)
 signal effect_failed(request: Dictionary, reason: String)
 
+var _stored_resources: Dictionary = {}
+
 # Intended effect request shape:
 # {
 #   "action": "produce_resource",
@@ -29,6 +31,26 @@ func resolve_effect(request: Dictionary) -> Dictionary:
 			result = _resolve_produce_resource(request)
 		"grant_player_shield":
 			result = _resolve_grant_player_shield(request)
+		"consume_resource":
+			result = _resolve_consume_resource(request)
+		"store_resource":
+			result = _resolve_store_resource(request)
+		"damage_enemy", "damage_nearby_enemies":
+			result = _resolve_enemy_damage(request)
+		"spawn_helper":
+			result = _resolve_spawn_helper(request)
+		"repeat_last_trigger":
+			result = _resolve_repeat_last_trigger(request)
+		"move_resource":
+			result = _resolve_move_resource(request)
+		"copy_output":
+			result = _resolve_copy_output(request)
+		"modify_production":
+			result = _resolve_modify_production(request)
+		"protect_adjacent_living":
+			result = _resolve_marker_effect(request, "protect_adjacent_living")
+		"connect_adjacent_flora":
+			result = _resolve_marker_effect(request, "connect_adjacent_flora")
 		_:
 			result = {
 				"success": false,
@@ -40,6 +62,14 @@ func resolve_effect(request: Dictionary) -> Dictionary:
 	else:
 		effect_failed.emit(request, str(result.get("reason", "Effect failed")))
 	return result
+
+
+func reset() -> void:
+	_stored_resources.clear()
+
+
+func get_stored_amount(cell: Vector2i, piece_id: String, resource_id: String) -> int:
+	return int(_stored_resources.get(_get_storage_key(cell, piece_id, resource_id), 0))
 
 
 func _resolve_produce_resource(request: Dictionary) -> Dictionary:
@@ -70,6 +100,72 @@ func _resolve_produce_resource(request: Dictionary) -> Dictionary:
 			"type": "resource",
 			"resource": resource_id,
 			"amount": amount
+		}
+	]
+	return result
+
+
+func _resolve_consume_resource(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var amount := int(trigger.get("cost", trigger.get("amount", request.get("amount", 0))))
+	var result := _make_base_result(request, "consume_resource")
+	result["resource"] = resource_id
+	result["amount"] = amount
+	if resource_id.is_empty():
+		result["reason"] = "Missing resource id"
+		return result
+	if amount <= 0:
+		result["reason"] = "Amount must be positive"
+		return result
+	if not GardenResources.spend(resource_id, amount):
+		result["reason"] = "Not enough resource"
+		return result
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "resource_consumed",
+			"resource": resource_id,
+			"amount": amount
+		}
+	]
+	return result
+
+
+func _resolve_store_resource(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var cell: Vector2i = request.get("cell", Vector2i(-1, -1))
+	var piece_id := str(request.get("piece_id", ""))
+	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var amount := int(trigger.get("amount", trigger.get("cost", request.get("amount", 1))))
+	var capacity := int(trigger.get("capacity", trigger.get("threshold", 0)))
+	var result := _make_base_result(request, "store_resource")
+	result["resource"] = resource_id
+	result["amount"] = amount
+	result["capacity"] = capacity
+	if resource_id.is_empty():
+		result["reason"] = "Missing resource id"
+		return result
+	if amount <= 0:
+		result["reason"] = "Amount must be positive"
+		return result
+	if not GardenResources.spend(resource_id, amount):
+		result["reason"] = "Not enough resource"
+		return result
+	var key := _get_storage_key(cell, piece_id, resource_id)
+	var stored := int(_stored_resources.get(key, 0)) + amount
+	if capacity > 0:
+		stored = mini(stored, capacity)
+	_stored_resources[key] = stored
+	result["stored"] = stored
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "resource_stored",
+			"resource": resource_id,
+			"amount": amount,
+			"stored": stored,
+			"capacity": capacity
 		}
 	]
 	return result
@@ -121,3 +217,169 @@ func _resolve_grant_player_shield(request: Dictionary) -> Dictionary:
 		}
 	]
 	return result
+
+
+func _resolve_enemy_damage(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var amount := int(trigger.get("amount", request.get("amount", 0)))
+	var result := _make_base_result(request, str(request.get("action", "damage_enemy")))
+	if amount <= 0:
+		result["reason"] = "Damage amount must be positive"
+		return result
+	var source := _make_source(request)
+	CombatEvents.enemy_damage_requested.emit(amount, source)
+	result["success"] = true
+	result["amount"] = amount
+	result["outputs"] = [
+		{
+			"type": "enemy_damage",
+			"amount": amount
+		}
+	]
+	return result
+
+
+func _resolve_spawn_helper(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var cost := int(trigger.get("cost", request.get("cost", 0)))
+	var amount := int(trigger.get("amount", request.get("amount", 1)))
+	var helper_id := str(trigger.get("helper_id", request.get("helper_id", "larva")))
+	var result := _make_base_result(request, "spawn_helper")
+	result["resource"] = resource_id
+	result["cost"] = cost
+	result["amount"] = amount
+	result["helper_id"] = helper_id
+	if amount <= 0:
+		result["reason"] = "Helper amount must be positive"
+		return result
+	if not resource_id.is_empty() and cost > 0 and not GardenResources.spend(resource_id, cost):
+		result["reason"] = "Not enough resource"
+		return result
+	CombatEvents.helper_spawn_requested.emit(helper_id, amount, _make_source(request))
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "helper_spawn",
+			"helper_id": helper_id,
+			"amount": amount
+		}
+	]
+	return result
+
+
+func _resolve_repeat_last_trigger(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var cost := int(trigger.get("cost", request.get("cost", 0)))
+	var scalar := float(trigger.get("scalar", request.get("scalar", 1.0)))
+	var result := _make_base_result(request, "repeat_last_trigger")
+	result["resource"] = resource_id
+	result["cost"] = cost
+	result["scalar"] = scalar
+	if scalar <= 0.0:
+		result["reason"] = "Repeat scalar must be positive"
+		return result
+	if not resource_id.is_empty() and cost > 0 and not GardenResources.spend(resource_id, cost):
+		result["reason"] = "Not enough resource"
+		return result
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "repeat_last_trigger",
+			"scalar": scalar
+		}
+	]
+	return result
+
+
+func _resolve_move_resource(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var amount := int(trigger.get("amount", request.get("amount", 1)))
+	var result := _make_base_result(request, "move_resource")
+	result["resource"] = resource_id
+	result["amount"] = amount
+	if amount <= 0:
+		result["reason"] = "Amount must be positive"
+		return result
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "resource_moved",
+			"resource": resource_id,
+			"amount": amount
+		}
+	]
+	return result
+
+
+func _resolve_copy_output(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var scalar := float(trigger.get("scalar", request.get("scalar", 1.0)))
+	var result := _make_base_result(request, "copy_output")
+	result["scalar"] = scalar
+	if scalar <= 0.0:
+		result["reason"] = "Copy scalar must be positive"
+		return result
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "copy_output",
+			"scalar": scalar
+		}
+	]
+	return result
+
+
+func _resolve_modify_production(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var bonus := int(trigger.get("production_bonus", request.get("production_bonus", 0)))
+	var result := _make_base_result(request, "modify_production")
+	result["production_bonus"] = bonus
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": "production_modifier",
+			"production_bonus": bonus
+		}
+	]
+	return result
+
+
+func _resolve_marker_effect(request: Dictionary, action: String) -> Dictionary:
+	var result := _make_base_result(request, action)
+	result["success"] = true
+	result["outputs"] = [
+		{
+			"type": action
+		}
+	]
+	return result
+
+
+func _make_base_result(request: Dictionary, action: String) -> Dictionary:
+	return {
+		"success": false,
+		"action": action,
+		"cell": request.get("cell", Vector2i(-1, -1)),
+		"piece_id": str(request.get("piece_id", "")),
+		"trigger": request.get("trigger", {}),
+		"outputs": [],
+		"context": request.get("context", {})
+	}
+
+
+func _make_source(request: Dictionary) -> Dictionary:
+	var trigger: Dictionary = request.get("trigger", {})
+	var context: Dictionary = request.get("context", {})
+	return {
+		"piece_id": str(request.get("piece_id", "")),
+		"cell": request.get("cell", Vector2i(-1, -1)),
+		"trigger": trigger.duplicate(true),
+		"context": context.duplicate(true)
+	}
+
+
+func _get_storage_key(cell: Vector2i, piece_id: String, resource_id: String) -> String:
+	return "%s,%s:%s:%s" % [cell.x, cell.y, piece_id, resource_id]

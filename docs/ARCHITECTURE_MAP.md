@@ -94,8 +94,9 @@ Current room/reward flow:
 - Autoload for generic effect action application.
 - Currently resolves `produce_resource` requests by validating resource data and adding resources through `GardenResources`.
 - Currently resolves `grant_player_shield` requests by spending the configured resource cost and emitting a generic player shield request through `CombatEvents`.
+- Recognizes additional generic primitives for consumption, storage, enemy damage requests, helper spawn requests, repeats, resource movement, output copying, production modification, adjacent protection, and flora connection markers.
 - Emits `effect_resolved` or `effect_failed` for result observers.
-- Does not resolve damage, healing, spawning, or other gameplay actions yet.
+- Does not own UI display, piece-specific trigger lookup, or final enemy/helper implementation.
 
 ### `game/scripts/combat/combat_events.gd`
 
