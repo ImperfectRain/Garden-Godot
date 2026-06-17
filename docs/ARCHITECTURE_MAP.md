@@ -196,6 +196,12 @@ Current room/reward flow:
 - Reads from `ContentDatabase`, `GardenManager`, and `GardenEffectResolver` for display only.
 - Does not own placement, trigger, reward, or effect rules.
 
+### `game/scripts/ui/prototype_feedback.gd`
+
+- Owns temporary first fun test audio and screen-flash feedback.
+- Plays placeholder tones and flashes for already-resolved gameplay events.
+- Does not decide gameplay outcomes or apply effects.
+
 ### `game/scripts/core/first_fun_test.gd`
 
 - Temporary debug scene glue.
@@ -216,6 +222,7 @@ Current room/reward flow:
 - `DebugHUD` owns temporary debug UI, display refresh, room status text, and event log.
 - `GardenGridPanel` owns temporary garden display state and trigger feedback.
 - `GardenInspectPanel` owns temporary selected-cell detail display.
+- `PrototypeFeedback` owns temporary audio/flash presentation for the debug scene.
 - `Bloomchains` records chains and directly calls `JournalManager`.
 - Resource provenance is global per resource type rather than per produced resource unit.
 - `DebugHUD` is still temporary and debug-only, but it now owns the first fun test display text and event log.
@@ -302,6 +309,12 @@ Current room/reward flow:
 - Own temporary garden detail display for safe moments.
 - Read content and current stored amounts for presentation only.
 - Avoid owning editing rules, placement logic, or effect resolution.
+
+### `PrototypeFeedback`
+
+- Own temporary presentation feedback only.
+- Listen to or be called from scene glue after gameplay systems have resolved outcomes.
+- Avoid making gameplay decisions, consuming resources, or dispatching triggers.
 
 ### `FirstFunTest`
 

@@ -104,6 +104,12 @@ The panel listens to `GardenManager.grid_reset`, `piece_placed`, `piece_removed`
 
 The panel reads the selected cell's piece data from `ContentDatabase` and displays the simple description, detail description, tags, likes, synergies, trigger summaries, and current stored resource counts. It should remain presentation-only; placement rules, effects, and trigger logic stay in the garden systems.
 
+## Prototype Feedback
+
+`PrototypeFeedback` lives at `res://game/scenes/ui/prototype_feedback.tscn` with script `game/scripts/ui/prototype_feedback.gd`. It plays short placeholder WAV tones and screen flashes for shield gain, enemy damage, Bloomchain finalization, and room reward readiness.
+
+The WAV files in `game/audio/sfx/prototype_*.wav` are generated placeholders for development only. Final audio should replace them through content or presentation data, not by adding gameplay-specific sound decisions to garden systems.
+
 ## Garden Interval Ticking
 
 Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, asks `GardenTriggerSystem` for JSON triggers with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.

@@ -18,6 +18,36 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: add placeholder audio vfx feedback
+
+#### Summary
+- Added generated placeholder WAV tones for shield, Bloomchain, enemy hit, and room reward events.
+- Added `PrototypeFeedback` to play temporary sounds and screen flashes after resolved gameplay events.
+- Wired first fun test feedback for shield gain, garden enemy damage, Bloomchain finalization, and reward readiness.
+
+#### Files Changed
+- `game/audio/sfx/prototype_shield.wav`
+- `game/audio/sfx/prototype_bloom.wav`
+- `game/audio/sfx/prototype_hit.wav`
+- `game/audio/sfx/prototype_room.wav`
+- `game/scenes/ui/prototype_feedback.tscn`
+- `game/scripts/ui/prototype_feedback.gd`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed generated `.wav` files use the Git LFS `filter=lfs` attribute.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Add the demo playtest checklist that covers the full expedition-room loop.
+
 ### 2026-06-17 - mvp: tune initial garden pieces
 
 #### Summary

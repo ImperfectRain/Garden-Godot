@@ -13,6 +13,7 @@ const DRIFTER_SPAWN_POSITION := Vector2(190, 90)
 @onready var expedition_map_panel := $CanvasLayer/ExpeditionMapPanel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 @onready var run_summary_panel := $CanvasLayer/RunSummaryPanel
+@onready var prototype_feedback := $CanvasLayer/PrototypeFeedback
 
 var _last_health := 0
 var _last_shield := 0
@@ -161,6 +162,7 @@ func _on_player_shield_changed(shield: int) -> void:
 	var delta := shield - _last_shield
 	if delta > 0:
 		debug_hud.add_event("Saintmoth granted +%s Shield." % delta)
+		prototype_feedback.play_shield()
 	elif delta < 0:
 		debug_hud.add_event("Shield absorbed %s damage." % abs(delta))
 	_last_shield = shield
@@ -185,6 +187,7 @@ func _on_player_damaged_event(amount: int, source: Dictionary) -> void:
 
 func _on_enemy_damaged(enemy_id: String, amount: int, _source: Dictionary) -> void:
 	debug_hud.add_event("%s took %s garden damage." % [enemy_id.capitalize(), amount])
+	prototype_feedback.play_enemy_hit()
 	_refresh_debug()
 
 
@@ -237,6 +240,7 @@ func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
 	debug_hud.set_last_bloomchain(bloomchain)
 	debug_hud.add_event("Bloomchain finalized x%s: %s" % [length, bloomchain])
 	debug_hud.set_status("Bloomchain finalized")
+	prototype_feedback.play_bloomchain()
 	_refresh_debug()
 
 
@@ -249,6 +253,7 @@ func _on_room_started(room_id: String) -> void:
 func _on_room_reward_ready(room_id: String) -> void:
 	debug_hud.set_status("Room survived - choose a reward")
 	debug_hud.add_event("%s survived. Choose one reward with 1, 2, or 3, then place it." % room_id.capitalize())
+	prototype_feedback.play_room_complete()
 	_reward_controller.show_rewards_for_room(room_id)
 	_refresh_debug()
 

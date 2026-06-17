@@ -79,6 +79,14 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm the run summary panel appears.
 - [ ] Confirm it shows result, rooms cleared, largest Bloomchain, resources, and restart prompt.
 
+## Prototype Feedback
+
+- [ ] Confirm gaining shield plays a short placeholder tone and a blue screen flash.
+- [ ] Confirm garden enemy damage plays a short placeholder hit tone and red flash.
+- [ ] Confirm Bloomchain finalization plays a short placeholder bloom tone and green flash.
+- [ ] Confirm room reward readiness plays a short placeholder room tone and gold flash.
+- [ ] Confirm the feedback is readable but does not block movement, reward selection, placement, or map controls.
+
 ## Bloomchain
 
 - [ ] Choose Bellflower from the reward panel.
