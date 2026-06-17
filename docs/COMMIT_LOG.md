@@ -18,6 +18,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: tune initial garden pieces
+
+#### Summary
+- Tuned Lantern Lily to produce Light every 4 seconds for a faster demo loop.
+- Tuned Grave Bell damage to make the 3 Echo payoff meaningful against the current Drifter.
+- Aligned Gravecap's death trigger event with the nearby enemy-death event documented in its content data.
+
+#### Files Changed
+- `game/data/garden_pieces/lantern_lily.json`
+- `game/data/garden_pieces/grave_bell.json`
+- `game/data/garden_pieces/gravecap.json`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed, with Git line-ending normalization warnings for the touched JSON files.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Add placeholder audio/VFX feedback for room completion, Bloomchains, shield use, and enemy hits.
+
 ### 2026-06-17 - mvp: add garden inspect mode
 
 #### Summary

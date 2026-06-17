@@ -108,7 +108,7 @@ The panel reads the selected cell's piece data from `ContentDatabase` and displa
 
 Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, asks `GardenTriggerSystem` for JSON triggers with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.
 
-The current Lantern Lily trigger comes from `game/data/garden_pieces/lantern_lily.json` and produces 1 Light every 5 seconds. Debug scenes should call `GardenTickSystem.process_intervals(delta)` instead of owning production timers.
+The current Lantern Lily trigger comes from `game/data/garden_pieces/lantern_lily.json` and produces 1 Light every 4 seconds. Debug scenes should call `GardenTickSystem.process_intervals(delta)` instead of owning production timers.
 
 `GardenTickSystem` owns the interval timer dictionary, timer key generation, and stale timer clearing. It resets timers on `GardenManager.grid_reset` and clears a cell's timers when `GardenManager.piece_placed` or `GardenManager.piece_removed` fires.
 

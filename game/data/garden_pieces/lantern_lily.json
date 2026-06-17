@@ -9,12 +9,12 @@
                  "starter"
              ],
     "simple_description":  "A soft flower that makes Light. Moths love it.",
-    "detail_description":  "Produces 1 Light every 5 seconds. Adjacent Fauna should be prioritized as Light receivers by consuming systems.",
+    "detail_description":  "Produces 1 Light every 4 seconds. Adjacent Fauna should be prioritized as Light receivers by consuming systems.",
     "produces":  [
                      {
                          "resource":  "light",
                          "amount":  1,
-                         "interval":  5.0
+                         "interval":  4.0
                      }
                  ],
     "consumes":  [
@@ -30,7 +30,7 @@
                          "action":  "produce_resource",
                          "resource":  "light",
                          "amount":  1,
-                         "cooldown":  5.0
+                         "cooldown":  4.0
                      }
                  ],
     "effects":  [

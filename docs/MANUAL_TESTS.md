@@ -9,7 +9,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm WASD movement works.
 - [ ] Confirm pressing R restarts the prototype scene.
 - [ ] Confirm the player and Saintmoth render as temporary sprite placeholders instead of polygon-only shapes.
-- [ ] Confirm Lantern Lily produces Light after roughly 5 seconds.
+- [ ] Confirm Lantern Lily produces Light after roughly 4 seconds.
 - [ ] Confirm pressing Space with less than 2 Light fails clearly in the debug log.
 - [ ] Confirm pressing Space with 2 or more Light grants shield.
 - [ ] Confirm Saintmoth grants a useful but not runaway shield amount.
@@ -118,7 +118,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 - [ ] Place Grave Bell before Bellflower produces Echo.
 - [ ] Confirm Grave Bell stores Echo.
-- [ ] Confirm Grave Bell rings and damages Drifter when it reaches 3 stored Echo.
+- [ ] Confirm Grave Bell rings and can defeat or nearly defeat Drifter when it reaches 3 stored Echo.
 - [ ] Place Mirror Shard opposite a producing or damaging piece across the 3x3 grid.
 - [ ] Confirm Mirror Shard copies the opposite tile output at reduced strength.
 - [ ] Place Bone Trellis adjacent to two Flora.
