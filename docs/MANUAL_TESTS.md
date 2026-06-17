@@ -52,6 +52,16 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm occupied cells reject placement.
 - [ ] Confirm garden debug rows update after placement.
 
+## Garden Inspect
+
+- [ ] Clear a room and claim/place the reward.
+- [ ] Confirm pressing I opens the garden inspect panel during the safe map-selection moment.
+- [ ] Confirm Arrow keys move the selected garden cell while inspect mode is open.
+- [ ] Confirm the inspect panel shows name, category or Heart role, descriptions, tags, likes, synergies, and trigger summaries.
+- [ ] Confirm stored-resource pieces such as Grave Bell show current stored amounts.
+- [ ] Confirm Escape closes inspect mode and returns to expedition map selection.
+- [ ] Confirm pressing I during active combat or reward placement does not steal those controls.
+
 ## Expedition Map
 
 - [ ] Confirm the Expedition Map panel is visible.

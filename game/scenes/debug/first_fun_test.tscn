@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://first_fun_test"]
+[gd_scene load_steps=15 format=3 uid="uid://first_fun_test"]
 
 [ext_resource type="Script" path="res://game/scripts/core/first_fun_test.gd" id="1"]
 [ext_resource type="Script" path="res://game/scripts/player/player_controller.gd" id="2"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" path="res://game/art/external/kenney/roguelike_rpg/Spritesheet/roguelikeSheet_transparent.png" id="9"]
 [ext_resource type="PackedScene" path="res://game/scenes/ui/expedition_map_panel.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://game/scenes/ui/run_summary_panel.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://game/scenes/ui/garden_inspect_panel.tscn" id="12"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_player_placeholder"]
 atlas = ExtResource("9")
@@ -67,6 +68,8 @@ player_path = NodePath("../Player")
 [node name="DebugHUD" parent="CanvasLayer" instance=ExtResource("6")]
 
 [node name="GardenGridPanel" parent="CanvasLayer" instance=ExtResource("8")]
+
+[node name="GardenInspectPanel" parent="CanvasLayer" instance=ExtResource("12")]
 
 [node name="ExpeditionMapPanel" parent="CanvasLayer" instance=ExtResource("10")]
 

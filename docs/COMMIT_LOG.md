@@ -18,6 +18,33 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: add garden inspect mode
+
+#### Summary
+- Added a temporary garden inspect panel for safe moments after a reward is claimed.
+- Added `I` to toggle inspect mode, Arrow keys to move selected garden cells, and Escape to close inspect mode.
+- The panel shows content-driven piece descriptions, triggers, likes, synergies, and stored resource counts.
+
+#### Files Changed
+- `game/scenes/ui/garden_inspect_panel.tscn`
+- `game/scripts/ui/garden_inspect_panel.gd`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/ui/debug_hud.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed the new inspect panel script does not include inline array loop patterns.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Tune initial garden piece values now that the player can inspect piece behavior in-game.
+
 ### 2026-06-17 - mvp: respawn drifter per room
 
 #### Summary

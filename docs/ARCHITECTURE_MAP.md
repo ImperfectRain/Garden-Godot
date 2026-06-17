@@ -189,6 +189,13 @@ Current room/reward flow:
 - Listens to garden placement/reset/trigger signals and refreshes display state.
 - Does not own placement, trigger, or garden effect rules.
 
+### `game/scripts/ui/garden_inspect_panel.gd`
+
+- Owns the temporary safe-moment garden inspection display.
+- Shows selected-cell content data, trigger summaries, likes, synergies, and stored resources.
+- Reads from `ContentDatabase`, `GardenManager`, and `GardenEffectResolver` for display only.
+- Does not own placement, trigger, reward, or effect rules.
+
 ### `game/scripts/core/first_fun_test.gd`
 
 - Temporary debug scene glue.
@@ -208,6 +215,7 @@ Current room/reward flow:
 - `RewardController` owns temporary reward availability, reward pool lookup, reward panel show/hide, selection handling, and first-empty-cell placement.
 - `DebugHUD` owns temporary debug UI, display refresh, room status text, and event log.
 - `GardenGridPanel` owns temporary garden display state and trigger feedback.
+- `GardenInspectPanel` owns temporary selected-cell detail display.
 - `Bloomchains` records chains and directly calls `JournalManager`.
 - Resource provenance is global per resource type rather than per produced resource unit.
 - `DebugHUD` is still temporary and debug-only, but it now owns the first fun test display text and event log.
@@ -288,6 +296,12 @@ Current room/reward flow:
 - Own temporary visual garden display.
 - Observe garden state and trigger signals.
 - Avoid owning placement rules, reward rules, trigger lookup, or effect logic.
+
+### `GardenInspectPanel`
+
+- Own temporary garden detail display for safe moments.
+- Read content and current stored amounts for presentation only.
+- Avoid owning editing rules, placement logic, or effect resolution.
 
 ### `FirstFunTest`
 

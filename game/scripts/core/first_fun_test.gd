@@ -9,6 +9,7 @@ const DRIFTER_SPAWN_POSITION := Vector2(190, 90)
 @onready var player := $Player
 @onready var debug_hud := $CanvasLayer/DebugHUD
 @onready var garden_grid_panel := $CanvasLayer/GardenGridPanel
+@onready var garden_inspect_panel := $CanvasLayer/GardenInspectPanel
 @onready var expedition_map_panel := $CanvasLayer/ExpeditionMapPanel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 @onready var run_summary_panel := $CanvasLayer/RunSummaryPanel
@@ -19,6 +20,7 @@ var _room_controller := SimpleRoomControllerScript.new()
 var _reward_controller := RewardControllerScript.new()
 var _expedition_map := ExpeditionMapControllerScript.new()
 var _active_drifter: Node = null
+var _is_inspecting_garden := false
 
 
 func _ready() -> void:
@@ -73,6 +75,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().reload_current_scene()
 		return
 	if _reward_controller.handle_placement_input(event):
+		get_viewport().set_input_as_handled()
+		_refresh_debug()
+		return
+	if _handle_garden_inspect_input(event):
 		get_viewport().set_input_as_handled()
 		_refresh_debug()
 		return
@@ -252,6 +258,9 @@ func _refresh_debug() -> void:
 	debug_hud.set_room_info(room_id, _expedition_map.get_completed_room_count(), _room_controller.get_objective_text())
 	debug_hud.refresh()
 	garden_grid_panel.refresh()
+	if _is_inspecting_garden:
+		garden_inspect_panel.set_inspected_cell(GardenManager.selected_cell)
+		garden_inspect_panel.refresh()
 	expedition_map_panel.set_rooms(_expedition_map.get_room_snapshot())
 
 
@@ -291,7 +300,7 @@ func _get_adjacent_synergy_names(piece_id: String, cell: Vector2i) -> Array[Stri
 
 
 func _handle_expedition_input(event: InputEvent) -> bool:
-	if _room_controller.is_active or _room_controller.is_reward_ready or _reward_controller.is_reward_available:
+	if _is_inspecting_garden or _room_controller.is_active or _room_controller.is_reward_ready or _reward_controller.is_reward_available:
 		return false
 	if (event is InputEventKey) == false or not event.is_pressed() or event.echo:
 		return false
@@ -307,6 +316,42 @@ func _handle_expedition_input(event: InputEvent) -> bool:
 		KEY_ENTER, KEY_KP_ENTER, KEY_E:
 			return _expedition_map.confirm_selection()
 	return false
+
+
+func _handle_garden_inspect_input(event: InputEvent) -> bool:
+	if (event is InputEventKey) == false or not event.is_pressed() or event.echo:
+		return false
+	if event.keycode == KEY_I:
+		if _room_controller.is_active or _room_controller.is_reward_ready or _reward_controller.is_reward_available:
+			debug_hud.add_event("Garden inspect opens after a reward is claimed.")
+			return true
+		_set_garden_inspect_mode(not _is_inspecting_garden)
+		return true
+	if not _is_inspecting_garden:
+		return false
+	match event.keycode:
+		KEY_LEFT:
+			return GardenManager.move_selected_cell(Vector2i.LEFT)
+		KEY_RIGHT:
+			return GardenManager.move_selected_cell(Vector2i.RIGHT)
+		KEY_UP:
+			return GardenManager.move_selected_cell(Vector2i.UP)
+		KEY_DOWN:
+			return GardenManager.move_selected_cell(Vector2i.DOWN)
+		KEY_ESCAPE:
+			_set_garden_inspect_mode(false)
+			return true
+	return false
+
+
+func _set_garden_inspect_mode(enabled: bool) -> void:
+	_is_inspecting_garden = enabled
+	garden_inspect_panel.visible = enabled
+	if enabled:
+		garden_inspect_panel.set_inspected_cell(GardenManager.selected_cell)
+		debug_hud.set_status("Garden inspect: Arrows select cells, Esc closes")
+	else:
+		debug_hud.set_status("Choose an adjacent expedition room")
 
 
 func _on_expedition_map_changed() -> void:

@@ -98,6 +98,12 @@ The HUD may read current resources and garden rows from global singletons for de
 
 The panel listens to `GardenManager.grid_reset`, `piece_placed`, `piece_removed`, and `piece_triggered`. Placement signals refresh the grid, and trigger signals briefly flash the triggered cell with an event marker. The text debug rows still exist for now; this panel is only the first readable visual garden UI, not the final garden screen.
 
+## Garden Inspect Panel
+
+`GardenInspectPanel` lives at `res://game/scenes/ui/garden_inspect_panel.tscn` with script `game/scripts/ui/garden_inspect_panel.gd`. It is a temporary safe-moment inspector for the first fun test. After a room reward is claimed, pressing `I` opens the panel, Arrow keys move the selected garden cell, and Escape closes it.
+
+The panel reads the selected cell's piece data from `ContentDatabase` and displays the simple description, detail description, tags, likes, synergies, trigger summaries, and current stored resource counts. It should remain presentation-only; placement rules, effects, and trigger logic stay in the garden systems.
+
 ## Garden Interval Ticking
 
 Garden interval production is owned by `GardenTickSystem.process_intervals(delta)`. The system inspects placed garden pieces through `GardenManager.get_all_cells()`, asks `GardenTriggerSystem` for JSON triggers with `event == "on_interval"`, advances a per-cell/per-trigger cooldown timer, and asks `GardenManager` to apply the trigger when its `cooldown` is reached.
