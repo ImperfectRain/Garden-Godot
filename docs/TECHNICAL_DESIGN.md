@@ -284,6 +284,15 @@ Current Fauna behavior:
 - Mawlet listens for `resource_available`, consumes 2 Blood, and repeats the previous successful garden trigger at reduced strength. Repeat depth is capped so Mawlet cannot repeat itself indefinitely.
 - Glass Beetle listens for `resource_available_adjacent` and only succeeds when the resource source is adjacent and another adjacent piece can use that resource.
 
+## Object Runtime Behavior
+
+Current Object behavior:
+
+- Grave Bell listens for Echo availability, stores Echo up to 3, then dispatches `stored_resource_threshold` and emits enemy damage through `CombatEvents.enemy_damage_requested`.
+- Mirror Shard listens for `opposite_tile_triggered`. The MVP interpretation reflects across the 3x3 grid: if the tile opposite the Mirror Shard triggers, the Mirror Shard copies resource or enemy-damage output at reduced strength.
+- Bone Trellis triggers a placement passive marker and lets resource availability from adjacent Flora also notify other Flora adjacent to the same Trellis.
+- Tiny Fence triggers a placement passive marker and applies its `production_bonus` to adjacent Flora production. It is the current MVP stand-in for protecting adjacent living pieces.
+
 ## Known Temporary Limitations
 
 - Resources are globally counted, with lightweight source-batch provenance. They are not fully stored per tile or per piece yet.

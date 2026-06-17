@@ -77,6 +77,18 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Place Glass Beetle adjacent to a producer and another piece that can use that resource.
 - [ ] Confirm Glass Beetle reacts only when the resource source is adjacent and a valid adjacent target exists.
 
+## Object Events
+
+- [ ] Place Grave Bell before Bellflower produces Echo.
+- [ ] Confirm Grave Bell stores Echo.
+- [ ] Confirm Grave Bell rings and damages Drifter when it reaches 3 stored Echo.
+- [ ] Place Mirror Shard opposite a producing or damaging piece across the 3x3 grid.
+- [ ] Confirm Mirror Shard copies the opposite tile output at reduced strength.
+- [ ] Place Bone Trellis adjacent to two Flora.
+- [ ] Confirm Bone Trellis logs its connection marker and shares adjacent resource availability to connected Flora.
+- [ ] Place Tiny Fence adjacent to Lantern Lily or another Flora.
+- [ ] Confirm adjacent Flora production is boosted by the Tiny Fence MVP production bonus.
+
 ## Notes
 
 - Keep this checklist focused on the current MVP. Do not add tests for future companions, bosses, biomes, procedural generation, art polish, or additional resources until those systems exist.

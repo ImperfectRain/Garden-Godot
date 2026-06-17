@@ -63,6 +63,7 @@ func place_piece(cell: Vector2i, piece_id: String, allow_heart := false) -> bool
 		return false
 	cells[cell] = piece_id
 	piece_placed.emit(cell, piece_id)
+	_dispatch_placement_passives(cell)
 	return true
 
 
@@ -256,6 +257,16 @@ func get_piece_tags_at(cell: Vector2i) -> Array:
 	return get_piece_at(cell).get("tags", [])
 
 
+func get_production_bonus_for_cell(cell: Vector2i) -> int:
+	var bonus := 0
+	for neighbor in get_adjacent_piece_cells(cell):
+		var piece := get_piece_at(neighbor)
+		for effect in piece.get("effects", []):
+			if str(effect.get("action", "")) == "protect_adjacent_living":
+				bonus += int(effect.get("production_bonus", 0))
+	return bonus
+
+
 func is_valid_cell(cell: Vector2i) -> bool:
 	return cell.x >= 0 and cell.x < GRID_SIZE.x and cell.y >= 0 and cell.y < GRID_SIZE.y
 
@@ -280,7 +291,7 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 	if RESOLVER_ACTIONS.has(action):
 		effect_result = GardenEffectResolver.resolve_effect(_build_effect_request(cell, piece_id, trigger, trigger_context))
 		succeeded = bool(effect_result.get("success", false))
-		if succeeded and action == "produce_resource":
+		if succeeded and ["produce_resource", "copy_output"].has(action) and not str(effect_result.get("resource", "")).is_empty():
 			_store_resource_source_from_effect(effect_result, trigger_context)
 		elif succeeded and RESOURCE_CONSUMING_ACTIONS.has(action):
 			_consume_resource_source_from_effect(effect_result)
@@ -298,6 +309,7 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 		_repeat_last_trigger(previous_trigger, effect_result, trigger_context)
 	_dispatch_follow_up_events(trigger, trigger_context)
 	_dispatch_effect_events(effect_result, trigger_context)
+	_dispatch_mirror_events(cell, piece_id, effect_result, trigger_context)
 	return true
 
 
@@ -412,9 +424,21 @@ func _dispatch_follow_up_events(trigger: Dictionary, context: Dictionary) -> voi
 		GardenTriggerSystem.trigger_global_event(str(event_name), context)
 
 
+func _dispatch_placement_passives(cell: Vector2i) -> void:
+	GardenTriggerSystem.trigger_cell_event(cell, "placement_passive", {"placed_cell": cell})
+	for neighbor in get_adjacent_piece_cells(cell):
+		GardenTriggerSystem.trigger_cell_event(neighbor, "placement_passive", {"placed_cell": cell})
+
+
 func _dispatch_effect_events(effect_result: Dictionary, context: Dictionary) -> void:
-	if str(effect_result.get("action", "")) != "produce_resource":
-		return
+	match str(effect_result.get("action", "")):
+		"produce_resource", "copy_output":
+			_dispatch_resource_available(effect_result, context)
+		"store_resource":
+			_dispatch_storage_threshold(effect_result, context)
+
+
+func _dispatch_resource_available(effect_result: Dictionary, context: Dictionary) -> void:
 	var resource_id := str(effect_result.get("resource", ""))
 	if resource_id.is_empty():
 		return
@@ -426,6 +450,44 @@ func _dispatch_effect_events(effect_result: Dictionary, context: Dictionary) -> 
 	var origin_cell: Vector2i = resource_context.get("origin_cell", Vector2i(-1, -1))
 	for neighbor in get_adjacent_piece_cells(origin_cell):
 		GardenTriggerSystem.trigger_cell_event(neighbor, "resource_available_adjacent", resource_context)
+	for trellis_cell in get_adjacent_cells_by_tag(origin_cell, "connection"):
+		for connected_cell in get_adjacent_cells_by_category(trellis_cell, "flora"):
+			if connected_cell != origin_cell:
+				GardenTriggerSystem.trigger_cell_event(connected_cell, "resource_available_adjacent", resource_context)
+
+
+func _dispatch_storage_threshold(effect_result: Dictionary, context: Dictionary) -> void:
+	var capacity := int(effect_result.get("capacity", 0))
+	var stored := int(effect_result.get("stored", 0))
+	if capacity <= 0 or stored < capacity:
+		return
+	var storage_context := context.duplicate(true)
+	storage_context["resource"] = str(effect_result.get("resource", ""))
+	storage_context["stored"] = stored
+	storage_context["threshold"] = capacity
+	var cell: Vector2i = effect_result.get("cell", Vector2i(-1, -1))
+	GardenTriggerSystem.trigger_cell_event(cell, "stored_resource_threshold", storage_context)
+	GardenEffectResolver.clear_stored_amount(cell, str(effect_result.get("piece_id", "")), str(effect_result.get("resource", "")))
+
+
+func _dispatch_mirror_events(source_cell: Vector2i, source_piece_id: String, effect_result: Dictionary, context: Dictionary) -> void:
+	if source_piece_id == "mirror_shard":
+		return
+	var mirror_context := context.duplicate(true)
+	mirror_context["copied_source_cell"] = source_cell
+	for output in effect_result.get("outputs", []):
+		match str(output.get("type", "")):
+			"resource":
+				mirror_context["copied_resource"] = str(output.get("resource", ""))
+				mirror_context["copied_amount"] = int(output.get("amount", 0))
+			"enemy_damage":
+				mirror_context["copied_enemy_damage"] = int(output.get("amount", 0))
+	if not mirror_context.has("copied_resource") and not mirror_context.has("copied_enemy_damage"):
+		return
+	for mirror_cell in get_cells_by_tag("copy"):
+		var opposite := Vector2i(GRID_SIZE.x - 1 - mirror_cell.x, GRID_SIZE.y - 1 - mirror_cell.y)
+		if opposite == source_cell:
+			GardenTriggerSystem.trigger_cell_event(mirror_cell, "opposite_tile_triggered", mirror_context)
 
 
 func _repeat_last_trigger(previous_trigger: Dictionary, effect_result: Dictionary, context: Dictionary) -> void:

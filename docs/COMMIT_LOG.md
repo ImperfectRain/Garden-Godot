@@ -265,6 +265,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Implement Object storage, copy, connection, and protection modifiers.
 
+### 2026-06-16 - mvp: implement object garden behavior
+
+#### Summary
+- Added Grave Bell Echo storage and threshold damage flow.
+- Added Mirror Shard copying for opposite-tile resource and enemy-damage outputs.
+- Added Bone Trellis placement passive behavior and Flora resource-sharing notifications.
+- Added Tiny Fence placement passive behavior and adjacent Flora production bonus.
+
+#### Files Changed
+- `game/data/garden_pieces/grave_bell.json`
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed all current Object trigger actions are recognized by `GardenEffectResolver`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Improve garden feedback readability with adjacency highlights, synergy hints, and typed trigger feedback.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

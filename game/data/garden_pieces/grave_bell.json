@@ -27,6 +27,14 @@
                ],
     "triggers":  [
                      {
+                         "id":  "store_echo",
+                         "event":  "resource_available",
+                         "action":  "store_resource",
+                         "resource":  "echo",
+                         "amount":  1,
+                         "capacity":  3
+                     },
+                     {
                          "id":  "echo_ring",
                          "event":  "stored_resource_threshold",
                          "action":  "damage_nearby_enemies",

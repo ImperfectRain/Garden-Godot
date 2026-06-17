@@ -63,6 +63,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary) -> void:
 	JournalManager.discover_piece(piece_id)
+	var action := str(_trigger.get("action", ""))
 	if piece_id == "lantern_lily":
 		debug_hud.add_event("Lantern Lily produced +1 Light.")
 	elif piece_id == "bellflower":
@@ -71,6 +72,16 @@ func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary
 		debug_hud.add_event("Blood Rose drank danger and produced +1 Blood.")
 	elif piece_id == "gravecap":
 		debug_hud.add_event("Gravecap grew from a nearby death and produced +1 Rot.")
+	elif piece_id == "grave_bell" and action == "store_resource":
+		debug_hud.add_event("Grave Bell stored Echo.")
+	elif piece_id == "grave_bell" and action == "damage_nearby_enemies":
+		debug_hud.add_event("Grave Bell rang and damaged an enemy.")
+	elif piece_id == "mirror_shard":
+		debug_hud.add_event("Mirror Shard copied the opposite tile.")
+	elif piece_id == "bone_trellis":
+		debug_hud.add_event("Bone Trellis connected adjacent Flora.")
+	elif piece_id == "tiny_fence":
+		debug_hud.add_event("Tiny Fence protected nearby living pieces.")
 	_refresh_debug()
 
 

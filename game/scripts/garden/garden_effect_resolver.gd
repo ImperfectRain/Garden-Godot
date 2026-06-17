@@ -72,10 +72,15 @@ func get_stored_amount(cell: Vector2i, piece_id: String, resource_id: String) ->
 	return int(_stored_resources.get(_get_storage_key(cell, piece_id, resource_id), 0))
 
 
+func clear_stored_amount(cell: Vector2i, piece_id: String, resource_id: String) -> void:
+	_stored_resources.erase(_get_storage_key(cell, piece_id, resource_id))
+
+
 func _resolve_produce_resource(request: Dictionary) -> Dictionary:
 	var trigger: Dictionary = request.get("trigger", {})
 	var resource_id := str(trigger.get("resource", request.get("resource", "")))
 	var amount := int(trigger.get("amount", request.get("amount", 1)))
+	amount += GardenManager.get_production_bonus_for_cell(request.get("cell", Vector2i(-1, -1)))
 	var result := {
 		"success": false,
 		"action": "produce_resource",
@@ -143,6 +148,7 @@ func _resolve_store_resource(request: Dictionary) -> Dictionary:
 	result["resource"] = resource_id
 	result["amount"] = amount
 	result["capacity"] = capacity
+	result["threshold"] = capacity
 	if resource_id.is_empty():
 		result["reason"] = "Missing resource id"
 		return result
@@ -333,19 +339,44 @@ func _resolve_move_resource(request: Dictionary) -> Dictionary:
 
 func _resolve_copy_output(request: Dictionary) -> Dictionary:
 	var trigger: Dictionary = request.get("trigger", {})
+	var context: Dictionary = request.get("context", {})
 	var scalar := float(trigger.get("scalar", request.get("scalar", 1.0)))
 	var result := _make_base_result(request, "copy_output")
 	result["scalar"] = scalar
 	if scalar <= 0.0:
 		result["reason"] = "Copy scalar must be positive"
 		return result
-	result["success"] = true
-	result["outputs"] = [
-		{
-			"type": "copy_output",
-			"scalar": scalar
-		}
-	]
+	var copied_resource := str(context.get("copied_resource", ""))
+	var copied_amount := int(context.get("copied_amount", 0))
+	if not copied_resource.is_empty() and copied_amount > 0:
+		var copied_resource_amount := maxi(1, int(floor(float(copied_amount) * scalar)))
+		GardenResources.add(copied_resource, copied_resource_amount)
+		result["resource"] = copied_resource
+		result["amount"] = copied_resource_amount
+		result["success"] = true
+		result["outputs"] = [
+			{
+				"type": "resource",
+				"resource": copied_resource,
+				"amount": copied_resource_amount
+			}
+		]
+		return result
+	var copied_damage := int(context.get("copied_enemy_damage", 0))
+	if copied_damage > 0:
+		var copied_damage_amount := maxi(1, int(floor(float(copied_damage) * scalar)))
+		CombatEvents.enemy_damage_requested.emit(copied_damage_amount, _make_source(request))
+		result["amount"] = copied_damage_amount
+		result["success"] = true
+		result["outputs"] = [
+			{
+				"type": "enemy_damage",
+				"amount": copied_damage_amount
+			}
+		]
+		return result
+	result["success"] = false
+	result["reason"] = "No copied output"
 	return result
 
 
