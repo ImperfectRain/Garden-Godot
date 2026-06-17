@@ -80,6 +80,8 @@ Reward pools currently use:
 
 The first fun test currently takes the first three available choices from the room's pool and skips pieces already placed in the garden. This is deterministic MVP behavior, not the final weighted or random reward resolver.
 
+Demo-specific reward pools use the `demo_` prefix and intentionally steer each room toward testable loops. Future procedural expedition generation can replace these with weighted pools once the core systems are stable.
+
 ## Trigger Fields
 
 Trigger entries currently support:

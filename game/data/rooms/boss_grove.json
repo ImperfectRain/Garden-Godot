@@ -1,9 +1,9 @@
-{
+﻿{
     "id":  "boss_grove",
     "name":  "Boss Grove",
     "plain_description":  "The Hungry Stag waits here.",
     "technical_description":  "Mini-boss room. Completes MVP run and records bond/journal progress.",
-    "reward_pool":  "run_completion",
+    "reward_pool":  "demo_boss_grove",
     "enemy_pool":  [
                        "hungry_stag"
                    ]

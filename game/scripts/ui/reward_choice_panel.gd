@@ -59,9 +59,31 @@ func _select_index(index: int) -> void:
 func _format_choice_text(index: int, piece_id: String, piece: Dictionary) -> String:
 	if piece.is_empty():
 		return "%s. Unknown reward: %s" % [index + 1, piece_id]
-	return "%s. %s [%s]\n%s" % [
+	var text := "%s. %s [%s]\n%s" % [
 		index + 1,
 		piece.get("name", piece_id),
 		piece.get("category", "unknown"),
 		piece.get("simple_description", "")
 	]
+	var synergy_hint := _get_existing_synergy_hint(piece)
+	if not synergy_hint.is_empty():
+		text += "\nWorks with: %s" % synergy_hint
+	return text
+
+
+func _get_existing_synergy_hint(piece: Dictionary) -> String:
+	var matches: Array[String] = []
+	for placed_piece_id in GardenManager.get_all_cells().values():
+		var placed_id := str(placed_piece_id)
+		if placed_id.is_empty():
+			continue
+		var placed_piece := ContentDatabase.get_garden_piece(placed_id)
+		var placed_category := str(placed_piece.get("category", ""))
+		for like in piece.get("likes", []):
+			var like_id := str(like)
+			if like_id == placed_id or like_id == placed_category or placed_piece.get("tags", []).has(like_id):
+				matches.append(str(placed_piece.get("name", placed_id)))
+				break
+	if matches.is_empty():
+		return ""
+	return ", ".join(PackedStringArray(matches))

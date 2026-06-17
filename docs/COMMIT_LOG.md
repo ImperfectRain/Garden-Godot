@@ -406,6 +406,33 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Improve reward pools for the demo loop.
 
+### 2026-06-17 - mvp: improve demo reward pools
+
+#### Summary
+- Added room-specific demo reward pools to reliably expose Bloomchain, death/Rot, Fauna, Object, and modifier loops.
+- Pointed current MVP rooms to the new demo pools.
+- Added reward-card "Works with" hints based on currently placed garden pieces.
+
+#### Files Changed
+- `game/data/rewards/demo_meadow.json`
+- `game/data/rewards/demo_nursery.json`
+- `game/data/rewards/demo_burrow.json`
+- `game/data/rewards/demo_reliquary.json`
+- `game/data/rewards/demo_boss_grove.json`
+- `game/data/rooms/*.json`
+- `game/scripts/ui/reward_choice_panel.gd`
+- `docs/CONTENT_SCHEMA.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed each room reward pool id resolves to a reward pool JSON file.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Add a simple run summary screen.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

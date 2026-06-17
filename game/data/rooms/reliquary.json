@@ -1,9 +1,9 @@
-{
+﻿{
     "id":  "reliquary",
     "name":  "Reliquary",
     "plain_description":  "An object-focused room.",
     "technical_description":  "Object reward room. Bias rewards toward Objects or relic modifiers.",
-    "reward_pool":  "object",
+    "reward_pool":  "demo_reliquary",
     "enemy_pool":  [
                        "grazer",
                        "drifter"
