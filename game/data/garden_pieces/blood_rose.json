@@ -8,7 +8,7 @@
                  "risk"
              ],
     "simple_description":  "A thorny flower that drinks danger.",
-    "detail_description":  "Produces 1 Blood when the player takes damage or an enemy dies close to the player.",
+    "detail_description":  "Produces 1 Blood when the player takes damage or an enemy dies close to the player. Enemy deaths close to the garden produce an extra Blood for Mawlet.",
     "produces":  [
                      {
                          "resource":  "blood",
@@ -26,6 +26,13 @@
                      {
                          "id":  "danger_blood",
                          "event":  "player_damaged_or_close_kill",
+                         "action":  "produce_resource",
+                         "resource":  "blood",
+                         "amount":  1
+                     },
+                     {
+                         "id":  "death_blood",
+                         "event":  "enemy_died_nearby",
                          "action":  "produce_resource",
                          "resource":  "blood",
                          "amount":  1

@@ -1,8 +1,9 @@
 {
   "id": "demo_burrow",
   "choices": [
+    "gravecap",
+    "blood_rose",
     "rotling",
-    "mawlet",
-    "glass_beetle"
+    "mawlet"
   ]
 }

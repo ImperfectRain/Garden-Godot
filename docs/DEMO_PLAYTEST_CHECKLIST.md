@@ -51,10 +51,15 @@ Use this checklist when evaluating whether the current first fun test is playabl
 ## Garden Systems
 
 - [ ] Create the Lantern Lily -> Saintmoth -> Bellflower Bloomchain and confirm it is shown in debug feedback.
+- [ ] Confirm chain step feedback appears while the Bloomchain is building.
+- [ ] Confirm Bellflower can still produce a slow Echo trickle if the player does not Pulse immediately.
 - [ ] Place Grave Bell before Echo is produced and confirm it stores Echo.
+- [ ] Confirm Grave Bell gives a small placement chime so it is useful before Echo exists.
 - [ ] Confirm Grave Bell rings at 3 Echo and can defeat or nearly defeat Drifter.
-- [ ] Place at least one Fauna reward and confirm it either consumes resources or clearly logs why it cannot.
-- [ ] Place at least one Object reward and confirm it changes garden behavior or clearly logs its marker effect.
+- [ ] Place Rotling and confirm it can request a weak helper even before the Rot engine is online.
+- [ ] Place Blood Rose and Mawlet, then confirm enemy deaths or player damage can build toward Mawlet's 2 Blood cost.
+- [ ] Place Bone Trellis next to Flora and confirm it improves production or resource sharing.
+- [ ] Place at least one Object reward and confirm it changes garden behavior or visibly fires a marker effect.
 
 ## Feedback And End State
 

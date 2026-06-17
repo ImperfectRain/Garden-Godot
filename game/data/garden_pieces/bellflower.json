@@ -8,7 +8,7 @@
                  "bloom"
              ],
     "simple_description":  "A little flower that rings when the garden wakes.",
-    "detail_description":  "When the garden wakes from a successful companion Pulse, produces 1 Echo.",
+    "detail_description":  "When the garden wakes from a successful companion Pulse, produces 1 Echo. If left alone, softly produces 1 Echo every 12 seconds.",
     "produces":  [
                      {
                          "resource":  "echo",
@@ -29,6 +29,14 @@
                          "action":  "produce_resource",
                          "resource":  "echo",
                          "amount":  1
+                     },
+                     {
+                         "id":  "soft_echo",
+                         "event":  "on_interval",
+                         "action":  "produce_resource",
+                         "resource":  "echo",
+                         "amount":  1,
+                         "cooldown":  12.0
                      }
                  ],
     "effects":  [

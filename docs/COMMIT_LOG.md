@@ -18,6 +18,39 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: improve garden piece standalone value
+
+#### Summary
+- Added slow standalone/fallback value to Bellflower, Rotling, and Grave Bell without adding new content.
+- Made Bone Trellis production support use the existing data-driven `production_bonus` field.
+- Added an extra Blood Rose death trigger so Mawlet has a more realistic activation path.
+- Resequenced demo reward pools into clearer build arcs.
+- Added chain-step event feedback in the first fun test.
+
+#### Files Changed
+- `game/data/garden_pieces/bellflower.json`
+- `game/data/garden_pieces/blood_rose.json`
+- `game/data/garden_pieces/bone_trellis.json`
+- `game/data/garden_pieces/grave_bell.json`
+- `game/data/garden_pieces/rotling.json`
+- `game/data/rewards/demo_nursery.json`
+- `game/data/rewards/demo_burrow.json`
+- `game/data/rewards/demo_reliquary.json`
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/DEMO_PLAYTEST_CHECKLIST.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed, with Git line-ending normalization warnings for touched JSON files.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Add visible per-cell resource movement/path feedback so chains feel less like debug text and more like a living garden.
+
 ### 2026-06-17 - mvp: tighten demo mechanics and summary
 
 #### Summary

@@ -8,7 +8,7 @@
                  "summon"
              ],
     "simple_description":  "A loyal little thing that eats Rot and spits out helpers.",
-    "detail_description":  "Consumes 2 Rot to spawn a temporary larva helper.",
+    "detail_description":  "Consumes 2 Rot to spawn a temporary larva helper. If it cannot find Rot for a while, it still spits out a weak larva helper every 16 seconds.",
     "produces":  [
 
                  ],
@@ -29,6 +29,14 @@
                          "resource":  "rot",
                          "cost":  2,
                          "amount":  1
+                     },
+                     {
+                         "id":  "lonely_larva",
+                         "event":  "on_interval",
+                         "action":  "spawn_helper",
+                         "helper_id":  "larva",
+                         "amount":  1,
+                         "cooldown":  16.0
                      }
                  ],
     "effects":  [

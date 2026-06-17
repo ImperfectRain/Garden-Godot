@@ -92,6 +92,18 @@ The first fun test no longer treats room completion alone as full success. `RunM
 
 This keeps the prototype aligned with the MVP question: whether placing living garden pieces creates readable Bloomchains during relaxed combat.
 
+## Garden Piece Value Pass
+
+Current MVP tuning aims for each piece to have at least one visible benefit without requiring a perfect combo:
+
+- Bellflower reacts to Saintmoth's `garden_woke` event and also produces a slow solo Echo trickle.
+- Rotling consumes Rot for helpers, but also spawns an occasional weak helper if Rot is unavailable.
+- Grave Bell stores Echo for its main payoff and now gives a small placement chime so it is not inert before Echo exists.
+- Bone Trellis grants adjacent Flora a small production bonus through data-defined `production_bonus`.
+- Blood Rose still rewards danger, but enemy deaths now give an additional Blood path so Mawlet can activate in realistic room flow.
+
+The current demo reward pools are intentionally sequenced as build arcs: Meadow teaches Bellflower, Nursery offers Grave Bell/Tiny Fence/Bone Trellis support, Burrow opens Rot/Blood/Fauna branches, and Reliquary introduces copying/carrying/object refinement.
+
 ## Debug HUD
 
 `DebugHUD` owns the temporary debug label, capped event log, room status text, last Bloomchain text, and display refresh. `FirstFunTest` should call high-level HUD methods such as `set_status()`, `add_event()`, `set_room_info()`, `set_last_bloomchain()`, and `refresh()` instead of assembling debug text directly.
@@ -183,6 +195,8 @@ The first causal chain is:
 4. Bellflower reacts to `garden_woke` and produces Echo.
 
 `Bloomchains` records steps by `chain_id`, prevents the same piece from triggering twice in one chain, and caps chains at `SOFT_CHAIN_CAP`. Step events can emit immediately through `chain_step_added`, but `JournalManager.record_bloomchain()` and `chain_finished` happen only when the chain finishes through timeout, cap, repeated-piece protection, or an explicit finish.
+
+The first fun test listens to `chain_step_added` for temporary debug feedback, so players can see a chain building before the final timeout resolves it.
 
 This finish-time recording means a future chain longer than 3 records its final length instead of only the first 3 steps.
 

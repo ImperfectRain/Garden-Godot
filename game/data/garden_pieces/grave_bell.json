@@ -9,7 +9,7 @@
                  "damage"
              ],
     "simple_description":  "Rings when enough Echo gathers.",
-    "detail_description":  "Stores Echo. At 3 Echo, rings hard enough to defeat a Drifter-sized threat.",
+    "detail_description":  "Rings softly when placed. Stores Echo. At 3 Echo, rings hard enough to defeat a Drifter-sized threat.",
     "produces":  [
 
                  ],
@@ -33,6 +33,12 @@
                          "resource":  "echo",
                          "amount":  1,
                          "capacity":  3
+                     },
+                     {
+                         "id":  "placement_chime",
+                         "event":  "placement_passive",
+                         "action":  "damage_nearby_enemies",
+                         "amount":  2
                      },
                      {
                          "id":  "echo_ring",

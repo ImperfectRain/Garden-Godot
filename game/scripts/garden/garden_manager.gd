@@ -263,8 +263,7 @@ func get_production_bonus_for_cell(cell: Vector2i) -> int:
 	for neighbor in get_adjacent_piece_cells(cell):
 		var piece := get_piece_at(neighbor)
 		for effect in piece.get("effects", []):
-			if str(effect.get("action", "")) == "protect_adjacent_living":
-				bonus += int(effect.get("production_bonus", 0))
+			bonus += int(effect.get("production_bonus", 0))
 	return bonus
 
 

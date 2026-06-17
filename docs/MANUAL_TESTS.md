@@ -94,6 +94,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Choose Bellflower from the first Meadow reward panel.
 - [ ] Wait until Lantern Lily has produced at least 2 Light.
 - [ ] Press Space to Pulse Saintmoth.
+- [ ] Confirm chain step feedback appears before the Bloomchain finalizes.
 - [ ] Confirm triggered garden cells briefly flash or show an event marker in the visual Garden panel.
 - [ ] Confirm different trigger types use readable markers such as production `+`, movement/copy `>`, damage `!`, and repeat `x`.
 - [ ] Confirm triggered garden cells show short fading feedback text such as `+1 light`, `Store echo`, `Hit`, `Copy`, or `Repeat`.
@@ -105,16 +106,20 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 ## Flora Events
 
+- [ ] Place Bellflower and wait without pulsing.
+- [ ] Confirm Bellflower eventually produces a solo Echo trickle.
 - [ ] Choose Blood Rose from the reward panel in a run where it is offered.
 - [ ] Place Blood Rose in any valid non-heart cell.
 - [ ] Let shield drop to 0.
 - [ ] Let Drifter deal health damage.
 - [ ] Confirm Blood Rose produces +1 Blood after actual health damage.
+- [ ] Defeat Drifter while Blood Rose is placed and confirm enemy death can help reach Mawlet's 2 Blood cost.
 - [ ] Confirm shield-only damage does not trigger Blood Rose.
 
 ## Fauna Events
 
 - [ ] Place Rotling before or after Gravecap.
+- [ ] Confirm Rotling can eventually request a weak helper even before enough Rot is available.
 - [ ] Defeat Drifter while Gravecap is placed.
 - [ ] Confirm Gravecap produces Rot and Rotling consumes 2 Rot when enough Rot is available.
 - [ ] Confirm Rotling logs a placeholder larva helper request.
@@ -126,13 +131,14 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 ## Object Events
 
+- [ ] Place Grave Bell and confirm its placement chime damages or attempts to damage a nearby enemy.
 - [ ] Place Grave Bell before Bellflower produces Echo.
 - [ ] Confirm Grave Bell stores Echo.
 - [ ] Confirm Grave Bell rings and can defeat or nearly defeat Drifter when it reaches 3 stored Echo.
 - [ ] Place Mirror Shard opposite a producing or damaging piece across the 3x3 grid.
 - [ ] Confirm Mirror Shard copies the opposite tile output at reduced strength.
 - [ ] Place Bone Trellis adjacent to two Flora.
-- [ ] Confirm Bone Trellis logs its connection marker and shares adjacent resource availability to connected Flora.
+- [ ] Confirm Bone Trellis logs its connection marker, shares adjacent resource availability to connected Flora, and boosts adjacent Flora production.
 - [ ] Place Tiny Fence adjacent to Lantern Lily or another Flora.
 - [ ] Confirm adjacent Flora production is boosted by the Tiny Fence MVP production bonus.
 

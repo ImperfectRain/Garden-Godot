@@ -44,6 +44,7 @@ func _ready() -> void:
 	CombatEvents.helper_spawn_requested.connect(_on_helper_spawn_requested)
 	GardenManager.piece_placed.connect(_on_piece_placed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
+	Bloomchains.chain_step_added.connect(_on_chain_step_added)
 	Bloomchains.chain_finished.connect(_on_bloomchain_finished)
 	_room_controller.room_started.connect(_on_room_started)
 	_room_controller.reward_ready.connect(_on_room_reward_ready)
@@ -243,6 +244,13 @@ func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
 	debug_hud.add_event("Bloomchain finalized x%s: %s" % [length, bloomchain])
 	debug_hud.set_status("Bloomchain finalized")
 	prototype_feedback.play_bloomchain()
+	_refresh_debug()
+
+
+func _on_chain_step_added(_cell: Vector2i, piece_id: String, action: String, chain_length: int) -> void:
+	if chain_length < 2:
+		return
+	debug_hud.add_event("Chain x%s: %s %s." % [chain_length, _get_piece_name(piece_id), action])
 	_refresh_debug()
 
 
