@@ -82,9 +82,15 @@ Player defeat calls `SimpleRoomController.stop()`, preventing the room timer fro
 
 The first fun test includes a temporary reward panel at `res://game/scenes/ui/reward_choice_panel.tscn`. It displays the reward ids it is given, looks up each piece's name, category, and simple description from `ContentDatabase`, and accepts either button clicks or keyboard keys 1/2/3.
 
-`RewardController` lives at `game/scripts/core/reward_controller.gd`. It tracks whether a reward is currently available, resolves the current room's `reward_pool` through `ContentDatabase.get_room(room_id)` and `ContentDatabase.get_reward_pool(pool_id)`, passes reward ids to `RewardChoicePanel.set_rewards(piece_ids)`, receives selected reward ids, places the reward through `GardenManager.place_piece_in_first_empty_cell(piece_id)`, and emits reward claim or failure results back to the scene.
+`RewardController` lives at `game/scripts/core/reward_controller.gd`. It tracks whether a reward is currently available, resolves the current room's `reward_pool` through `ContentDatabase.get_room(room_id)` and `ContentDatabase.get_reward_pool(pool_id)`, passes reward ids to `RewardChoicePanel.set_rewards(piece_ids)`, receives selected reward ids, starts pending manual placement, places the reward through `GardenManager.place_piece()` after confirmation, and emits reward claim or failure results back to the scene.
 
-For now, reward selection uses the first three available piece ids from the room's pool, skipping pieces already placed in the garden. This keeps the Meadow room data-driven through `general_garden_piece` while still offering useful new pieces. This is a scaffold for validating reward readability and garden placement; it is not the final room reward flow, weighted reward resolver, drag-and-drop garden UI, or polished reward screen.
+For now, reward selection uses up to the first three available piece ids from the room's pool, skipping pieces already placed in the garden. The demo Meadow pool intentionally offers only Bellflower so the first reward teaches the Lantern Lily -> Saintmoth -> Bellflower proof chain before the player branches into broader rewards. This is a scaffold for validating reward readability and garden placement; it is not the final weighted reward resolver, drag-and-drop garden UI, or polished reward screen.
+
+## Demo Success Condition
+
+The first fun test no longer treats room completion alone as full success. `RunManager` requires the run to clear the planned demo rooms and reach a Bloomchain of at least 3. If the player clears the expedition without that chain, the run summary reports `Garden proof incomplete` instead of `Success`.
+
+This keeps the prototype aligned with the MVP question: whether placing living garden pieces creates readable Bloomchains during relaxed combat.
 
 ## Debug HUD
 

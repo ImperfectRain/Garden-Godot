@@ -18,6 +18,34 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: tighten demo mechanics and summary
+
+#### Summary
+- Made demo success require both clearing planned rooms and reaching a Bloomchain of at least 3.
+- Updated the run summary to report garden proof status and show a clean end-state screen.
+- Stopped room/garden ticking after the run ends and hid debug panels behind the summary.
+- Directed the first Meadow reward to Bellflower so the demo teaches the first Bloomchain before branching.
+
+#### Files Changed
+- `game/scripts/core/run_manager.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/ui/run_summary_panel.gd`
+- `game/scenes/ui/run_summary_panel.tscn`
+- `game/data/rewards/demo_meadow.json`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/DEMO_PLAYTEST_CHECKLIST.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- Targeted scan found only pre-existing `piece.get(..., [])` loop patterns outside this change; no direct tween erase callback pattern was reintroduced.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Improve in-room presentation by replacing the dense debug HUD with a smaller objective/resource HUD.
+
 ### 2026-06-17 - fix: clean demo runtime warnings
 
 #### Summary

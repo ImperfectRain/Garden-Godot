@@ -76,8 +76,10 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 ## Run Summary
 
 - [ ] Clear the final demo expedition room or trigger player defeat.
-- [ ] Confirm the run summary panel appears.
-- [ ] Confirm it shows result, rooms cleared, largest Bloomchain, resources, and restart prompt.
+- [ ] Confirm the run summary panel appears without overlapping the debug HUD, garden panel, or expedition map.
+- [ ] Confirm it shows result, rooms cleared, garden proof status, largest Bloomchain, resources, and restart prompt.
+- [ ] Confirm a full room clear without a 3-step Bloomchain reports `Garden proof incomplete`.
+- [ ] Confirm a full room clear with a 3-step Bloomchain reports `Success`.
 
 ## Prototype Feedback
 
@@ -89,7 +91,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 
 ## Bloomchain
 
-- [ ] Choose Bellflower from the reward panel.
+- [ ] Choose Bellflower from the first Meadow reward panel.
 - [ ] Wait until Lantern Lily has produced at least 2 Light.
 - [ ] Press Space to Pulse Saintmoth.
 - [ ] Confirm triggered garden cells briefly flash or show an event marker in the visual Garden panel.

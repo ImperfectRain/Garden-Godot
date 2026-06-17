@@ -58,7 +58,7 @@ func _ready() -> void:
 	_reward_controller.reward_failed.connect(_on_reward_failed)
 	_last_health = player.health
 	_last_shield = player.shield
-	debug_hud.add_event("Lantern Lily produces +1 Light every 5 seconds.")
+	debug_hud.add_event("Lantern Lily produces +1 Light every 4 seconds.")
 	debug_hud.add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
 	debug_hud.add_event("Clear rooms, choose rewards, then pick adjacent expedition rooms.")
 	_room_controller.start(_expedition_map.get_current_room_id())
@@ -66,6 +66,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if not RunManager.is_run_active:
+		return
 	GardenTickSystem.process_intervals(delta)
 	_room_controller.process(delta)
 	_refresh_debug()
@@ -305,6 +307,8 @@ func _get_adjacent_synergy_names(piece_id: String, cell: Vector2i) -> Array[Stri
 
 
 func _handle_expedition_input(event: InputEvent) -> bool:
+	if not RunManager.is_run_active:
+		return false
 	if _is_inspecting_garden or _room_controller.is_active or _room_controller.is_reward_ready or _reward_controller.is_reward_available:
 		return false
 	if (event is InputEventKey) == false or not event.is_pressed() or event.echo:
@@ -324,6 +328,8 @@ func _handle_expedition_input(event: InputEvent) -> bool:
 
 
 func _handle_garden_inspect_input(event: InputEvent) -> bool:
+	if not RunManager.is_run_active:
+		return false
 	if (event is InputEventKey) == false or not event.is_pressed() or event.echo:
 		return false
 	if event.keycode == KEY_I:
@@ -376,9 +382,9 @@ func _on_expedition_selection_failed(reason: String) -> void:
 
 
 func _on_run_finished(summary: Dictionary) -> void:
+	_show_run_summary_mode()
 	run_summary_panel.show_summary(summary)
 	debug_hud.set_status("Run finished")
-	_refresh_debug()
 
 
 func _spawn_drifter_for_room() -> void:
@@ -390,3 +396,14 @@ func _spawn_drifter_for_room() -> void:
 	drifter.player_path = NodePath("../Player")
 	add_child(drifter)
 	_active_drifter = drifter
+
+
+func _show_run_summary_mode() -> void:
+	if is_instance_valid(_active_drifter):
+		_active_drifter.queue_free()
+	debug_hud.hide()
+	garden_grid_panel.hide()
+	garden_inspect_panel.hide()
+	expedition_map_panel.hide()
+	reward_choice_panel.hide()
+	_is_inspecting_garden = false

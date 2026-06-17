@@ -22,7 +22,8 @@ Use this checklist when evaluating whether the current first fun test is playabl
 ## Reward And Placement
 
 - [ ] Confirm reward choices appear after room completion.
-- [ ] Select a reward with 1, 2, or 3.
+- [ ] Confirm the first Meadow reward is Bellflower, so the demo teaches the first Bloomchain before branching.
+- [ ] Select the offered reward with 1 or by clicking it.
 - [ ] Confirm the selected reward enters placement mode instead of being placed automatically.
 - [ ] Move the placement cursor with Arrow keys.
 - [ ] Confirm valid, blocked, adjacent, and synergy-highlighted cells are visually distinct.
@@ -59,12 +60,16 @@ Use this checklist when evaluating whether the current first fun test is playabl
 
 - [ ] Confirm shield, Bloomchain, room reward, and enemy-hit placeholder feedback is noticeable but not distracting.
 - [ ] Trigger player defeat or clear the final demo room.
-- [ ] Confirm the run summary appears and includes result, rooms cleared, largest Bloomchain, and resources.
+- [ ] Confirm the run summary appears as a clean end-state screen without the debug HUD, garden panel, or expedition map overlapping it.
+- [ ] Confirm the run summary includes result, rooms cleared, garden proof status, largest Bloomchain, and resources.
+- [ ] Confirm clearing all rooms without a 3-step Bloomchain reports `Garden proof incomplete`, not `Success`.
+- [ ] Confirm clearing all rooms after a 3-step Bloomchain reports `Success`.
 - [ ] Press R and confirm the prototype restarts cleanly.
 
 ## Pass Criteria
 
 - [ ] A tester can explain Lantern Lily -> Light -> Saintmoth -> Shield.
+- [ ] A tester can create or explain a 3-step Bloomchain.
 - [ ] A tester can explain at least one placed reward interaction.
 - [ ] A tester understands that room selection happens on a revealed expedition grid.
 - [ ] A tester can complete at least two rooms without live explanation.
