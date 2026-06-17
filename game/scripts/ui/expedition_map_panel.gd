@@ -31,8 +31,8 @@ func _refresh() -> void:
 			_add_cell(Vector2i(x, y))
 
 
-func _add_cell(position: Vector2i) -> void:
-	var room := _get_room_at(position)
+func _add_cell(map_position: Vector2i) -> void:
+	var room := _get_room_at(map_position)
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = CELL_SIZE
 	panel.add_theme_stylebox_override("panel", _make_style(room))
@@ -46,9 +46,9 @@ func _add_cell(position: Vector2i) -> void:
 	panel.add_child(label)
 
 
-func _get_room_at(position: Vector2i) -> Dictionary:
+func _get_room_at(map_position: Vector2i) -> Dictionary:
 	for room in _rooms:
-		if room.get("position", Vector2i.ZERO) == position:
+		if room.get("position", Vector2i.ZERO) == map_position:
 			return room
 	return {}
 
@@ -61,11 +61,11 @@ func _get_bounds() -> Rect2i:
 	var min_y := 0
 	var max_y := 0
 	for room in _rooms:
-		var position: Vector2i = room.get("position", Vector2i.ZERO)
-		min_x = mini(min_x, position.x)
-		max_x = maxi(max_x, position.x)
-		min_y = mini(min_y, position.y)
-		max_y = maxi(max_y, position.y)
+		var map_position: Vector2i = room.get("position", Vector2i.ZERO)
+		min_x = mini(min_x, map_position.x)
+		max_x = maxi(max_x, map_position.x)
+		min_y = mini(min_y, map_position.y)
+		max_y = maxi(max_y, map_position.y)
 	return Rect2i(Vector2i(min_x, min_y), Vector2i(max_x - min_x + 1, max_y - min_y + 1))
 
 
@@ -78,7 +78,7 @@ func _get_room_text(room: Dictionary) -> String:
 	elif bool(room.get("is_selected", false)):
 		marker = ">"
 	elif bool(room.get("cleared", false)):
-		marker = "✓"
+		marker = "OK"
 	var room_id := str(room.get("room_id", "room"))
 	return "%s\n%s" % [marker, room_id.capitalize()]
 

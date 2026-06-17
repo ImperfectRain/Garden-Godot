@@ -229,7 +229,11 @@ func _show_cell_feedback(cell: Vector2i, text: String) -> void:
 	var tween := create_tween()
 	_feedback_tweens[cell] = tween
 	tween.tween_property(label, "modulate", Color(1, 1, 1, 0), 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.finished.connect(_feedback_tweens.erase.bind(cell))
+	tween.finished.connect(_on_feedback_finished.bind(cell))
+
+
+func _on_feedback_finished(cell: Vector2i) -> void:
+	_feedback_tweens.erase(cell)
 
 
 func _pending_piece_likes_cell(cell: Vector2i) -> bool:

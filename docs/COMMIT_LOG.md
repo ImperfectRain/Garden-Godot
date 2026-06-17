@@ -18,6 +18,30 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - fix: clean demo runtime warnings
+
+#### Summary
+- Fixed garden grid feedback tween completion so it no longer calls `Dictionary.erase` as an invalid callback.
+- Renamed expedition map local parameters that shadowed `Control.position`.
+- Suppressed intentional unused-signal warnings on the generic `CombatEvents` bus.
+- Replaced the expedition map cleared-room checkmark with an ASCII marker for safer editor/terminal rendering.
+
+#### Files Changed
+- `game/scripts/ui/garden_grid_panel.gd`
+- `game/scripts/ui/expedition_map_panel.gd`
+- `game/scripts/combat/combat_events.gd`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- Confirmed no direct `finished.connect(...erase...)` callback remains in the garden grid panel.
+- Confirmed no `position` parameter/local shadowing pattern remains in the expedition map panel.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Re-run the first fun test in Godot and continue clearing any remaining editor warnings or runtime errors.
+
 ### 2026-06-17 - docs: add demo playtest checklist
 
 #### Summary
