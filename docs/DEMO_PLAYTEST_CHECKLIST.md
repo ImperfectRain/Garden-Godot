@@ -1,0 +1,79 @@
+# Demo Playtest Checklist
+
+Use this checklist when evaluating whether the current first fun test is playable as a small demo, not just whether individual systems work.
+
+## Setup
+
+- [ ] Open the project in Godot 4.x.
+- [ ] Run `res://game/scenes/debug/first_fun_test.tscn`.
+- [ ] Confirm the screen shows player, Saintmoth, Drifter, debug HUD, Garden panel, and Expedition Map panel.
+- [ ] Confirm temporary placeholder sprites are visible for player, Saintmoth, and Drifter.
+
+## First Room
+
+- [ ] Move with WASD for at least 15 seconds and confirm movement feels readable.
+- [ ] Let Lantern Lily produce Light after roughly 4 seconds.
+- [ ] Press Space with less than 2 Light and confirm the failure is readable.
+- [ ] Press Space with at least 2 Light and confirm Saintmoth grants shield.
+- [ ] Confirm the blue shield ring, placeholder shield sound, and shield flash are visible/audible.
+- [ ] Let Drifter touch the player and confirm shield absorbs damage before health.
+- [ ] Defeat Drifter or survive until the reward appears.
+
+## Reward And Placement
+
+- [ ] Confirm reward choices appear after room completion.
+- [ ] Select a reward with 1, 2, or 3.
+- [ ] Confirm the selected reward enters placement mode instead of being placed automatically.
+- [ ] Move the placement cursor with Arrow keys.
+- [ ] Confirm valid, blocked, adjacent, and synergy-highlighted cells are visually distinct.
+- [ ] Place the reward with Enter or E.
+- [ ] Confirm the Garden panel updates and the room is marked cleared.
+
+## Safe Garden Review
+
+- [ ] Press I after claiming a reward.
+- [ ] Confirm the Garden Inspect panel opens.
+- [ ] Move between garden cells with Arrow keys.
+- [ ] Confirm the panel explains the selected piece using content data: descriptions, triggers, likes, synergies, and stored amounts.
+- [ ] Press Escape and confirm expedition map selection works again.
+
+## Expedition Progression
+
+- [ ] Confirm adjacent cardinal rooms are revealed after the room is cleared.
+- [ ] Select one revealed adjacent room with Arrow keys.
+- [ ] Confirm hidden and non-adjacent rooms cannot be selected.
+- [ ] Press Enter or E to travel to the selected room.
+- [ ] Confirm a fresh Drifter appears in the new room.
+- [ ] Clear at least three rooms, choosing and placing one reward after each.
+- [ ] Backtrack to a revealed adjacent cleared room and confirm the map allows it.
+
+## Garden Systems
+
+- [ ] Create the Lantern Lily -> Saintmoth -> Bellflower Bloomchain and confirm it is shown in debug feedback.
+- [ ] Place Grave Bell before Echo is produced and confirm it stores Echo.
+- [ ] Confirm Grave Bell rings at 3 Echo and can defeat or nearly defeat Drifter.
+- [ ] Place at least one Fauna reward and confirm it either consumes resources or clearly logs why it cannot.
+- [ ] Place at least one Object reward and confirm it changes garden behavior or clearly logs its marker effect.
+
+## Feedback And End State
+
+- [ ] Confirm shield, Bloomchain, room reward, and enemy-hit placeholder feedback is noticeable but not distracting.
+- [ ] Trigger player defeat or clear the final demo room.
+- [ ] Confirm the run summary appears and includes result, rooms cleared, largest Bloomchain, and resources.
+- [ ] Press R and confirm the prototype restarts cleanly.
+
+## Pass Criteria
+
+- [ ] A tester can explain Lantern Lily -> Light -> Saintmoth -> Shield.
+- [ ] A tester can explain at least one placed reward interaction.
+- [ ] A tester understands that room selection happens on a revealed expedition grid.
+- [ ] A tester can complete at least two rooms without live explanation.
+- [ ] Combat pressure feels gentle enough to read the garden.
+
+## Known Prototype Limits
+
+- Godot editor validation is still manual unless a Godot CLI is added to PATH.
+- Expedition generation is deterministic scaffolding, not procedural yet.
+- Enemy spawning is still debug-scene setup, not room encounter data.
+- Audio and VFX are generated placeholders for development only.
+- Garden UI and inspect mode are prototype panels, not final UX.

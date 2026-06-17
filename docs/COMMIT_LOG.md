@@ -18,6 +18,26 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - docs: add demo playtest checklist
+
+#### Summary
+- Added an end-to-end demo playtest checklist ordered by actual tester flow.
+- Documented setup, first room, reward placement, safe garden review, expedition progression, garden systems, feedback, and pass criteria.
+- Updated README controls and linked the new demo checklist alongside the regression checklist.
+
+#### Files Changed
+- `docs/DEMO_PLAYTEST_CHECKLIST.md`
+- `README.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Run the checklist in the Godot editor and fix any parser/runtime issues found there.
+
 ### 2026-06-17 - mvp: add placeholder audio vfx feedback
 
 #### Summary
