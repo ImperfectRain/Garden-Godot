@@ -56,6 +56,9 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.is_pressed() and not event.echo and event.keycode == KEY_R:
+		get_tree().reload_current_scene()
+		return
 	if _reward_controller.handle_placement_input(event):
 		get_viewport().set_input_as_handled()
 		_refresh_debug()
@@ -98,6 +101,8 @@ func _on_reward_claimed(piece_id: String, _cell: Vector2i) -> void:
 	debug_hud.set_status("Reward placed: %s" % _get_piece_name(piece_id))
 	RunManager.complete_current_room()
 	debug_hud.add_event("Room complete. Advanced to %s." % RunManager.get_current_room_id())
+	if RunManager.is_run_active:
+		_room_controller.start(RunManager.get_current_room_id())
 	_refresh_debug()
 
 
@@ -218,7 +223,7 @@ func _on_room_started(room_id: String) -> void:
 
 func _on_room_reward_ready(room_id: String) -> void:
 	debug_hud.set_status("Room survived - choose a reward")
-	debug_hud.add_event("Meadow survived. Choose one reward with 1, 2, or 3, then place it.")
+	debug_hud.add_event("%s survived. Choose one reward with 1, 2, or 3, then place it." % room_id.capitalize())
 	_reward_controller.show_rewards_for_room(room_id)
 	_refresh_debug()
 

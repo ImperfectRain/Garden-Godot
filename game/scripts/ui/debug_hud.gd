@@ -47,7 +47,7 @@ func refresh() -> void:
 		return
 	var lines: Array[String] = [
 		"Garden of Teeth - First Fun Test",
-		"WASD move | Space pulse Saintmoth | Rewards: 1/2/3, Arrows place, Enter/E confirm, Esc cancel",
+		"WASD move | Space pulse | R restart | Rewards: 1/2/3, Arrows place, Enter/E confirm, Esc cancel",
 		"Room: %s | Completed: %s | Objective: %s" % [room_id, completed_room_count, objective_text],
 		"Interval ticking: GardenTickSystem",
 		"Enemy: Drifter slowly follows and deals contact damage",

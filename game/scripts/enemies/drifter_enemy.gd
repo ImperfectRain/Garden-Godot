@@ -1,10 +1,10 @@
 extends CharacterBody2D
 
-@export var move_speed := 70.0
+@export var move_speed := 62.0
 @export var contact_damage := 1
-@export var damage_cooldown := 1.0
+@export var damage_cooldown := 1.25
 @export var contact_range := 22.0
-@export var max_health := 18
+@export var max_health := 14
 @export var enemy_id := "drifter"
 @export var player_path: NodePath
 

@@ -332,6 +332,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Re-run the first fun test in Godot and report the next parser/runtime error if one appears.
 
+### 2026-06-17 - mvp: tune first fun test balance
+
+#### Summary
+- Reduced Saintmoth shield from 20 to 8 to avoid runaway shield stacking.
+- Softened Drifter speed, health, and contact cadence for lower-stress demo pressure.
+- Shortened the temporary survival room timer to improve demo iteration.
+- Added R to restart the prototype scene.
+- Restarted the next room after successful reward placement while the run remains active.
+
+#### Files Changed
+- `game/data/garden_pieces/saintmoth.json`
+- `game/scripts/enemies/drifter_enemy.gd`
+- `game/scripts/core/simple_room_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `game/scripts/ui/debug_hud.gd`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Add expedition grid map progression scaffold.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

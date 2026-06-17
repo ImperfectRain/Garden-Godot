@@ -7,10 +7,12 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Open the project in Godot 4.
 - [ ] Run `res://game/scenes/debug/first_fun_test.tscn`.
 - [ ] Confirm WASD movement works.
+- [ ] Confirm pressing R restarts the prototype scene.
 - [ ] Confirm the player and Saintmoth render as temporary sprite placeholders instead of polygon-only shapes.
 - [ ] Confirm Lantern Lily produces Light after roughly 5 seconds.
 - [ ] Confirm pressing Space with less than 2 Light fails clearly in the debug log.
 - [ ] Confirm pressing Space with 2 or more Light grants shield.
+- [ ] Confirm Saintmoth grants a useful but not runaway shield amount.
 - [ ] Confirm a visible blue placeholder shield ring appears around the player when shield is active.
 - [ ] Confirm Light is spent when Saintmoth grants shield.
 - [ ] Confirm the debug UI updates resources, health, shield, garden rows, status, and event log.

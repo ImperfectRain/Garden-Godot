@@ -4,7 +4,7 @@ signal room_started(room_id: String)
 signal room_completed(room_id: String)
 signal reward_ready(room_id: String)
 
-const DEFAULT_SURVIVAL_SECONDS := 30.0
+const DEFAULT_SURVIVAL_SECONDS := 24.0
 
 var room_id := ""
 var duration_seconds := DEFAULT_SURVIVAL_SECONDS

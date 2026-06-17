@@ -30,7 +30,7 @@
                          "action":  "grant_player_shield",
                          "resource":  "light",
                          "cost":  2,
-                         "amount":  20,
+                         "amount":  8,
                          "follow_up_events":  [
                                                   "garden_woke"
                                               ]
@@ -39,7 +39,7 @@
     "effects":  [
                     {
                         "action":  "grant_player_shield",
-                        "amount":  20
+                        "amount":  8
                     }
                 ],
     "likes":  [
