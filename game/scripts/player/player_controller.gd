@@ -51,5 +51,6 @@ func take_damage(amount: int) -> void:
 	if remaining > 0:
 		health = max(health - remaining, 0)
 		health_changed.emit(health, max_health)
+		CombatEvents.player_damaged.emit(remaining, {"target": "player"})
 		if health == 0:
 			player_defeated.emit()

@@ -53,6 +53,15 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm the finalized Bloomchain is recorded in the journal.
 - [ ] Confirm failed Saintmoth Pulse attempts do not count as successful Bloomchain steps.
 
+## Flora Events
+
+- [ ] Choose Blood Rose from the reward panel in a run where it is offered.
+- [ ] Place Blood Rose in any valid non-heart cell.
+- [ ] Let shield drop to 0.
+- [ ] Let Drifter deal health damage.
+- [ ] Confirm Blood Rose produces +1 Blood after actual health damage.
+- [ ] Confirm shield-only damage does not trigger Blood Rose.
+
 ## Notes
 
 - Keep this checklist focused on the current MVP. Do not add tests for future companions, bosses, biomes, procedural generation, art polish, or additional resources until those systems exist.

@@ -25,6 +25,7 @@ func _ready() -> void:
 	GardenResources.resource_changed.connect(_on_resource_changed)
 	GardenResources.resource_spent.connect(_on_resource_spent)
 	GardenResources.resource_failed.connect(_on_resource_failed)
+	CombatEvents.player_damaged.connect(_on_player_damaged_event)
 	GardenManager.piece_placed.connect(_on_piece_placed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
 	Bloomchains.chain_finished.connect(_on_bloomchain_finished)
@@ -63,6 +64,10 @@ func _on_piece_triggered(_cell: Vector2i, piece_id: String, _trigger: Dictionary
 		debug_hud.add_event("Lantern Lily produced +1 Light.")
 	elif piece_id == "bellflower":
 		debug_hud.add_event("Bellflower heard the garden wake and produced +1 Echo.")
+	elif piece_id == "blood_rose":
+		debug_hud.add_event("Blood Rose drank danger and produced +1 Blood.")
+	elif piece_id == "gravecap":
+		debug_hud.add_event("Gravecap grew from a nearby death and produced +1 Rot.")
 	_refresh_debug()
 
 
@@ -125,6 +130,14 @@ func _on_player_health_changed(health: int, _max_health: int) -> void:
 	if damage > 0:
 		debug_hud.add_event("Drifter hit player for %s damage." % damage)
 	_last_health = health
+	_refresh_debug()
+
+
+func _on_player_damaged_event(amount: int, source: Dictionary) -> void:
+	GardenTriggerSystem.trigger_global_event("player_damaged_or_close_kill", {
+		"damage": amount,
+		"source": source
+	})
 	_refresh_debug()
 
 

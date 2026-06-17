@@ -184,6 +184,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Implement Flora triggers beyond Lantern Lily/Bellflower by routing player damage and enemy death garden events.
 
+### 2026-06-16 - mvp: route blood rose damage event
+
+#### Summary
+- Added an actual player-damaged combat event after health damage is applied.
+- Routed actual player health damage in the first fun test to the existing Blood Rose garden event.
+- Added debug feedback for Blood Rose and Gravecap trigger messages.
+- Documented current Flora functionality and the remaining Gravecap dependency on enemy death events.
+
+#### Files Changed
+- `game/scripts/combat/combat_events.gd`
+- `game/scripts/player/player_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed Blood Rose trigger data still listens for `player_damaged_or_close_kill`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Add enemy health/death events so Gravecap can produce Rot and enemy-facing Object effects can matter.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

@@ -103,6 +103,7 @@ Current room/reward flow:
 - Autoload scaffold for player/enemy-facing combat effect requests.
 - Defines generic signals for player shield, player damage, enemy damage, and helper spawning.
 - Routes current player shield requests from `GardenEffectResolver` to interested combat receivers.
+- Broadcasts actual player health damage after `PlayerController.take_damage()` applies shield-before-health logic.
 - Exists to replace scene-specific combat wiring in focused steps.
 
 ### `game/scripts/garden/bloomchain_manager.gd`
