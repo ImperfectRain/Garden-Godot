@@ -274,7 +274,7 @@ func as_debug_rows() -> Array[String]:
 func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary = {}) -> bool:
 	# Temporary bridge: keep new action mechanics in GardenEffectResolver, not here.
 	var action := str(trigger.get("action", ""))
-	var trigger_context := _build_trigger_context(piece_id, trigger, context)
+	var trigger_context := _build_trigger_context(cell, piece_id, trigger, context)
 	var effect_result := {}
 	var succeeded := false
 	if RESOLVER_ACTIONS.has(action):
@@ -286,6 +286,7 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 			_consume_resource_source_from_effect(effect_result)
 	if not succeeded:
 		return false
+	var previous_trigger := last_trigger.duplicate(true)
 	last_trigger = {
 		"cell": cell,
 		"piece_id": piece_id,
@@ -293,7 +294,10 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 	}
 	piece_triggered.emit(cell, piece_id, trigger)
 	Bloomchains.record_trigger(cell, piece_id, trigger, trigger_context)
+	if action == "repeat_last_trigger":
+		_repeat_last_trigger(previous_trigger, effect_result, trigger_context)
 	_dispatch_follow_up_events(trigger, trigger_context)
+	_dispatch_effect_events(effect_result, trigger_context)
 	return true
 
 
@@ -335,15 +339,19 @@ func _consume_resource_source_from_effect(result: Dictionary) -> void:
 		return
 	var remaining := amount
 	var sources: Array = _resource_sources[resource_id]
+	var result_context: Dictionary = result.get("context", {})
+	var start_index := int(result_context.get("resource_source_index", _find_preferred_source_index(resource_id, result.get("cell", Vector2i(-1, -1)))))
 	while remaining > 0 and not sources.is_empty():
-		var source: Dictionary = sources[0]
+		var index := clampi(start_index, 0, sources.size() - 1)
+		var source: Dictionary = sources[index]
 		var source_amount := int(source.get("amount", 0))
 		if source_amount <= remaining:
 			remaining -= source_amount
-			sources.pop_front()
+			sources.remove_at(index)
+			start_index = 0
 		else:
 			source["amount"] = source_amount - remaining
-			sources[0] = source
+			sources[index] = source
 			remaining = 0
 	if sources.is_empty():
 		_resource_sources.erase(resource_id)
@@ -351,12 +359,12 @@ func _consume_resource_source_from_effect(result: Dictionary) -> void:
 		_resource_sources[resource_id] = sources
 
 
-func _build_trigger_context(piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:
+func _build_trigger_context(cell: Vector2i, piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:
 	var trigger_context := context.duplicate(true)
 	var resource_id := str(trigger.get("resource", ""))
 	var action := str(trigger.get("action", ""))
 	if RESOURCE_CONSUMING_ACTIONS.has(action) and trigger_context.get("chain_id", "") == "" and _resource_sources.has(resource_id):
-		var source_context := _peek_resource_source_context(resource_id)
+		var source_context := _peek_resource_source_context(resource_id, cell)
 		if not source_context.is_empty():
 			trigger_context = source_context
 	if str(trigger_context.get("chain_id", "")).is_empty():
@@ -366,11 +374,30 @@ func _build_trigger_context(piece_id: String, trigger: Dictionary, context: Dict
 	return trigger_context
 
 
-func _peek_resource_source_context(resource_id: String) -> Dictionary:
+func _peek_resource_source_context(resource_id: String, consumer_cell := Vector2i(-1, -1)) -> Dictionary:
 	var sources: Array = _resource_sources.get(resource_id, [])
 	if sources.is_empty():
 		return {}
-	return sources[0].duplicate(true)
+	var index := _find_preferred_source_index(resource_id, consumer_cell)
+	if index < 0:
+		return {}
+	var source: Dictionary = sources[index]
+	var result := source.duplicate(true)
+	result["resource_source_index"] = index
+	return result
+
+
+func _find_preferred_source_index(resource_id: String, consumer_cell: Vector2i) -> int:
+	var sources: Array = _resource_sources.get(resource_id, [])
+	if sources.is_empty():
+		return -1
+	if is_valid_cell(consumer_cell):
+		for index in range(sources.size()):
+			var source: Dictionary = sources[index]
+			var origin_cell: Vector2i = source.get("origin_cell", Vector2i(-1, -1))
+			if origin_cell == consumer_cell or are_cells_adjacent(origin_cell, consumer_cell):
+				return index
+	return 0
 
 
 func _get_resource_amount_from_result(result: Dictionary) -> int:
@@ -383,6 +410,45 @@ func _get_resource_amount_from_result(result: Dictionary) -> int:
 func _dispatch_follow_up_events(trigger: Dictionary, context: Dictionary) -> void:
 	for event_name in trigger.get("follow_up_events", []):
 		GardenTriggerSystem.trigger_global_event(str(event_name), context)
+
+
+func _dispatch_effect_events(effect_result: Dictionary, context: Dictionary) -> void:
+	if str(effect_result.get("action", "")) != "produce_resource":
+		return
+	var resource_id := str(effect_result.get("resource", ""))
+	if resource_id.is_empty():
+		return
+	var resource_context := context.duplicate(true)
+	resource_context["resource"] = resource_id
+	resource_context["amount"] = int(effect_result.get("amount", 0))
+	resource_context["origin_cell"] = effect_result.get("cell", Vector2i(-1, -1))
+	GardenTriggerSystem.trigger_global_event("resource_available", resource_context)
+	var origin_cell: Vector2i = resource_context.get("origin_cell", Vector2i(-1, -1))
+	for neighbor in get_adjacent_piece_cells(origin_cell):
+		GardenTriggerSystem.trigger_cell_event(neighbor, "resource_available_adjacent", resource_context)
+
+
+func _repeat_last_trigger(previous_trigger: Dictionary, effect_result: Dictionary, context: Dictionary) -> void:
+	if int(context.get("repeat_depth", 0)) > 0:
+		return
+	if previous_trigger.is_empty():
+		return
+	var source_trigger: Dictionary = previous_trigger.get("trigger", {})
+	if str(source_trigger.get("action", "")) == "repeat_last_trigger":
+		return
+	var source_cell: Vector2i = previous_trigger.get("cell", Vector2i(-1, -1))
+	var source_piece_id := str(previous_trigger.get("piece_id", ""))
+	if not is_valid_cell(source_cell) or get_piece_id_at(source_cell) != source_piece_id:
+		return
+	var repeated_trigger := source_trigger.duplicate(true)
+	repeated_trigger["id"] = "%s_repeat" % source_trigger.get("id", source_trigger.get("action", "trigger"))
+	if repeated_trigger.has("amount"):
+		var scalar := float(effect_result.get("scalar", 1.0))
+		repeated_trigger["amount"] = maxi(1, int(floor(float(repeated_trigger["amount"]) * scalar)))
+	repeated_trigger["follow_up_events"] = []
+	var repeat_context := context.duplicate(true)
+	repeat_context["repeat_depth"] = int(repeat_context.get("repeat_depth", 0)) + 1
+	apply_trigger_request(source_cell, source_piece_id, repeated_trigger, repeat_context)
 
 
 func _make_chain_id(piece_id: String, trigger: Dictionary) -> String:

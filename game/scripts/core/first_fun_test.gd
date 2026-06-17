@@ -28,6 +28,7 @@ func _ready() -> void:
 	CombatEvents.player_damaged.connect(_on_player_damaged_event)
 	CombatEvents.enemy_damaged.connect(_on_enemy_damaged)
 	CombatEvents.enemy_defeated.connect(_on_enemy_defeated)
+	CombatEvents.helper_spawn_requested.connect(_on_helper_spawn_requested)
 	GardenManager.piece_placed.connect(_on_piece_placed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
 	Bloomchains.chain_finished.connect(_on_bloomchain_finished)
@@ -158,6 +159,11 @@ func _on_enemy_defeated(enemy_id: String, world_position: Vector2, source: Dicti
 	GardenTriggerSystem.trigger_global_event("enemy_died", context)
 	GardenTriggerSystem.trigger_global_event("enemy_died_nearby", context)
 	GardenTriggerSystem.trigger_global_event("player_damaged_or_close_kill", context)
+	_refresh_debug()
+
+
+func _on_helper_spawn_requested(helper_id: String, amount: int, _source: Dictionary) -> void:
+	debug_hud.add_event("Rotling requested %s %s helper." % [amount, helper_id])
 	_refresh_debug()
 
 

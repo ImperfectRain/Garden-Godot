@@ -295,20 +295,37 @@ func _resolve_repeat_last_trigger(request: Dictionary) -> Dictionary:
 
 func _resolve_move_resource(request: Dictionary) -> Dictionary:
 	var trigger: Dictionary = request.get("trigger", {})
-	var resource_id := str(trigger.get("resource", request.get("resource", "")))
+	var context: Dictionary = request.get("context", {})
+	var resource_id := str(trigger.get("resource", request.get("resource", context.get("resource", ""))))
 	var amount := int(trigger.get("amount", request.get("amount", 1)))
+	var carrier_cell: Vector2i = request.get("cell", Vector2i(-1, -1))
+	var origin_cell: Vector2i = context.get("origin_cell", Vector2i(-1, -1))
+	var target_cell := _find_adjacent_resource_target(carrier_cell, origin_cell, resource_id)
 	var result := _make_base_result(request, "move_resource")
 	result["resource"] = resource_id
 	result["amount"] = amount
+	result["origin_cell"] = origin_cell
+	result["target_cell"] = target_cell
+	if resource_id.is_empty():
+		result["reason"] = "Missing resource id"
+		return result
 	if amount <= 0:
 		result["reason"] = "Amount must be positive"
+		return result
+	if not GardenManager.are_cells_adjacent(carrier_cell, origin_cell):
+		result["reason"] = "Resource source is not adjacent"
+		return result
+	if target_cell == Vector2i(-1, -1):
+		result["reason"] = "No adjacent resource target"
 		return result
 	result["success"] = true
 	result["outputs"] = [
 		{
 			"type": "resource_moved",
 			"resource": resource_id,
-			"amount": amount
+			"amount": amount,
+			"origin_cell": origin_cell,
+			"target_cell": target_cell
 		}
 	]
 	return result
@@ -383,3 +400,25 @@ func _make_source(request: Dictionary) -> Dictionary:
 
 func _get_storage_key(cell: Vector2i, piece_id: String, resource_id: String) -> String:
 	return "%s,%s:%s:%s" % [cell.x, cell.y, piece_id, resource_id]
+
+
+func _find_adjacent_resource_target(carrier_cell: Vector2i, origin_cell: Vector2i, resource_id: String) -> Vector2i:
+	for neighbor in GardenManager.get_adjacent_piece_cells(carrier_cell):
+		if neighbor == origin_cell:
+			continue
+		if _piece_can_use_resource(GardenManager.get_piece_at(neighbor), resource_id):
+			return neighbor
+	return Vector2i(-1, -1)
+
+
+func _piece_can_use_resource(piece: Dictionary, resource_id: String) -> bool:
+	for consume in piece.get("consumes", []):
+		if str(consume.get("resource", "")) == resource_id:
+			return true
+	for store in piece.get("stores", []):
+		if str(store.get("resource", "")) == resource_id:
+			return true
+	for like in piece.get("likes", []):
+		if str(like) == resource_id:
+			return true
+	return false

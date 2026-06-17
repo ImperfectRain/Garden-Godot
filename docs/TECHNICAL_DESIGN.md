@@ -266,6 +266,24 @@ Resources are still stored globally by `GardenResources`, but `GardenManager` no
 
 When a consuming trigger succeeds, GardenManager consumes from the matching resource source queue and uses the earliest available source context for Bloomchain causality. This is not full per-tile resource storage yet, but it gives future consumers and modifiers enough context for placement-sensitive behavior.
 
+Consumers now prefer adjacent resource sources when possible. This means Saintmoth will preferentially consume Light whose source was adjacent to the Heart Tile, preserving the starter fantasy that Lantern Lily feeds Saintmoth when placed nearby.
+
+Successful resource production dispatches:
+
+- `resource_available` globally.
+- `resource_available_adjacent` to occupied neighbor cells around the producing cell.
+
+These events are used by Rotling, Mawlet, and Glass Beetle.
+
+## Fauna Runtime Behavior
+
+Current Fauna behavior:
+
+- Saintmoth consumes Light and grants Shield. Light source provenance now prefers adjacent producers when available.
+- Rotling listens for `resource_available`, consumes 2 Rot, and emits a debug helper spawn request.
+- Mawlet listens for `resource_available`, consumes 2 Blood, and repeats the previous successful garden trigger at reduced strength. Repeat depth is capped so Mawlet cannot repeat itself indefinitely.
+- Glass Beetle listens for `resource_available_adjacent` and only succeeds when the resource source is adjacent and another adjacent piece can use that resource.
+
 ## Known Temporary Limitations
 
 - Resources are globally counted, with lightweight source-batch provenance. They are not fully stored per tile or per piece yet.

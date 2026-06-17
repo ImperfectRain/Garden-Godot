@@ -239,6 +239,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Implement Fauna resource reactions for Rotling, Mawlet, and Glass Beetle.
 
+### 2026-06-16 - mvp: implement fauna resource reactions
+
+#### Summary
+- Dispatches resource availability events after successful production.
+- Improved Saintmoth Light consumption provenance to prefer adjacent Light sources.
+- Implemented Rotling helper-spawn requests from Rot availability.
+- Implemented Mawlet repeat behavior with repeat-depth loop prevention.
+- Made Glass Beetle resource movement placement-sensitive through adjacent source and target checks.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed all current Fauna trigger actions are recognized by `GardenEffectResolver`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Implement Object storage, copy, connection, and protection modifiers.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

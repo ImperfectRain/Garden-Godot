@@ -65,6 +65,18 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm Blood Rose produces +1 Blood after actual health damage.
 - [ ] Confirm shield-only damage does not trigger Blood Rose.
 
+## Fauna Events
+
+- [ ] Place Rotling before or after Gravecap.
+- [ ] Defeat Drifter while Gravecap is placed.
+- [ ] Confirm Gravecap produces Rot and Rotling consumes 2 Rot when enough Rot is available.
+- [ ] Confirm Rotling logs a placeholder larva helper request.
+- [ ] Place Mawlet and Blood Rose.
+- [ ] Let Blood Rose produce at least 2 Blood through actual health damage.
+- [ ] Confirm Mawlet consumes 2 Blood and repeats the previous successful garden trigger without looping forever.
+- [ ] Place Glass Beetle adjacent to a producer and another piece that can use that resource.
+- [ ] Confirm Glass Beetle reacts only when the resource source is adjacent and a valid adjacent target exists.
+
 ## Notes
 
 - Keep this checklist focused on the current MVP. Do not add tests for future companions, bosses, biomes, procedural generation, art polish, or additional resources until those systems exist.
