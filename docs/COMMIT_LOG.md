@@ -162,6 +162,28 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add lightweight resource routing/provenance improvements so placement can influence who consumes or modifies produced resources.
 
+### 2026-06-16 - architecture: add resource provenance batches
+
+#### Summary
+- Replaced single last-source resource provenance with per-resource source batches.
+- Recorded origin cell, origin piece, chain context, and adjacent occupied/category cells when resources are produced.
+- Consuming effects now inherit source context for Bloomchain causality and consume source batches after successful resource spends.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/ARCHITECTURE_MAP.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Confirmed Lantern Lily, Saintmoth, and Bellflower trigger data still supports the first causal Bloomchain path.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Implement Flora triggers beyond Lantern Lily/Bellflower by routing player damage and enemy death garden events.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

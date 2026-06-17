@@ -24,6 +24,13 @@ const RESOLVER_ACTIONS := [
 	"protect_adjacent_living",
 	"connect_adjacent_flora"
 ]
+const RESOURCE_CONSUMING_ACTIONS := [
+	"grant_player_shield",
+	"consume_resource",
+	"store_resource",
+	"spawn_helper",
+	"repeat_last_trigger"
+]
 
 var cells: Dictionary = {}
 var selected_cell := HEART_CELL
@@ -275,6 +282,8 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 		succeeded = bool(effect_result.get("success", false))
 		if succeeded and action == "produce_resource":
 			_store_resource_source_from_effect(effect_result, trigger_context)
+		elif succeeded and RESOURCE_CONSUMING_ACTIONS.has(action):
+			_consume_resource_source_from_effect(effect_result)
 	if not succeeded:
 		return false
 	last_trigger = {
@@ -302,19 +311,73 @@ func _store_resource_source_from_effect(result: Dictionary, context: Dictionary)
 	var resource_id := str(result.get("resource", ""))
 	if resource_id.is_empty():
 		return
-	_resource_sources[resource_id] = context.duplicate(true)
+	var source := context.duplicate(true)
+	var cell: Vector2i = result.get("cell", Vector2i(-1, -1))
+	source["resource_id"] = resource_id
+	source["amount"] = int(result.get("amount", 0))
+	source["origin_cell"] = cell
+	source["origin_piece_id"] = str(result.get("piece_id", ""))
+	source["adjacent_cells"] = get_adjacent_piece_cells(cell)
+	source["adjacent_flora_cells"] = get_adjacent_cells_by_category(cell, "flora")
+	source["adjacent_fauna_cells"] = get_adjacent_cells_by_category(cell, "fauna")
+	source["adjacent_object_cells"] = get_adjacent_cells_by_category(cell, "object")
+	if not _resource_sources.has(resource_id):
+		_resource_sources[resource_id] = []
+	_resource_sources[resource_id].append(source)
+
+
+func _consume_resource_source_from_effect(result: Dictionary) -> void:
+	var resource_id := str(result.get("resource", ""))
+	if resource_id.is_empty() or not _resource_sources.has(resource_id):
+		return
+	var amount := _get_resource_amount_from_result(result)
+	if amount <= 0:
+		return
+	var remaining := amount
+	var sources: Array = _resource_sources[resource_id]
+	while remaining > 0 and not sources.is_empty():
+		var source: Dictionary = sources[0]
+		var source_amount := int(source.get("amount", 0))
+		if source_amount <= remaining:
+			remaining -= source_amount
+			sources.pop_front()
+		else:
+			source["amount"] = source_amount - remaining
+			sources[0] = source
+			remaining = 0
+	if sources.is_empty():
+		_resource_sources.erase(resource_id)
+	else:
+		_resource_sources[resource_id] = sources
 
 
 func _build_trigger_context(piece_id: String, trigger: Dictionary, context: Dictionary) -> Dictionary:
 	var trigger_context := context.duplicate(true)
 	var resource_id := str(trigger.get("resource", ""))
-	if trigger.get("action", "") == "grant_player_shield" and trigger_context.get("chain_id", "") == "" and _resource_sources.has(resource_id):
-		trigger_context = _resource_sources[resource_id].duplicate(true)
+	var action := str(trigger.get("action", ""))
+	if RESOURCE_CONSUMING_ACTIONS.has(action) and trigger_context.get("chain_id", "") == "" and _resource_sources.has(resource_id):
+		var source_context := _peek_resource_source_context(resource_id)
+		if not source_context.is_empty():
+			trigger_context = source_context
 	if str(trigger_context.get("chain_id", "")).is_empty():
 		trigger_context["chain_id"] = _make_chain_id(piece_id, trigger)
 	trigger_context["source_piece_id"] = piece_id
 	trigger_context["source_trigger_id"] = trigger.get("id", trigger.get("action", ""))
 	return trigger_context
+
+
+func _peek_resource_source_context(resource_id: String) -> Dictionary:
+	var sources: Array = _resource_sources.get(resource_id, [])
+	if sources.is_empty():
+		return {}
+	return sources[0].duplicate(true)
+
+
+func _get_resource_amount_from_result(result: Dictionary) -> int:
+	var cost := int(result.get("cost", 0))
+	if cost > 0:
+		return cost
+	return int(result.get("amount", 0))
 
 
 func _dispatch_follow_up_events(trigger: Dictionary, context: Dictionary) -> void:

@@ -240,9 +240,22 @@ Current Pulse behavior still selects the Heart Tile before pulsing so the first 
 
 These helpers do not apply effects. They exist so later Flora/Fauna/Object behavior can ask placement questions consistently before `GardenEffectResolver` applies an action.
 
+## Resource Provenance and Routing
+
+Resources are still stored globally by `GardenResources`, but `GardenManager` now tracks lightweight source batches per resource id. When a trigger produces a resource, the source batch records:
+
+- resource id and amount
+- origin cell
+- origin piece id
+- chain context
+- adjacent occupied cells
+- adjacent Flora, Fauna, and Object cells
+
+When a consuming trigger succeeds, GardenManager consumes from the matching resource source queue and uses the earliest available source context for Bloomchain causality. This is not full per-tile resource storage yet, but it gives future consumers and modifiers enough context for placement-sensitive behavior.
+
 ## Known Temporary Limitations
 
-- Resources are global to the garden instead of stored per tile or per piece.
+- Resources are globally counted, with lightweight source-batch provenance. They are not fully stored per tile or per piece yet.
 - Only a partial set of trigger effects is implemented in code; `produce_resource` and `grant_player_shield` are routed through `GardenEffectResolver`.
 - Interval ticking has moved to `GardenTickSystem`, and event-to-trigger lookup has moved to `GardenTriggerSystem`; completed trigger application still routes through `GardenManager`.
 - Room objective timing has moved to `SimpleRoomController`, but `FirstFunTest` still wires room-ready and reward-claimed outcomes.
