@@ -18,6 +18,27 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: respawn drifter per room
+
+#### Summary
+- Added fresh Drifter spawning when each first fun test room starts.
+- Kept the enemy setup inside `FirstFunTest` as debug-scene encounter scaffolding.
+- Updated manual tests to verify that later expedition rooms still have gentle enemy pressure.
+
+#### Files Changed
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Add garden inspect mode so safe moments expose exact piece behavior without reading JSON.
+
 ### 2026-06-14 - docs: add project documentation foundation
 
 #### Summary

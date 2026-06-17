@@ -3,6 +3,8 @@ extends Node2D
 const SimpleRoomControllerScript := preload("res://game/scripts/core/simple_room_controller.gd")
 const RewardControllerScript := preload("res://game/scripts/core/reward_controller.gd")
 const ExpeditionMapControllerScript := preload("res://game/scripts/core/expedition_map_controller.gd")
+const DrifterScene := preload("res://game/scenes/enemies/drifter.tscn")
+const DRIFTER_SPAWN_POSITION := Vector2(190, 90)
 
 @onready var player := $Player
 @onready var debug_hud := $CanvasLayer/DebugHUD
@@ -16,9 +18,11 @@ var _last_shield := 0
 var _room_controller := SimpleRoomControllerScript.new()
 var _reward_controller := RewardControllerScript.new()
 var _expedition_map := ExpeditionMapControllerScript.new()
+var _active_drifter: Node = null
 
 
 func _ready() -> void:
+	_active_drifter = $Drifter
 	RunManager.start_run()
 	RunManager.run_finished.connect(_on_run_finished)
 	_expedition_map.generate_demo_map()
@@ -231,6 +235,7 @@ func _on_bloomchain_finished(length: int, piece_ids: Array[String]) -> void:
 
 
 func _on_room_started(room_id: String) -> void:
+	_spawn_drifter_for_room()
 	debug_hud.add_event("Room started: %s." % room_id)
 	_refresh_debug()
 
@@ -324,3 +329,14 @@ func _on_run_finished(summary: Dictionary) -> void:
 	run_summary_panel.show_summary(summary)
 	debug_hud.set_status("Run finished")
 	_refresh_debug()
+
+
+func _spawn_drifter_for_room() -> void:
+	if is_instance_valid(_active_drifter):
+		_active_drifter.queue_free()
+	var drifter := DrifterScene.instantiate()
+	drifter.name = "Drifter"
+	drifter.position = DRIFTER_SPAWN_POSITION
+	drifter.player_path = NodePath("../Player")
+	add_child(drifter)
+	_active_drifter = drifter

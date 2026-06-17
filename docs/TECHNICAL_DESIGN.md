@@ -61,6 +61,8 @@ The first fun test includes one `Drifter` enemy from `res://game/scenes/enemies/
 
 Drifter damage is intentionally low-stress: it uses a short cooldown so contact does not instantly defeat the player. Because damage goes through `take_damage()`, shield absorbs damage before health, making Saintmoth's shield useful without requiring a full combat system yet.
 
+`FirstFunTest` currently spawns one fresh Drifter whenever a room starts. This is debug-scene enemy setup only; the final expedition flow should replace it with room encounter data and a focused enemy/wave controller.
+
 ## Temporary Room Loop
 
 The first fun test uses `game/scripts/core/simple_room_controller.gd` for a minimal survival room objective. `SimpleRoomController` owns the default 30-second survival duration, active/completed/reward-ready state, objective text, and room flow signals.

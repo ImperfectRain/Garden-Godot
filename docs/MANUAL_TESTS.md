@@ -27,6 +27,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm player defeat is visible through the debug status or defeat signal behavior.
 - [ ] Confirm Grave Bell or another enemy damage effect can damage Drifter when triggered.
 - [ ] Confirm defeated Drifter logs a death event and disappears.
+- [ ] Confirm each newly entered expedition room spawns a fresh Drifter for gentle pressure.
 - [ ] Confirm Gravecap produces Rot after a Drifter death if Gravecap is placed.
 - [ ] Confirm defeating the room's Drifter completes the room and shows rewards.
 - [ ] Confirm surviving the room timer still completes the room if Drifter is not defeated.
