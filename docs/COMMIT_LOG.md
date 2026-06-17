@@ -291,6 +291,28 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Improve garden feedback readability with adjacency highlights, synergy hints, and typed trigger feedback.
 
+### 2026-06-16 - mvp: improve garden feedback readability
+
+#### Summary
+- Added adjacency and synergy highlights during manual garden placement.
+- Added "Works with" placement status hints based on adjacent ids, categories, and tags.
+- Added action-specific trigger flash colors and short cell markers for production, movement, damage, helper spawn, and repeat actions.
+
+#### Files Changed
+- `game/scripts/ui/garden_grid_panel.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level scene/script validation was not run.
+
+#### Next Recommended Task
+- Run the first fun test in Godot and fix any editor/runtime issues from the new garden behavior pass.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

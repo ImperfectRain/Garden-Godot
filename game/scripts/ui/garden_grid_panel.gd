@@ -2,7 +2,6 @@ extends PanelContainer
 
 const CELL_SIZE := Vector2(96, 64)
 const EMPTY_TEXT := "."
-const TRIGGER_MARKER := " *"
 const PIECE_ICON_PATHS := {
 	"lantern_lily": "res://game/art/external/kenney/tiny_town/Tiles/tile_0002.png",
 	"gravecap": "res://game/art/external/kenney/tiny_town/Tiles/tile_0029.png",
@@ -102,12 +101,11 @@ func _update_cell(cell: Vector2i) -> void:
 	var is_heart := cell == GardenManager.HEART_CELL
 	icon.texture = _get_icon_texture(piece_id, piece, is_heart)
 	icon.visible = icon.texture != null
-	label.text = _get_cell_text(cell, piece_id, piece, false)
+	label.text = _get_cell_text(cell, piece_id, piece, "")
 	panel.add_theme_stylebox_override("panel", _make_cell_style(_get_cell_color(piece, is_heart), _get_border_color(cell, is_heart)))
 
 
-func _get_cell_text(cell: Vector2i, piece_id: String, piece: Dictionary, triggered: bool) -> String:
-	var marker := TRIGGER_MARKER if triggered else ""
+func _get_cell_text(cell: Vector2i, piece_id: String, piece: Dictionary, marker: String) -> String:
 	if _placement_active and cell == _placement_cell and piece_id.is_empty():
 		var pending_piece := ContentDatabase.get_garden_piece(_placement_piece_id)
 		return "Place\n%s%s" % [pending_piece.get("name", _placement_piece_id), marker]
@@ -137,6 +135,8 @@ func _get_cell_color(piece: Dictionary, is_heart: bool) -> Color:
 func _get_border_color(cell: Vector2i, is_heart: bool) -> Color:
 	if _placement_active and cell == _placement_cell:
 		return Color(0.36, 0.95, 0.52, 1.0) if GardenManager.can_place_piece(cell, _placement_piece_id) else Color(1.0, 0.28, 0.22, 1.0)
+	if _placement_active and GardenManager.are_cells_adjacent(_placement_cell, cell):
+		return Color(1.0, 0.80, 0.28, 1.0) if _pending_piece_likes_cell(cell) else Color(0.42, 0.62, 0.78, 1.0)
 	if cell == GardenManager.selected_cell:
 		return Color(0.46, 0.78, 1.0, 1.0)
 	return Color(1.0, 0.86, 0.34, 1.0) if is_heart else Color(0.38, 0.44, 0.38, 1.0)
@@ -178,18 +178,18 @@ func _on_selected_cell_changed(_cell: Vector2i) -> void:
 
 
 func _on_piece_triggered(cell: Vector2i, _piece_id: String, _trigger: Dictionary) -> void:
-	_flash_cell(cell)
+	_flash_cell(cell, _trigger)
 
 
-func _flash_cell(cell: Vector2i) -> void:
+func _flash_cell(cell: Vector2i, trigger: Dictionary) -> void:
 	if not _cell_panels.has(cell):
 		return
 	var panel: PanelContainer = _cell_panels[cell]
 	var label: Label = _cell_labels[cell]
 	var piece_id := GardenManager.get_piece_id_at(cell)
 	var piece := ContentDatabase.get_garden_piece(piece_id)
-	label.text = _get_cell_text(cell, piece_id, piece, true)
-	panel.modulate = Color(1.25, 1.25, 0.7, 1.0)
+	label.text = _get_cell_text(cell, piece_id, piece, _get_trigger_marker(trigger))
+	panel.modulate = _get_flash_color(piece, trigger)
 	if _flash_tweens.has(cell):
 		var old_tween: Tween = _flash_tweens[cell]
 		if old_tween != null:
@@ -203,3 +203,56 @@ func _flash_cell(cell: Vector2i) -> void:
 func _on_flash_finished(cell: Vector2i) -> void:
 	_flash_tweens.erase(cell)
 	_update_cell(cell)
+
+
+func _pending_piece_likes_cell(cell: Vector2i) -> bool:
+	var cell_piece_id := GardenManager.get_piece_id_at(cell)
+	if cell_piece_id.is_empty():
+		return false
+	var pending_piece := ContentDatabase.get_garden_piece(_placement_piece_id)
+	var cell_piece := ContentDatabase.get_garden_piece(cell_piece_id)
+	var cell_category := str(cell_piece.get("category", ""))
+	for like in pending_piece.get("likes", []):
+		var like_id := str(like)
+		if like_id == cell_piece_id or like_id == cell_category or cell_piece.get("tags", []).has(like_id):
+			return true
+	return false
+
+
+func _get_trigger_marker(trigger: Dictionary) -> String:
+	match str(trigger.get("action", "")):
+		"produce_resource":
+			return " +"
+		"store_resource":
+			return " ="
+		"move_resource", "copy_output":
+			return " >"
+		"damage_enemy", "damage_nearby_enemies":
+			return " !"
+		"spawn_helper":
+			return " *"
+		"repeat_last_trigger":
+			return " x"
+		_:
+			return " *"
+
+
+func _get_flash_color(piece: Dictionary, trigger: Dictionary) -> Color:
+	match str(trigger.get("action", "")):
+		"produce_resource":
+			return Color(0.78, 1.35, 0.78, 1.0)
+		"grant_player_shield", "consume_resource":
+			return Color(0.72, 0.92, 1.35, 1.0)
+		"damage_enemy", "damage_nearby_enemies":
+			return Color(1.35, 0.82, 0.54, 1.0)
+		"move_resource", "copy_output", "repeat_last_trigger":
+			return Color(1.05, 0.82, 1.35, 1.0)
+	match str(piece.get("category", "")):
+		"flora":
+			return Color(0.9, 1.25, 0.8, 1.0)
+		"fauna":
+			return Color(0.78, 0.95, 1.25, 1.0)
+		"object":
+			return Color(1.25, 1.08, 0.76, 1.0)
+		_:
+			return Color(1.25, 1.25, 0.7, 1.0)

@@ -37,6 +37,9 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm the reward panel appears after the survival room timer completes.
 - [ ] Confirm selecting a reward starts manual garden placement instead of immediately placing the piece.
 - [ ] Confirm Arrow keys move the highlighted placement cell in the visual Garden panel.
+- [ ] Confirm cells adjacent to the pending placement are highlighted.
+- [ ] Confirm adjacent pieces that match the pending piece's likes get a stronger synergy highlight.
+- [ ] Confirm placement status shows simple "Works with" hints when relevant.
 - [ ] Confirm Enter or E places the chosen piece in the highlighted valid cell.
 - [ ] Confirm Escape cancels placement and returns to reward choice.
 - [ ] Confirm the visual Garden panel updates after reward placement.
@@ -50,6 +53,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Wait until Lantern Lily has produced at least 2 Light.
 - [ ] Press Space to Pulse Saintmoth.
 - [ ] Confirm triggered garden cells briefly flash or show an event marker in the visual Garden panel.
+- [ ] Confirm different trigger types use readable markers such as production `+`, movement/copy `>`, damage `!`, and repeat `x`.
 - [ ] Confirm the Bloomchain reaches length 3: Lantern Lily -> Saintmoth -> Bellflower.
 - [ ] Wait for the short chain finalization timeout.
 - [ ] Confirm the finalized Bloomchain appears in the debug UI.

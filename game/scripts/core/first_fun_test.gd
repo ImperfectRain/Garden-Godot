@@ -112,13 +112,14 @@ func _on_reward_failed(piece_id: String, reason: String) -> void:
 
 func _on_reward_placement_started(piece_id: String, cell: Vector2i) -> void:
 	garden_grid_panel.set_placement_preview(true, piece_id, cell)
-	debug_hud.set_status("Place %s with Arrow keys, Enter/E confirm, Esc cancel" % _get_piece_name(piece_id))
+	debug_hud.set_status(_get_placement_status(piece_id, cell))
 	debug_hud.add_event("Choose a garden cell for %s." % _get_piece_name(piece_id))
 	_refresh_debug()
 
 
 func _on_reward_placement_cursor_changed(piece_id: String, cell: Vector2i) -> void:
 	garden_grid_panel.set_placement_preview(true, piece_id, cell)
+	debug_hud.set_status(_get_placement_status(piece_id, cell))
 	_refresh_debug()
 
 
@@ -238,4 +239,27 @@ func _get_piece_names(piece_ids: Array[String]) -> Array[String]:
 	var names: Array[String] = []
 	for piece_id in piece_ids:
 		names.append(_get_piece_name(piece_id))
+	return names
+
+
+func _get_placement_status(piece_id: String, cell: Vector2i) -> String:
+	var status := "Place %s with Arrows, Enter/E confirm, Esc cancel" % _get_piece_name(piece_id)
+	var synergy_names := _get_adjacent_synergy_names(piece_id, cell)
+	if not synergy_names.is_empty():
+		status += " | Works with: %s" % ", ".join(PackedStringArray(synergy_names))
+	return status
+
+
+func _get_adjacent_synergy_names(piece_id: String, cell: Vector2i) -> Array[String]:
+	var piece := ContentDatabase.get_garden_piece(piece_id)
+	var names: Array[String] = []
+	for neighbor in GardenManager.get_adjacent_piece_cells(cell):
+		var neighbor_id := GardenManager.get_piece_id_at(neighbor)
+		var neighbor_piece := ContentDatabase.get_garden_piece(neighbor_id)
+		var neighbor_category := str(neighbor_piece.get("category", ""))
+		for like in piece.get("likes", []):
+			var like_id := str(like)
+			if like_id == neighbor_id or like_id == neighbor_category or neighbor_piece.get("tags", []).has(like_id):
+				names.append(_get_piece_name(neighbor_id))
+				break
 	return names

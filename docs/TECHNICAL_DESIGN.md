@@ -293,6 +293,19 @@ Current Object behavior:
 - Bone Trellis triggers a placement passive marker and lets resource availability from adjacent Flora also notify other Flora adjacent to the same Trellis.
 - Tiny Fence triggers a placement passive marker and applies its `production_bonus` to adjacent Flora production. It is the current MVP stand-in for protecting adjacent living pieces.
 
+## Garden Feedback
+
+`GardenGridPanel` is still temporary prototype UI, but it now provides several readability cues:
+
+- pending placement cell highlight
+- adjacent-cell highlight during placement
+- stronger highlight for adjacent pieces liked by the pending piece
+- selected-cell highlight
+- action-specific trigger flash colors
+- short trigger markers such as `+` for production, `>` for movement/copying, `!` for damage, and `x` for repeats
+
+`FirstFunTest` also updates the debug status during placement with simple "Works with" hints based on adjacent piece ids, categories, and tags.
+
 ## Known Temporary Limitations
 
 - Resources are globally counted, with lightweight source-batch provenance. They are not fully stored per tile or per piece yet.
