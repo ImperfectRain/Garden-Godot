@@ -384,6 +384,28 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add enemy defeat as a room objective alongside survival.
 
+### 2026-06-17 - mvp: add enemy defeat room objective
+
+#### Summary
+- Extended `SimpleRoomController` to complete rooms through either survival timer or enemy defeat count.
+- Routed Drifter defeat events into the active room objective.
+- Updated objective text to show defeat progress and remaining survival time.
+
+#### Files Changed
+- `game/scripts/core/simple_room_controller.gd`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Improve reward pools for the demo loop.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

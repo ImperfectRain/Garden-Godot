@@ -178,6 +178,7 @@ func _on_enemy_damaged(enemy_id: String, amount: int, _source: Dictionary) -> vo
 
 func _on_enemy_defeated(enemy_id: String, world_position: Vector2, source: Dictionary) -> void:
 	debug_hud.add_event("%s fell. Death-fed Flora wake." % enemy_id.capitalize())
+	_room_controller.record_enemy_defeated()
 	var context := {
 		"enemy_id": enemy_id,
 		"world_position": world_position,

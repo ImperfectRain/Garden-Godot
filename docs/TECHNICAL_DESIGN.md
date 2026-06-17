@@ -251,6 +251,15 @@ Current behavior:
 
 This is groundwork for the final expedition system where map layouts are generated per expedition and room selection happens from a zoomed-out grid view.
 
+## Room Objectives
+
+`SimpleRoomController` now supports two temporary completion paths:
+
+- survive until the room timer expires
+- defeat the configured number of enemies
+
+The first fun test currently tracks Drifter defeats through `CombatEvents.enemy_defeated` and completes the room when the enemy goal is met. This keeps the room loop low-stress while making garden enemy damage and Grave Bell payoff relevant.
+
 ## Garden Adjacency Queries
 
 `GardenManager` exposes read-only helpers for placement-sensitive effects:
