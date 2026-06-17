@@ -313,6 +313,25 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Run the first fun test in Godot and fix any editor/runtime issues from the new garden behavior pass.
 
+### 2026-06-16 - fix: type diagonal neighbor offsets
+
+#### Summary
+- Fixed a Godot parser error in `GardenManager.get_diagonal_neighbors()` by replacing an inline untyped Vector2i array with an explicitly typed `Array[Vector2i]`.
+- Preserved existing adjacency behavior.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Scanned garden scripts for remaining inline `for ... in [` loops.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Re-run the first fun test in Godot and report the next parser/runtime error if one appears.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

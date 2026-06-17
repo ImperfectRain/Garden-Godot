@@ -181,12 +181,13 @@ func get_orthogonal_neighbors(cell: Vector2i) -> Array[Vector2i]:
 
 func get_diagonal_neighbors(cell: Vector2i) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
-	for offset in [
+	var offsets: Array[Vector2i] = [
 		Vector2i(-1, -1),
 		Vector2i(1, -1),
 		Vector2i(1, 1),
 		Vector2i(-1, 1)
-	]:
+	]
+	for offset in offsets:
 		var neighbor := cell + offset
 		if is_valid_cell(neighbor):
 			result.append(neighbor)
