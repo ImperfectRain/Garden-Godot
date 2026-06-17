@@ -433,6 +433,29 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add a simple run summary screen.
 
+### 2026-06-17 - mvp: add run summary panel
+
+#### Summary
+- Added a temporary run summary UI panel.
+- Shows success/failure, rooms cleared, largest Bloomchain, resource totals, and restart prompt.
+- Wired player defeat and run completion into the summary display.
+
+#### Files Changed
+- `game/scripts/ui/run_summary_panel.gd`
+- `game/scenes/ui/run_summary_panel.tscn`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Add floating garden feedback for resource and combat events.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

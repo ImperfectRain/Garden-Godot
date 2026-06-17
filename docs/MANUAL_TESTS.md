@@ -62,6 +62,12 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm backtracking to a revealed adjacent room is allowed.
 - [ ] Confirm hidden or non-adjacent rooms cannot be selected for travel.
 
+## Run Summary
+
+- [ ] Clear the final demo expedition room or trigger player defeat.
+- [ ] Confirm the run summary panel appears.
+- [ ] Confirm it shows result, rooms cleared, largest Bloomchain, resources, and restart prompt.
+
 ## Bloomchain
 
 - [ ] Choose Bellflower from the reward panel.

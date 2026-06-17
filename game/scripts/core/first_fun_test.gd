@@ -9,6 +9,7 @@ const ExpeditionMapControllerScript := preload("res://game/scripts/core/expediti
 @onready var garden_grid_panel := $CanvasLayer/GardenGridPanel
 @onready var expedition_map_panel := $CanvasLayer/ExpeditionMapPanel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
+@onready var run_summary_panel := $CanvasLayer/RunSummaryPanel
 
 var _last_health := 0
 var _last_shield := 0
@@ -19,6 +20,7 @@ var _expedition_map := ExpeditionMapControllerScript.new()
 
 func _ready() -> void:
 	RunManager.start_run()
+	RunManager.run_finished.connect(_on_run_finished)
 	_expedition_map.generate_demo_map()
 	GardenManager.place_piece(Vector2i(0, 1), "lantern_lily")
 	debug_hud.set_player(player)
@@ -214,6 +216,7 @@ func _on_resource_failed(resource_id: String, requested: int, _available: int) -
 func _on_player_defeated() -> void:
 	_room_controller.stop()
 	debug_hud.set_status("Player defeated - restart the scene to try again")
+	RunManager.finish_run(false)
 	_refresh_debug()
 
 
@@ -314,4 +317,10 @@ func _on_expedition_room_selected(room_id: String, _position: Vector2i) -> void:
 
 func _on_expedition_selection_failed(reason: String) -> void:
 	debug_hud.add_event(reason)
+	_refresh_debug()
+
+
+func _on_run_finished(summary: Dictionary) -> void:
+	run_summary_panel.show_summary(summary)
+	debug_hud.set_status("Run finished")
 	_refresh_debug()
