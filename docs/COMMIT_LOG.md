@@ -358,6 +358,32 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - Add expedition grid map progression scaffold.
 
+### 2026-06-17 - mvp: add expedition map scaffold
+
+#### Summary
+- Added `ExpeditionMapController` as groundwork for grid-based expedition progression.
+- Added a temporary `ExpeditionMapPanel` UI showing revealed, selected, current, and cleared rooms.
+- Wired room clearing to reveal adjacent cardinal rooms and allow adjacent room selection/backtracking.
+- Updated the first fun test to start rooms from the expedition map.
+
+#### Files Changed
+- `game/scripts/core/expedition_map_controller.gd`
+- `game/scripts/ui/expedition_map_panel.gd`
+- `game/scenes/ui/expedition_map_panel.tscn`
+- `game/scenes/debug/first_fun_test.tscn`
+- `game/scripts/core/first_fun_test.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- Parsed all current JSON data files with PowerShell `ConvertFrom-Json`.
+- Godot CLI was not available in PATH, so editor-level validation was not run.
+
+#### Next Recommended Task
+- Add enemy defeat as a room objective alongside survival.
+
 ### 2026-06-14 - architecture: add content validation pass
 
 #### Summary

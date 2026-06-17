@@ -2,20 +2,24 @@ extends Node2D
 
 const SimpleRoomControllerScript := preload("res://game/scripts/core/simple_room_controller.gd")
 const RewardControllerScript := preload("res://game/scripts/core/reward_controller.gd")
+const ExpeditionMapControllerScript := preload("res://game/scripts/core/expedition_map_controller.gd")
 
 @onready var player := $Player
 @onready var debug_hud := $CanvasLayer/DebugHUD
 @onready var garden_grid_panel := $CanvasLayer/GardenGridPanel
+@onready var expedition_map_panel := $CanvasLayer/ExpeditionMapPanel
 @onready var reward_choice_panel := $CanvasLayer/RewardChoicePanel
 
 var _last_health := 0
 var _last_shield := 0
 var _room_controller := SimpleRoomControllerScript.new()
 var _reward_controller := RewardControllerScript.new()
+var _expedition_map := ExpeditionMapControllerScript.new()
 
 
 func _ready() -> void:
 	RunManager.start_run()
+	_expedition_map.generate_demo_map()
 	GardenManager.place_piece(Vector2i(0, 1), "lantern_lily")
 	debug_hud.set_player(player)
 	debug_hud.set_status("Survive until the reward appears")
@@ -34,6 +38,9 @@ func _ready() -> void:
 	Bloomchains.chain_finished.connect(_on_bloomchain_finished)
 	_room_controller.room_started.connect(_on_room_started)
 	_room_controller.reward_ready.connect(_on_room_reward_ready)
+	_expedition_map.map_changed.connect(_on_expedition_map_changed)
+	_expedition_map.room_selected.connect(_on_expedition_room_selected)
+	_expedition_map.selection_failed.connect(_on_expedition_selection_failed)
 	_reward_controller.setup(reward_choice_panel)
 	_reward_controller.placement_started.connect(_on_reward_placement_started)
 	_reward_controller.placement_cursor_changed.connect(_on_reward_placement_cursor_changed)
@@ -44,8 +51,8 @@ func _ready() -> void:
 	_last_shield = player.shield
 	debug_hud.add_event("Lantern Lily produces +1 Light every 5 seconds.")
 	debug_hud.add_event("Pulse when Saintmoth has 2 Light to gain Shield.")
-	debug_hud.add_event("Survive 30 seconds, then choose a garden reward.")
-	_room_controller.start(RunManager.get_current_room_id())
+	debug_hud.add_event("Clear rooms, choose rewards, then pick adjacent expedition rooms.")
+	_room_controller.start(_expedition_map.get_current_room_id())
 	_refresh_debug()
 
 
@@ -60,6 +67,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().reload_current_scene()
 		return
 	if _reward_controller.handle_placement_input(event):
+		get_viewport().set_input_as_handled()
+		_refresh_debug()
+		return
+	if _handle_expedition_input(event):
 		get_viewport().set_input_as_handled()
 		_refresh_debug()
 
@@ -100,9 +111,8 @@ func _on_reward_claimed(piece_id: String, _cell: Vector2i) -> void:
 	_room_controller.mark_reward_claimed()
 	debug_hud.set_status("Reward placed: %s" % _get_piece_name(piece_id))
 	RunManager.complete_current_room()
-	debug_hud.add_event("Room complete. Advanced to %s." % RunManager.get_current_room_id())
-	if RunManager.is_run_active:
-		_room_controller.start(RunManager.get_current_room_id())
+	_expedition_map.complete_current_room()
+	debug_hud.add_event("Room cleared. Choose an adjacent expedition room.")
 	_refresh_debug()
 
 
@@ -229,10 +239,11 @@ func _on_room_reward_ready(room_id: String) -> void:
 
 
 func _refresh_debug() -> void:
-	var room_id := RunManager.get_current_room_id()
-	debug_hud.set_room_info(room_id, RunManager.get_completed_room_count(), _room_controller.get_objective_text())
+	var room_id := _expedition_map.get_current_room_id()
+	debug_hud.set_room_info(room_id, _expedition_map.get_completed_room_count(), _room_controller.get_objective_text())
 	debug_hud.refresh()
 	garden_grid_panel.refresh()
+	expedition_map_panel.set_rooms(_expedition_map.get_room_snapshot())
 
 
 func _get_piece_name(piece_id: String) -> String:
@@ -268,3 +279,38 @@ func _get_adjacent_synergy_names(piece_id: String, cell: Vector2i) -> Array[Stri
 				names.append(_get_piece_name(neighbor_id))
 				break
 	return names
+
+
+func _handle_expedition_input(event: InputEvent) -> bool:
+	if _room_controller.is_active or _room_controller.is_reward_ready or _reward_controller.is_reward_available:
+		return false
+	if (event is InputEventKey) == false or not event.is_pressed() or event.echo:
+		return false
+	match event.keycode:
+		KEY_LEFT:
+			return _expedition_map.move_selection(Vector2i.LEFT)
+		KEY_RIGHT:
+			return _expedition_map.move_selection(Vector2i.RIGHT)
+		KEY_UP:
+			return _expedition_map.move_selection(Vector2i.UP)
+		KEY_DOWN:
+			return _expedition_map.move_selection(Vector2i.DOWN)
+		KEY_ENTER, KEY_KP_ENTER, KEY_E:
+			return _expedition_map.confirm_selection()
+	return false
+
+
+func _on_expedition_map_changed() -> void:
+	_refresh_debug()
+
+
+func _on_expedition_room_selected(room_id: String, _position: Vector2i) -> void:
+	debug_hud.set_status("Entered expedition room: %s" % room_id)
+	debug_hud.add_event("Entered %s." % room_id.capitalize())
+	_room_controller.start(room_id)
+	_refresh_debug()
+
+
+func _on_expedition_selection_failed(reason: String) -> void:
+	debug_hud.add_event(reason)
+	_refresh_debug()

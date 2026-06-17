@@ -49,6 +49,17 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm occupied cells reject placement.
 - [ ] Confirm garden debug rows update after placement.
 
+## Expedition Map
+
+- [ ] Confirm the Expedition Map panel is visible.
+- [ ] Confirm the starting room is marked as current.
+- [ ] Clear a room and claim/place the reward.
+- [ ] Confirm adjacent cardinal rooms are revealed after the room is cleared.
+- [ ] Confirm Arrow keys select revealed adjacent rooms when not placing a reward.
+- [ ] Confirm Enter or E travels to the selected adjacent room.
+- [ ] Confirm backtracking to a revealed adjacent room is allowed.
+- [ ] Confirm hidden or non-adjacent rooms cannot be selected for travel.
+
 ## Bloomchain
 
 - [ ] Choose Bellflower from the reward panel.

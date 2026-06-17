@@ -236,6 +236,21 @@ Temporary controls during placement:
 
 Current Pulse behavior still selects the Heart Tile before pulsing so the first fun test remains focused on Saintmoth. Future inspect, tend, and selected-piece Pulse behavior should use these selection helpers instead of directly assigning `selected_cell`.
 
+## Expedition Map Progression
+
+The first fun test now includes a scaffold for the intended expedition map flow. `ExpeditionMapController` owns a small generated top-down grid of room nodes. The current demo generator creates a deterministic path using existing MVP room ids, but the controller API is meant to be replaced by procedural generation later.
+
+Current behavior:
+
+- The run starts in the first revealed room.
+- Clearing a room reveals adjacent cardinal rooms that exist in the generated layout.
+- After claiming the room reward, the player can use Arrow keys to select revealed adjacent rooms.
+- Enter or E travels to the selected room.
+- Backtracking to revealed adjacent rooms is allowed.
+- `ExpeditionMapPanel` displays revealed rooms, current room, selected room, and cleared rooms.
+
+This is groundwork for the final expedition system where map layouts are generated per expedition and room selection happens from a zoomed-out grid view.
+
 ## Garden Adjacency Queries
 
 `GardenManager` exposes read-only helpers for placement-sensitive effects:
