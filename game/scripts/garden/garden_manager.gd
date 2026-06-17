@@ -153,6 +153,20 @@ func get_all_cells() -> Dictionary:
 	return cells.duplicate()
 
 
+func get_cell_resource_summary(cell: Vector2i) -> Dictionary:
+	var summary: Dictionary = {}
+	for resource_id in _resource_sources.keys():
+		var total := 0
+		var sources: Array = _resource_sources.get(resource_id, [])
+		for source in sources:
+			var origin_cell: Vector2i = source.get("origin_cell", Vector2i(-1, -1))
+			if origin_cell == cell:
+				total += int(source.get("amount", 0))
+		if total > 0:
+			summary[str(resource_id)] = total
+	return summary
+
+
 func get_neighbors(cell: Vector2i, include_diagonal := false) -> Array[Vector2i]:
 	var offsets: Array[Vector2i] = [
 		Vector2i(0, -1),
@@ -293,6 +307,8 @@ func _apply_trigger(cell: Vector2i, piece_id: String, trigger: Dictionary, conte
 		succeeded = bool(effect_result.get("success", false))
 		if succeeded and ["produce_resource", "copy_output"].has(action) and not str(effect_result.get("resource", "")).is_empty():
 			_store_resource_source_from_effect(effect_result, trigger_context)
+		elif succeeded and action == "move_resource":
+			_move_resource_source_from_effect(effect_result)
 		elif succeeded and RESOURCE_CONSUMING_ACTIONS.has(action):
 			_consume_resource_source_from_effect(effect_result)
 	if not succeeded:
@@ -340,6 +356,62 @@ func _store_resource_source_from_effect(result: Dictionary, context: Dictionary)
 	if not _resource_sources.has(resource_id):
 		_resource_sources[resource_id] = []
 	_resource_sources[resource_id].append(source)
+
+
+func _move_resource_source_from_effect(result: Dictionary) -> void:
+	var resource_id := str(result.get("resource", ""))
+	var amount := int(result.get("amount", 0))
+	var origin_cell: Vector2i = result.get("origin_cell", Vector2i(-1, -1))
+	var target_cell: Vector2i = result.get("target_cell", Vector2i(-1, -1))
+	if resource_id.is_empty() or amount <= 0 or target_cell == Vector2i(-1, -1):
+		return
+	var moved := _remove_resource_source_amount(resource_id, origin_cell, amount)
+	if moved <= 0:
+		return
+	var result_context: Dictionary = result.get("context", {})
+	var source: Dictionary = result_context.duplicate(true)
+	source["resource_id"] = resource_id
+	source["amount"] = moved
+	source["origin_cell"] = target_cell
+	source["origin_piece_id"] = get_piece_id_at(target_cell)
+	source["adjacent_cells"] = get_adjacent_piece_cells(target_cell)
+	source["adjacent_flora_cells"] = get_adjacent_cells_by_category(target_cell, "flora")
+	source["adjacent_fauna_cells"] = get_adjacent_cells_by_category(target_cell, "fauna")
+	source["adjacent_object_cells"] = get_adjacent_cells_by_category(target_cell, "object")
+	if not _resource_sources.has(resource_id):
+		_resource_sources[resource_id] = []
+	_resource_sources[resource_id].append(source)
+
+
+func _remove_resource_source_amount(resource_id: String, origin_cell: Vector2i, amount: int) -> int:
+	if not _resource_sources.has(resource_id):
+		return 0
+	var remaining := amount
+	var moved := 0
+	var sources: Array = _resource_sources[resource_id]
+	var index := 0
+	while index < sources.size() and remaining > 0:
+		var source: Dictionary = sources[index]
+		var source_cell: Vector2i = source.get("origin_cell", Vector2i(-1, -1))
+		if source_cell != origin_cell:
+			index += 1
+			continue
+		var source_amount := int(source.get("amount", 0))
+		var taken := mini(source_amount, remaining)
+		source_amount -= taken
+		remaining -= taken
+		moved += taken
+		if source_amount <= 0:
+			sources.remove_at(index)
+		else:
+			source["amount"] = source_amount
+			sources[index] = source
+			index += 1
+	if sources.is_empty():
+		_resource_sources.erase(resource_id)
+	else:
+		_resource_sources[resource_id] = sources
+	return moved
 
 
 func _consume_resource_source_from_effect(result: Dictionary) -> void:
@@ -434,6 +506,8 @@ func _dispatch_effect_events(effect_result: Dictionary, context: Dictionary) -> 
 	match str(effect_result.get("action", "")):
 		"produce_resource", "copy_output":
 			_dispatch_resource_available(effect_result, context)
+		"move_resource":
+			_dispatch_moved_resource_available(effect_result, context)
 		"store_resource":
 			_dispatch_storage_threshold(effect_result, context)
 
@@ -454,6 +528,24 @@ func _dispatch_resource_available(effect_result: Dictionary, context: Dictionary
 		for connected_cell in get_adjacent_cells_by_category(trellis_cell, "flora"):
 			if connected_cell != origin_cell:
 				GardenTriggerSystem.trigger_cell_event(connected_cell, "resource_available_adjacent", resource_context)
+
+
+func _dispatch_moved_resource_available(effect_result: Dictionary, context: Dictionary) -> void:
+	var resource_id := str(effect_result.get("resource", ""))
+	if resource_id.is_empty():
+		return
+	var resource_context := context.duplicate(true)
+	resource_context["resource"] = resource_id
+	resource_context["amount"] = int(effect_result.get("amount", 0))
+	resource_context["origin_cell"] = effect_result.get("target_cell", Vector2i(-1, -1))
+	resource_context["moved_from_cell"] = effect_result.get("origin_cell", Vector2i(-1, -1))
+	resource_context["moved_by_cell"] = effect_result.get("cell", Vector2i(-1, -1))
+	var result_context: Dictionary = effect_result.get("context", {})
+	resource_context["moved_by_cells"] = result_context.get("moved_by_cells", [])
+	GardenTriggerSystem.trigger_global_event("resource_available", resource_context)
+	var moved_origin_cell: Vector2i = resource_context["origin_cell"]
+	for neighbor in get_adjacent_piece_cells(moved_origin_cell):
+		GardenTriggerSystem.trigger_cell_event(neighbor, "resource_available_adjacent", resource_context)
 
 
 func _dispatch_storage_threshold(effect_result: Dictionary, context: Dictionary) -> void:

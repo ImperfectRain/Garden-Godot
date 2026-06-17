@@ -27,6 +27,7 @@ Use this checklist when evaluating whether the current first fun test is playabl
 - [ ] Confirm the selected reward enters placement mode instead of being placed automatically.
 - [ ] Move the placement cursor with Arrow keys.
 - [ ] Confirm valid, blocked, adjacent, and synergy-highlighted cells are visually distinct.
+- [ ] Confirm Mirror Shard, Glass Beetle, and Bone Trellis show route/link/mirror preview hints when relevant.
 - [ ] Place the reward with Enter or E.
 - [ ] Confirm the Garden panel updates and the room is marked cleared.
 
@@ -52,6 +53,8 @@ Use this checklist when evaluating whether the current first fun test is playabl
 
 - [ ] Create the Lantern Lily -> Saintmoth -> Bellflower Bloomchain and confirm it is shown in debug feedback.
 - [ ] Confirm chain step feedback appears while the Bloomchain is building.
+- [ ] Confirm the finalized Bloomchain replays its cell path with numbered pulses.
+- [ ] Confirm resource badges appear in garden cells after resources are produced or stored.
 - [ ] Confirm Bellflower can still produce a slow Echo trickle if the player does not Pulse immediately.
 - [ ] Place Grave Bell before Echo is produced and confirm it stores Echo.
 - [ ] Confirm Grave Bell gives a small placement chime so it is useful before Echo exists.
@@ -59,6 +62,8 @@ Use this checklist when evaluating whether the current first fun test is playabl
 - [ ] Place Rotling and confirm it can request a weak helper even before the Rot engine is online.
 - [ ] Place Blood Rose and Mawlet, then confirm enemy deaths or player damage can build toward Mawlet's 2 Blood cost.
 - [ ] Place Bone Trellis next to Flora and confirm it improves production or resource sharing.
+- [ ] Place Glass Beetle between a resource source and a valid consumer, then confirm source/carrier/target feedback appears.
+- [ ] Place Mirror Shard opposite a producing or damaging tile, then confirm source/mirror feedback appears.
 - [ ] Place at least one Object reward and confirm it changes garden behavior or visibly fires a marker effect.
 
 ## Feedback And End State

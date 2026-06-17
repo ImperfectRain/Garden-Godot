@@ -18,6 +18,35 @@ This file tracks meaningful project changes by task. Each Codex task should appe
 #### Next Recommended Task
 - ...
 
+### 2026-06-17 - mvp: add garden causality feedback
+
+#### Summary
+- Added per-cell resource summary access and resource badges in the Garden panel.
+- Made move-resource effects update provenance and redispatch resource availability from the target cell.
+- Added loop context for moved resources so a carrier cannot re-move the same resource indefinitely.
+- Added Garden panel feedback for Glass Beetle source/carrier/target movement and Mirror Shard source/copy behavior.
+- Added Bloomchain path playback through a new `chain_path_finished` signal.
+- Added placement preview hints for liked links, carrier routes, Bone Trellis Flora routes, and Mirror Shard opposite tiles.
+
+#### Files Changed
+- `game/scripts/garden/garden_manager.gd`
+- `game/scripts/garden/garden_effect_resolver.gd`
+- `game/scripts/garden/bloomchain_manager.gd`
+- `game/scripts/ui/garden_grid_panel.gd`
+- `docs/TECHNICAL_DESIGN.md`
+- `docs/MANUAL_TESTS.md`
+- `docs/DEMO_PLAYTEST_CHECKLIST.md`
+- `docs/COMMIT_LOG.md`
+
+#### Verification
+- `git diff --check` passed.
+- JSON content parsed with PowerShell `ConvertFrom-Json`.
+- Targeted scan found no direct tween erase callback pattern; existing inline `piece.get(..., [])` loop patterns remain in older code.
+- `where.exe godot` did not find a Godot CLI on PATH, so editor-level scene validation was not run.
+
+#### Next Recommended Task
+- Replace the remaining dense debug HUD with a compact player-facing HUD and move detailed logs behind a debug toggle.
+
 ### 2026-06-17 - mvp: improve garden piece standalone value
 
 #### Summary

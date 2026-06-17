@@ -114,7 +114,11 @@ The HUD may read current resources and garden rows from global singletons for de
 
 `GardenGridPanel` lives at `res://game/scenes/ui/garden_grid_panel.tscn` with script `game/scripts/ui/garden_grid_panel.gd`. It is a temporary prototype UI that shows the current 3x3 garden as cells with text labels, simple category colors, and a distinct Heart Tile.
 
-The panel listens to `GardenManager.grid_reset`, `piece_placed`, `piece_removed`, and `piece_triggered`. Placement signals refresh the grid, and trigger signals briefly flash the triggered cell with an event marker. The text debug rows still exist for now; this panel is only the first readable visual garden UI, not the final garden screen.
+The panel listens to `GardenManager.grid_reset`, `piece_placed`, `piece_removed`, and `piece_triggered`. Placement signals refresh the grid, and trigger signals briefly flash the triggered cell with an event marker. It also reads `GardenManager.get_cell_resource_summary(cell)` and `GardenEffectResolver.get_stored_amount()` so each cell can show small resource badges such as `L:1` or stored Echo.
+
+For prototype causality feedback, `GardenGridPanel` listens to `GardenEffectResolver.effect_resolved` and `Bloomchains.chain_path_finished`. Move effects briefly mark origin, carrier, and target cells; copy effects mark source and mirror cells; finished Bloomchains replay their path as numbered cell pulses. This is not final VFX, but it makes resource movement and chain aftermath visible without relying only on debug text.
+
+During reward placement, the panel highlights likely links: adjacent liked pieces, carrier routes, Bone Trellis Flora routes, and Mirror Shard's opposite source tile. These hints are deliberately simple and content-driven.
 
 ## Garden Inspect Panel
 
@@ -196,7 +200,7 @@ The first causal chain is:
 
 `Bloomchains` records steps by `chain_id`, prevents the same piece from triggering twice in one chain, and caps chains at `SOFT_CHAIN_CAP`. Step events can emit immediately through `chain_step_added`, but `JournalManager.record_bloomchain()` and `chain_finished` happen only when the chain finishes through timeout, cap, repeated-piece protection, or an explicit finish.
 
-The first fun test listens to `chain_step_added` for temporary debug feedback, so players can see a chain building before the final timeout resolves it.
+The first fun test listens to `chain_step_added` for temporary debug feedback, so players can see a chain building before the final timeout resolves it. `Bloomchains.chain_path_finished` emits the finished step dictionaries so presentation can replay the final path.
 
 This finish-time recording means a future chain longer than 3 records its final length instead of only the first 3 steps.
 
@@ -332,6 +336,8 @@ Successful resource production dispatches:
 - `resource_available_adjacent` to occupied neighbor cells around the producing cell.
 
 These events are used by Rotling, Mawlet, and Glass Beetle.
+
+Move-resource effects update resource provenance from the origin cell to the target cell and redispatch resource availability from the target. This lets Glass Beetle visibly carry a resource and lets consumers near the target react. A small `moved_by_cells` context prevents one carrier from re-moving the same resource in a loop.
 
 ## Fauna Runtime Behavior
 

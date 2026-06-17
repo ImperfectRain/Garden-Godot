@@ -28,10 +28,12 @@ const CATEGORY_ICON_PATHS := {
 var _cell_panels: Dictionary = {}
 var _cell_icons: Dictionary = {}
 var _cell_labels: Dictionary = {}
+var _cell_resource_labels: Dictionary = {}
 var _cell_feedback_labels: Dictionary = {}
 var _flash_tweens: Dictionary = {}
 var _feedback_tweens: Dictionary = {}
 var _texture_cache: Dictionary = {}
+var _chain_tween: Tween
 var _placement_active := false
 var _placement_piece_id := ""
 var _placement_cell := Vector2i.ZERO
@@ -43,6 +45,8 @@ func _ready() -> void:
 	GardenManager.piece_removed.connect(_on_piece_changed)
 	GardenManager.piece_triggered.connect(_on_piece_triggered)
 	GardenManager.selected_cell_changed.connect(_on_selected_cell_changed)
+	GardenEffectResolver.effect_resolved.connect(_on_effect_resolved)
+	Bloomchains.chain_path_finished.connect(_on_chain_path_finished)
 	_build_cells()
 	refresh()
 
@@ -64,6 +68,7 @@ func _build_cells() -> void:
 		child.queue_free()
 	_cell_panels.clear()
 	_cell_feedback_labels.clear()
+	_cell_resource_labels.clear()
 	_cell_labels.clear()
 	for y in range(GardenManager.GRID_SIZE.y):
 		for x in range(GardenManager.GRID_SIZE.x):
@@ -90,6 +95,12 @@ func _build_cells() -> void:
 			label.add_theme_font_size_override("font_size", 11)
 			content.add_child(label)
 
+			var resource_label := Label.new()
+			resource_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			resource_label.add_theme_font_size_override("font_size", 10)
+			resource_label.modulate = Color(0.82, 0.92, 0.78, 1.0)
+			content.add_child(resource_label)
+
 			var feedback_label := Label.new()
 			feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			feedback_label.add_theme_font_size_override("font_size", 12)
@@ -99,19 +110,22 @@ func _build_cells() -> void:
 			_cell_panels[cell] = panel
 			_cell_icons[cell] = icon
 			_cell_labels[cell] = label
+			_cell_resource_labels[cell] = resource_label
 			_cell_feedback_labels[cell] = feedback_label
 
 
 func _update_cell(cell: Vector2i) -> void:
 	var icon: TextureRect = _cell_icons[cell]
 	var label: Label = _cell_labels[cell]
+	var resource_label: Label = _cell_resource_labels[cell]
 	var panel: PanelContainer = _cell_panels[cell]
 	var piece_id := GardenManager.get_piece_id_at(cell)
 	var piece := ContentDatabase.get_garden_piece(piece_id)
 	var is_heart := cell == GardenManager.HEART_CELL
 	icon.texture = _get_icon_texture(piece_id, piece, is_heart)
 	icon.visible = icon.texture != null
-	label.text = _get_cell_text(cell, piece_id, piece, "")
+	label.text = _get_cell_text(cell, piece_id, piece, _get_preview_marker(cell))
+	resource_label.text = _get_resource_badge_text(cell, piece_id, piece)
 	panel.add_theme_stylebox_override("panel", _make_cell_style(_get_cell_color(piece, is_heart), _get_border_color(cell, is_heart)))
 
 
@@ -145,8 +159,12 @@ func _get_cell_color(piece: Dictionary, is_heart: bool) -> Color:
 func _get_border_color(cell: Vector2i, is_heart: bool) -> Color:
 	if _placement_active and cell == _placement_cell:
 		return Color(0.36, 0.95, 0.52, 1.0) if GardenManager.can_place_piece(cell, _placement_piece_id) else Color(1.0, 0.28, 0.22, 1.0)
+	if _placement_active and _is_mirror_opposite_preview_cell(cell):
+		return Color(0.88, 0.50, 1.0, 1.0)
 	if _placement_active and GardenManager.are_cells_adjacent(_placement_cell, cell):
 		return Color(1.0, 0.80, 0.28, 1.0) if _pending_piece_likes_cell(cell) else Color(0.42, 0.62, 0.78, 1.0)
+	if _placement_active and _pending_piece_can_route_to_cell(cell):
+		return Color(0.56, 0.92, 1.0, 1.0)
 	if cell == GardenManager.selected_cell:
 		return Color(0.46, 0.78, 1.0, 1.0)
 	return Color(1.0, 0.86, 0.34, 1.0) if is_heart else Color(0.38, 0.44, 0.38, 1.0)
@@ -190,6 +208,7 @@ func _on_selected_cell_changed(_cell: Vector2i) -> void:
 func _on_piece_triggered(cell: Vector2i, _piece_id: String, _trigger: Dictionary) -> void:
 	_flash_cell(cell, _trigger)
 	_show_cell_feedback(cell, _get_feedback_text(_trigger))
+	refresh()
 
 
 func _flash_cell(cell: Vector2i, trigger: Dictionary) -> void:
@@ -236,6 +255,81 @@ func _on_feedback_finished(cell: Vector2i) -> void:
 	_feedback_tweens.erase(cell)
 
 
+func _on_effect_resolved(result: Dictionary) -> void:
+	match str(result.get("action", "")):
+		"move_resource":
+			_show_resource_move(result)
+		"copy_output":
+			_show_copy_output(result)
+		"store_resource":
+			refresh()
+
+
+func _show_resource_move(result: Dictionary) -> void:
+	var origin_cell: Vector2i = result.get("origin_cell", Vector2i(-1, -1))
+	var carrier_cell: Vector2i = result.get("cell", Vector2i(-1, -1))
+	var target_cell: Vector2i = result.get("target_cell", Vector2i(-1, -1))
+	var resource_id := str(result.get("resource", ""))
+	if GardenManager.is_valid_cell(origin_cell):
+		_show_cell_feedback(origin_cell, "%s >" % resource_id)
+		_pulse_cell(origin_cell, Color(0.55, 0.85, 1.2, 1.0))
+	if GardenManager.is_valid_cell(carrier_cell):
+		_show_cell_feedback(carrier_cell, "Carry")
+		_pulse_cell(carrier_cell, Color(0.9, 0.7, 1.25, 1.0))
+	if GardenManager.is_valid_cell(target_cell):
+		_show_cell_feedback(target_cell, "> %s" % resource_id)
+		_pulse_cell(target_cell, Color(0.55, 1.05, 0.9, 1.0))
+	refresh()
+
+
+func _show_copy_output(result: Dictionary) -> void:
+	var context: Dictionary = result.get("context", {})
+	var source_cell: Vector2i = context.get("copied_source_cell", Vector2i(-1, -1))
+	var mirror_cell: Vector2i = result.get("cell", Vector2i(-1, -1))
+	if GardenManager.is_valid_cell(source_cell):
+		_show_cell_feedback(source_cell, "Source")
+		_pulse_cell(source_cell, Color(0.82, 0.82, 1.25, 1.0))
+	if GardenManager.is_valid_cell(mirror_cell):
+		_show_cell_feedback(mirror_cell, "Copy")
+		_pulse_cell(mirror_cell, Color(1.08, 0.78, 1.35, 1.0))
+	refresh()
+
+
+func _on_chain_path_finished(steps: Array) -> void:
+	if steps.size() < 2:
+		return
+	if _chain_tween != null:
+		_chain_tween.kill()
+	_chain_tween = create_tween()
+	for index in range(steps.size()):
+		var step: Dictionary = steps[index]
+		var cell: Vector2i = step.get("cell", Vector2i(-1, -1))
+		if not GardenManager.is_valid_cell(cell):
+			continue
+		_chain_tween.tween_callback(_show_chain_path_step.bind(cell, index + 1))
+		_chain_tween.tween_interval(0.18)
+
+
+func _show_chain_path_step(cell: Vector2i, step_number: int) -> void:
+	_show_cell_feedback(cell, "Chain %s" % step_number)
+	_pulse_cell(cell, Color(1.0, 1.18, 0.55, 1.0))
+
+
+func _pulse_cell(cell: Vector2i, color: Color) -> void:
+	if not _cell_panels.has(cell):
+		return
+	var panel: PanelContainer = _cell_panels[cell]
+	panel.modulate = color
+	if _flash_tweens.has(cell):
+		var old_tween: Tween = _flash_tweens[cell]
+		if old_tween != null:
+			old_tween.kill()
+	var tween := create_tween()
+	_flash_tweens[cell] = tween
+	tween.tween_property(panel, "modulate", Color.WHITE, 0.35).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.finished.connect(_on_flash_finished.bind(cell))
+
+
 func _pending_piece_likes_cell(cell: Vector2i) -> bool:
 	var cell_piece_id := GardenManager.get_piece_id_at(cell)
 	if cell_piece_id.is_empty():
@@ -243,11 +337,62 @@ func _pending_piece_likes_cell(cell: Vector2i) -> bool:
 	var pending_piece := ContentDatabase.get_garden_piece(_placement_piece_id)
 	var cell_piece := ContentDatabase.get_garden_piece(cell_piece_id)
 	var cell_category := str(cell_piece.get("category", ""))
-	for like in pending_piece.get("likes", []):
+	var likes: Array = pending_piece.get("likes", [])
+	for like in likes:
 		var like_id := str(like)
 		if like_id == cell_piece_id or like_id == cell_category or cell_piece.get("tags", []).has(like_id):
 			return true
 	return false
+
+
+func _pending_piece_can_route_to_cell(cell: Vector2i) -> bool:
+	if not _placement_active or cell == _placement_cell or GardenManager.get_piece_id_at(cell).is_empty():
+		return false
+	var pending_piece := ContentDatabase.get_garden_piece(_placement_piece_id)
+	var pending_tags: Array = pending_piece.get("tags", [])
+	if pending_tags.has("carrier"):
+		return GardenManager.are_cells_adjacent(_placement_cell, cell)
+	if pending_tags.has("connection") and GardenManager.get_piece_category_at(cell) == "flora":
+		return GardenManager.are_cells_adjacent(_placement_cell, cell)
+	return false
+
+
+func _is_mirror_opposite_preview_cell(cell: Vector2i) -> bool:
+	if not _placement_active or _placement_piece_id != "mirror_shard":
+		return false
+	var opposite := Vector2i(GardenManager.GRID_SIZE.x - 1 - _placement_cell.x, GardenManager.GRID_SIZE.y - 1 - _placement_cell.y)
+	return cell == opposite and not GardenManager.get_piece_id_at(cell).is_empty()
+
+
+func _get_preview_marker(cell: Vector2i) -> String:
+	if not _placement_active or cell == _placement_cell:
+		return ""
+	if _is_mirror_opposite_preview_cell(cell):
+		return " mirror"
+	if _pending_piece_likes_cell(cell):
+		return " link"
+	if _pending_piece_can_route_to_cell(cell):
+		return " route"
+	return ""
+
+
+func _get_resource_badge_text(cell: Vector2i, piece_id: String, piece: Dictionary) -> String:
+	var parts: Array[String] = []
+	var summary: Dictionary = GardenManager.get_cell_resource_summary(cell)
+	for resource_id in summary.keys():
+		parts.append("%s:%s" % [str(resource_id).substr(0, 1).to_upper(), int(summary[resource_id])])
+	var stores: Array = piece.get("stores", [])
+	for store_data in stores:
+		var store: Dictionary = store_data
+		var resource := str(store.get("resource", ""))
+		if resource.is_empty():
+			continue
+		var stored := GardenEffectResolver.get_stored_amount(cell, piece_id, resource)
+		if stored > 0:
+			parts.append("%s:%s" % [resource.substr(0, 1).to_upper(), stored])
+	if parts.is_empty():
+		return ""
+	return " ".join(PackedStringArray(parts))
 
 
 func _get_trigger_marker(trigger: Dictionary) -> String:

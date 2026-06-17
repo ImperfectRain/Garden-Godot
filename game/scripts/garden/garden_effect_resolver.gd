@@ -308,6 +308,7 @@ func _resolve_move_resource(request: Dictionary) -> Dictionary:
 	var origin_cell: Vector2i = context.get("origin_cell", Vector2i(-1, -1))
 	var target_cell := _find_adjacent_resource_target(carrier_cell, origin_cell, resource_id)
 	var result := _make_base_result(request, "move_resource")
+	var moved_by_cells: Array = context.get("moved_by_cells", [])
 	result["resource"] = resource_id
 	result["amount"] = amount
 	result["origin_cell"] = origin_cell
@@ -318,12 +319,18 @@ func _resolve_move_resource(request: Dictionary) -> Dictionary:
 	if amount <= 0:
 		result["reason"] = "Amount must be positive"
 		return result
+	if moved_by_cells.has(carrier_cell):
+		result["reason"] = "Carrier already moved this resource"
+		return result
 	if not GardenManager.are_cells_adjacent(carrier_cell, origin_cell):
 		result["reason"] = "Resource source is not adjacent"
 		return result
 	if target_cell == Vector2i(-1, -1):
 		result["reason"] = "No adjacent resource target"
 		return result
+	moved_by_cells.append(carrier_cell)
+	result["context"] = context.duplicate(true)
+	result["context"]["moved_by_cells"] = moved_by_cells
 	result["success"] = true
 	result["outputs"] = [
 		{

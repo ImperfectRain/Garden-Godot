@@ -44,6 +44,8 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm Arrow keys move the highlighted placement cell in the visual Garden panel.
 - [ ] Confirm cells adjacent to the pending placement are highlighted.
 - [ ] Confirm adjacent pieces that match the pending piece's likes get a stronger synergy highlight.
+- [ ] Confirm Mirror Shard placement previews the opposite source tile when one exists.
+- [ ] Confirm Glass Beetle and Bone Trellis placement previews route/link cells when adjacent pieces exist.
 - [ ] Confirm placement status shows simple "Works with" hints when relevant.
 - [ ] Confirm Enter or E places the chosen piece in the highlighted valid cell.
 - [ ] Confirm Escape cancels placement and returns to reward choice.
@@ -95,6 +97,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Wait until Lantern Lily has produced at least 2 Light.
 - [ ] Press Space to Pulse Saintmoth.
 - [ ] Confirm chain step feedback appears before the Bloomchain finalizes.
+- [ ] Confirm finalized Bloomchains replay their garden path as numbered cell pulses.
 - [ ] Confirm triggered garden cells briefly flash or show an event marker in the visual Garden panel.
 - [ ] Confirm different trigger types use readable markers such as production `+`, movement/copy `>`, damage `!`, and repeat `x`.
 - [ ] Confirm triggered garden cells show short fading feedback text such as `+1 light`, `Store echo`, `Hit`, `Copy`, or `Repeat`.
@@ -128,6 +131,8 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm Mawlet consumes 2 Blood and repeats the previous successful garden trigger without looping forever.
 - [ ] Place Glass Beetle adjacent to a producer and another piece that can use that resource.
 - [ ] Confirm Glass Beetle reacts only when the resource source is adjacent and a valid adjacent target exists.
+- [ ] Confirm Glass Beetle feedback marks the source, carrier, and target cells.
+- [ ] Confirm cell resource badges update when a resource is produced or moved.
 
 ## Object Events
 
@@ -137,6 +142,7 @@ Use this checklist before and after small MVP changes. The goal is to confirm th
 - [ ] Confirm Grave Bell rings and can defeat or nearly defeat Drifter when it reaches 3 stored Echo.
 - [ ] Place Mirror Shard opposite a producing or damaging piece across the 3x3 grid.
 - [ ] Confirm Mirror Shard copies the opposite tile output at reduced strength.
+- [ ] Confirm Mirror Shard feedback marks the source and mirror cells when it copies output.
 - [ ] Place Bone Trellis adjacent to two Flora.
 - [ ] Confirm Bone Trellis logs its connection marker, shares adjacent resource availability to connected Flora, and boosts adjacent Flora production.
 - [ ] Place Tiny Fence adjacent to Lantern Lily or another Flora.

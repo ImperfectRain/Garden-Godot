@@ -3,6 +3,7 @@ extends Node
 signal chain_started(origin_cell: Vector2i, origin_piece_id: String)
 signal chain_step_added(cell: Vector2i, piece_id: String, action: String, chain_length: int)
 signal chain_finished(length: int, piece_ids: Array[String])
+signal chain_path_finished(steps: Array)
 
 const CHAIN_TIMEOUT_SECONDS := 1.25
 const SOFT_CHAIN_CAP := 8
@@ -52,6 +53,7 @@ func finish_chain() -> void:
 		if not chain_id.is_empty():
 			_finished_chain_ids[chain_id] = true
 		chain_finished.emit(length, ids)
+		chain_path_finished.emit(active_chain.duplicate(true))
 	if not chain_id.is_empty():
 		_causal_chains.erase(chain_id)
 	active_chain.clear()
